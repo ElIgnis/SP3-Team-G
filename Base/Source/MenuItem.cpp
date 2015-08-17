@@ -35,8 +35,8 @@ void CMenuItem::SetIs_Selected(const bool b_IsSelected)
 	this->b_IsSelected = b_IsSelected;
 }
 
-static const float MAXf_size = 6.5f;
-static const float MINf_size = 5.f;
+static const float MAXSIZE = 6.5f;
+static const float MINSIZE = 5.f;
 
 void CMenuItem::Update(double dt)
 {
@@ -55,17 +55,17 @@ void CMenuItem::Update(double dt)
 		colour.Set(1.0, 0.8, 0.0);
 	}
 
-	if(this->f_size < MINf_size && b_IsShrinking)
+	if(this->f_size < MINSIZE && b_IsShrinking)
 	{
 		b_IsShrinking = false;
 		b_IsMin = true;
-		this->f_size = MINf_size;
+		this->f_size = MINSIZE;
 	}
-	else if(this->f_size > MAXf_size && b_IsGrowing)
+	else if(this->f_size > MAXSIZE && b_IsGrowing)
 	{
 		b_IsGrowing = false;
 		b_IsMax = true;
-		this->f_size = MAXf_size;
+		this->f_size = MAXSIZE;
 	}
 
 	if(b_IsGrowing)
