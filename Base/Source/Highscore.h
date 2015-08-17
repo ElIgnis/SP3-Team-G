@@ -13,9 +13,9 @@ using std::ostream;
 class CHighscore
 {
 private:
-	string Name;
-	int Score;
-	int ScoreIndex;
+	string s_Name;
+	int i_Score;
+	int i_ScoreIndex;
 
 public:
 	CHighscore();
