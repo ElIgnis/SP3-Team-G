@@ -60,6 +60,9 @@ public:
 	//Render menu items
 	void RenderMenu(void);
 
+	//Render Background Image
+	void RenderBackground();
+
 	//Render UI items
 	void RenderUI(void);
 
