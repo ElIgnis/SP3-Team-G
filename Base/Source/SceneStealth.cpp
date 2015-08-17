@@ -654,35 +654,24 @@ void SceneStealth::RenderMenu(void)
 		RenderTextOnScreen(meshList[GEO_TEXT], menu_main.m_menuList[i]->GetText(), menu_main.m_menuList[i]->GetColour(), 
 			menu_main.m_menuList[i]->GetSize(), menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
 	}
+
 	RenderDesc(menu_main);
 
-	//High score text
-	if(menu_main.GetSelection() == 2)
-	{
-		//Display high scores
-		for(int i = 0; i < HS_List.GetHighScoreCount(); ++i)
-		{
-			std::ostringstream HighScore;
-			HighScore << "#" << i+1 << ": " << HS_List.GetScoreList().at(i);
-			RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
-		}
-	}
 
-	RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! You have acquired a new high score!!", Color(), 4.f, 4.f, 44.f);
-
+	/*RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! You have acquired a new high score!!", Color(), 4.f, 4.f, 44.f);
 	std::ostringstream HighScoreName;
 	for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
 	{
 		HighScoreName << tempHighScore.GetNameString()[i];
 	}
-	RenderTextOnScreen(meshList[GEO_TEXT], "Please enter your name: " + HighScoreName.str(), Color(0, 1, 0), 3.f, 4.f, 40.f);
+	RenderTextOnScreen(meshList[GEO_TEXT], "Please enter your name: " + HighScoreName.str(), Color(0, 1, 0), 3.f, 4.f, 40.f);*/
 }
 
 void SceneStealth::RenderDesc(CMenu &menuItem)
 {
 	switch(menuItem.GetSelection())
 	{
-	case 0:
+	case 0://This is option 1 (PLAY)
 		{
 			for(unsigned j = 0; j < menu_main.m_menuList[0]->vec_DescTokens.size(); ++j)
 			{
@@ -692,7 +681,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			}
 		}
 		break;
-	case 1:
+	case 1: //Option 2 for Level Select
 		{
 			for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
 			{
@@ -702,12 +691,18 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			}
 		}
 		break;
-	case 2:
+	case 2: //Option 3 for Highscore
 		{
-			//Insert render Highscore thingy here
+			//Display high scores
+			for(int i = 0; i < HS_List.GetHighScoreCount(); ++i)
+			{
+				std::ostringstream HighScore;
+				HighScore << "#" << i+1 << ": " << HS_List.GetScoreList().at(i);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
+			}
 		}
 		break;
-	case 3:
+	case 3: //Option 4 for Instructions
 		{
 			for(unsigned j = 0; j < menu_main.m_menuList[3]->vec_DescTokens.size(); ++j)
 			{
@@ -717,7 +712,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			}
 		}
 		break;
-	case 4:
+	case 4: //Option 5 for Game Controls
 		{
 			for(unsigned j = 0; j < menu_main.m_menuList[4]->vec_DescTokens.size(); ++j)
 			{
@@ -727,7 +722,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			}
 		}
 		break;
-	case 5:
+	case 5: //Option 6 
 		{
 			for(unsigned j = 0; j < menu_main.m_menuList[5]->vec_DescTokens.size(); ++j)
 			{
