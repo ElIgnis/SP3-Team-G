@@ -6,8 +6,9 @@
 
 using std::string;
 
-struct GameObject
+class GameObject
 {
+public:
 	enum GAMEOBJECT_TYPE
 	{
 		GO_NONE = 0,
