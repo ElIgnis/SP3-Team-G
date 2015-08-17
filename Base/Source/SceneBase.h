@@ -85,6 +85,7 @@ public:
 	virtual void UpdateKeypress(const unsigned char key) = 0;
 	virtual void Render();
 	virtual void Exit();
+	virtual bool GetExit() = 0;
 
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);

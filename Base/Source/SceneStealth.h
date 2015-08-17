@@ -22,6 +22,12 @@ using std::endl;
 
 class SceneStealth : public SceneBase
 {
+	enum GAME_STATE //gamestates
+	{
+		STATE_MENU,
+		STATE_PLAYING,
+		NUM_GAMESTATES,//number of gamestates
+	};
 public:
 	SceneStealth();
 	~SceneStealth();
@@ -30,6 +36,7 @@ public:
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
+	virtual bool GetExit();
 
 	void RenderGO(GameObject *go);
 
@@ -42,11 +49,14 @@ public:
 	void InitGame(void);
 
 	//Update everything in the game scene here(Not Menu)
-	void UpdateGame(void);
+	void UpdateGame(const double dt);
+	void UpdateMenu(const double dt);
 
 	//Update keypress
 	void UpdateKeypress(const unsigned char key);
 
+	//Render game
+	void RenderGame(void);
 	//Render menu items
 	void RenderMenu(void);
 
@@ -64,6 +74,9 @@ protected:
 	Vector3 u1, u2, v1, v2;
 
 private:
+	//Check for exit scene
+	bool b_ExitScene;
+
 	//Player vars
 	GameObject *Player;
 
@@ -75,6 +88,9 @@ private:
 
 	//Menu
 	CMenu menu_main;
+
+	//Game state
+	GAME_STATE GameState;
 };
 
 #endif

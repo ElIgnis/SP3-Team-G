@@ -12,6 +12,7 @@ public:
 	virtual void UpdateKeypress(const unsigned char key) = 0;
 	virtual void Render() = 0;
 	virtual void Exit() = 0;
+	virtual bool GetExit() = 0;
 };
 
 #endif

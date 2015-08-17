@@ -4,6 +4,8 @@
 #include <sstream>
 
 SceneStealth::SceneStealth()
+	: GameState(STATE_MENU)
+	, b_ExitScene (false)
 {
 }
 
@@ -41,7 +43,7 @@ void SceneStealth::Init()
 	m = new CMenuItem("Exit");
 	menu_main.m_menuList.push_back(m);
 	menu_main.m_menuList[0]->SetIs_Selected(true);
-	menu_main.SpaceOptions(45,10, 5);
+	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 }
 
 void SceneStealth::InitGame(void)
@@ -188,16 +190,54 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
+	switch(GameState)
+	{
+	case STATE_MENU:
+		UpdateMenu(dt);
+		break;
+	case STATE_PLAYING:
+		UpdateGame(dt);
+		break;
+	default:
+		break;
+	}
+}
+
+void SceneStealth::UpdateGame(const double dt)
+{
+
+}
+
+void SceneStealth::UpdateMenu(const double dt)
+{
 	menu_main.Update(dt);
 }
 
 void SceneStealth::UpdateKeypress(const unsigned char key)
 {
-	if(key == VK_UP)//change
-		menu_main.UpdateSelection(true);
-	if(key == VK_DOWN)//change
-		menu_main.UpdateSelection(false);
+	switch(GameState)
+	{
+	case STATE_MENU:
+		{
+			if(key == VK_UP)//change
+				menu_main.UpdateSelection(true);
+			if(key == VK_DOWN)//change
+				menu_main.UpdateSelection(false);
+			if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
+				GameState = STATE_PLAYING;
+			if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
+				b_ExitScene = true;
+		}
+		break;
+	case STATE_PLAYING:
+		{
 
+
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void SceneStealth::RenderGO(GameObject *go)
@@ -224,6 +264,11 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 		break;
 	}
+}
+
+void SceneStealth::RenderGame(void)
+{
+	RenderTextOnScreen(meshList[GEO_TEXT], "playing screen test", Color(1, 0, 0), 5, 10, 10);
 }
 
 void SceneStealth::RenderMenu(void)
@@ -319,8 +364,17 @@ void SceneStealth::Render()
 		glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &lightPosition_cameraspace.x);
 	}
 
-	//Calling of render menu
-	RenderMenu();
+	switch(GameState)
+	{
+	case STATE_MENU:
+		RenderMenu(); //Calling of rendermenu
+		break;
+	case STATE_PLAYING:
+		RenderGame(); //Game playing screen
+		break;
+	default:
+		break;
+	}
 	
 	//Calling of render UI
 	RenderUI();
@@ -337,4 +391,9 @@ void SceneStealth::Exit()
 		delete go;
 		m_goList.pop_back();
 	}
+}
+
+bool SceneStealth::GetExit()
+{
+	return b_ExitScene;
 }
