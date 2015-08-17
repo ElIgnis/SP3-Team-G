@@ -30,17 +30,22 @@ void SceneStealth::Init()
 	}
 
 	CMenuItem *m;
-	m = new CMenuItem("Play");
+	m = new CMenuItem("Play", "Play.txt");
+	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Level Select");
+	m = new CMenuItem("Level Select", "LevelSelect.txt");
+	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
 	m = new CMenuItem("Highscore");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Instructions");
+	m = new CMenuItem("Instructions", "Instructions.txt");
+	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Controls guide");
+	m = new CMenuItem("Controls guide", "ControlsGuide.txt");
+	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Exit");
+	m = new CMenuItem("Exit", "Exit.txt");
+	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
 	menu_main.m_menuList[0]->SetIs_Selected(true);
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
@@ -286,10 +291,75 @@ void SceneStealth::RenderMenu(void)
 	modelStack.Scale(224.f, 126.f, 1.f);
 	RenderMesh(meshList[GEO_STARTMENU], false);
 	modelStack.PopMatrix();
-
+	
 	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
+	{
 		RenderTextOnScreen(meshList[GEO_TEXT], menu_main.m_menuList[i]->GetText(), menu_main.m_menuList[i]->GetColour(), 
-		menu_main.m_menuList[i]->GetSize(), menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
+			menu_main.m_menuList[i]->GetSize(), menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
+	}
+	RenderDesc(menu_main);
+}
+
+void SceneStealth::RenderDesc(CMenu &menuItem)
+{
+	switch(menuItem.GetSelection())
+	{
+	case 0:
+		{
+			for(unsigned j = 0; j < menu_main.m_menuList[0]->vec_DescTokens.size(); ++j)
+			{
+				std::stringstream ssDesc;
+				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+			}
+		}
+		break;
+	case 1:
+		{
+			for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
+			{
+				std::stringstream ssDesc;
+				ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+			}
+		}
+		break;
+	case 2:
+		{
+			//Insert render Highscore thingy here
+		}
+		break;
+	case 3:
+		{
+			for(unsigned j = 0; j < menu_main.m_menuList[3]->vec_DescTokens.size(); ++j)
+			{
+				std::stringstream ssDesc;
+				ssDesc << menu_main.m_menuList[3]->vec_DescTokens[j];
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+			}
+		}
+		break;
+	case 4:
+		{
+			for(unsigned j = 0; j < menu_main.m_menuList[4]->vec_DescTokens.size(); ++j)
+			{
+				std::stringstream ssDesc;
+				ssDesc << menu_main.m_menuList[4]->vec_DescTokens[j];
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+			}
+		}
+		break;
+	case 5:
+		{
+			for(unsigned j = 0; j < menu_main.m_menuList[5]->vec_DescTokens.size(); ++j)
+			{
+				std::stringstream ssDesc;
+				ssDesc << menu_main.m_menuList[5]->vec_DescTokens[j];
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+			}
+		}
+		break;
+	}
 }
 
 void SceneStealth::RenderUI(void)

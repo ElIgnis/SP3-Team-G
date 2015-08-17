@@ -24,6 +24,21 @@ CMenuItem::CMenuItem(std::string text)
 	, text("NULL")
 {
 	this->text = text;
+	this->textFile = textFile;
+}
+
+CMenuItem::CMenuItem(std::string text, std::string textFile)
+	: colour(0.8, 1.0, 0.2)
+	, f_size(5)
+	, b_IsGrowing(false)
+	, b_IsShrinking(false)
+	, b_IsMax(false)
+	, b_IsMin(false)
+	, b_IsSelected(false)
+	, text("NULL")
+{
+	this->text = text;
+	this->textFile = textFile;
 }
 
 CMenuItem::CMenuItem(Vector3 pos, std::string text)
@@ -106,4 +121,29 @@ Color CMenuItem::GetColour()
 std::string CMenuItem::GetText()
 {
 	return text;
+}
+
+std::string CMenuItem::GetTextFile()
+{
+	return textFile;
+}
+
+bool CMenuItem::GetSelected()
+{
+	return b_IsSelected;
+}
+
+void CMenuItem::ReadDescription()
+{
+	std::ifstream theFile(this->GetTextFile());
+	std::string line;
+	if (theFile.is_open())
+	{
+		while ( std::getline (theFile,line) )
+		{
+				vec_DescTokens.push_back(line);
+		}
+		theFile.close();
+	}
+	else std::cout << "Unable to open file";
 }
