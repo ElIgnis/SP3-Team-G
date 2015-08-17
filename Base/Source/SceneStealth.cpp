@@ -217,7 +217,6 @@ void SceneStealth::RenderUI(void)
 void SceneStealth::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//hi
 	if(!camera.GetPersp())
 	{
 		rotateScene = 0.f;
