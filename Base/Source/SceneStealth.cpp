@@ -252,7 +252,7 @@ void SceneStealth::RenderGO(GameObject *go)
 			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
 			modelStack.Rotate(angle, 0, 0 ,1);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-			RenderMesh(meshList[GEO_WALL], bLightEnabled);
+			RenderMesh(meshList[GEO_WALL_BLUE], bLightEnabled);
 			modelStack.PopMatrix();
 		}
 		break;
@@ -270,6 +270,13 @@ void SceneStealth::RenderGO(GameObject *go)
 void SceneStealth::RenderGame(void)
 {
 	RenderTextOnScreen(meshList[GEO_TEXT], "playing screen test", Color(1, 0, 0), 5, 10, 10);
+
+	//TEST OBJECT - REMOVE
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0, 0);
+	modelStack.Scale(10, 50, 1);
+	RenderMesh(meshList[GEO_WALL_BLUE], bLightEnabled);
+	modelStack.PopMatrix();
 }
 
 void SceneStealth::RenderMenu(void)
