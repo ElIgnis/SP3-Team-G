@@ -206,6 +206,7 @@ void SceneStealth::Update(double dt)
 	default:
 		break;
 	}
+	ProcessKeys();
 }
 
 void SceneStealth::UpdateGame(const double dt)
@@ -243,6 +244,369 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 		break;
 	default:
 		break;
+	}
+}
+
+void SceneStealth::ProcessKeys(void)
+{
+	//Name input for high scores
+	if(tempHighScore.GetNameCharCount() < HS_NameLength)
+	{
+		if(Application::IsKeyPressed(VK_SHIFT))
+			tempHighScore.SetCapitalLetter(true);
+		else
+			tempHighScore.SetCapitalLetter(false);
+
+		//Alpha key states
+		static bool b_AKeyState = false;
+		static bool b_BKeyState = false;
+		static bool b_CKeyState = false;
+		static bool b_DKeyState = false;
+		static bool b_EKeyState = false;
+		static bool b_FKeyState = false;
+		static bool b_GKeyState = false;
+		static bool b_HKeyState = false;
+		static bool b_IKeyState = false;
+		static bool b_JKeyState = false;
+		static bool b_KKeyState = false;
+		static bool b_LKeyState = false;
+		static bool b_MKeyState = false;
+		static bool b_NKeyState = false;
+		static bool b_OKeyState = false;
+		static bool b_PKeyState = false;
+		static bool b_QKeyState = false;
+		static bool b_RKeyState = false;
+		static bool b_SKeyState = false;
+		static bool b_TKeyState = false;
+		static bool b_UKeyState = false;
+		static bool b_VKeyState = false;
+		static bool b_WKeyState = false;
+		static bool b_XKeyState = false;
+		static bool b_YKeyState = false;
+		static bool b_ZKeyState = false;
+
+		//A Key
+		if(Application::IsKeyPressed('A') && !b_AKeyState)
+		{
+			b_AKeyState = true;
+		}
+		if(!Application::IsKeyPressed('A') && b_AKeyState)
+		{
+			b_AKeyState = false;
+			tempHighScore.SetCharToAdd('a');
+		}
+
+		//B Key
+		if(Application::IsKeyPressed('B') && !b_BKeyState)
+		{
+			b_BKeyState = true;
+		}
+		if(!Application::IsKeyPressed('B') && b_BKeyState)
+		{
+			b_BKeyState = false;
+			tempHighScore.SetCharToAdd('b');
+		}
+
+		//C Key
+		if(Application::IsKeyPressed('C') && !b_CKeyState)
+		{
+			b_CKeyState = true;
+		}
+		if(!Application::IsKeyPressed('C') && b_CKeyState)
+		{
+			b_CKeyState = false;
+			tempHighScore.SetCharToAdd('c');
+		}
+
+		//D Key
+		if(Application::IsKeyPressed('D') && !b_DKeyState)
+		{
+			b_DKeyState = true;
+		}
+		if(!Application::IsKeyPressed('D') && b_DKeyState)
+		{
+			b_DKeyState = false;
+			tempHighScore.SetCharToAdd('d');
+		}
+
+		//E Key
+		if(Application::IsKeyPressed('E') && !b_EKeyState)
+		{
+			b_EKeyState = true;
+		}
+		if(!Application::IsKeyPressed('E') && b_EKeyState)
+		{
+			b_EKeyState = false;
+			tempHighScore.SetCharToAdd('e');
+		}
+
+		//F Key
+		if(Application::IsKeyPressed('F') && !b_FKeyState)
+		{
+			b_FKeyState = true;
+		}
+		if(!Application::IsKeyPressed('F') && b_FKeyState)
+		{
+			b_FKeyState = false;
+			tempHighScore.SetCharToAdd('f');
+		}
+
+		//G Key
+		if(Application::IsKeyPressed('G') && !b_GKeyState)
+		{
+			b_GKeyState = true;
+		}
+		if(!Application::IsKeyPressed('G') && b_GKeyState)
+		{
+			b_GKeyState = false;
+			tempHighScore.SetCharToAdd('g');
+		}
+
+		//H Key
+		if(Application::IsKeyPressed('H') && !b_HKeyState)
+		{
+			b_HKeyState = true;
+		}
+		if(!Application::IsKeyPressed('H') && b_HKeyState)
+		{
+			b_HKeyState = false;
+			tempHighScore.SetCharToAdd('h');
+		}
+
+		//I Key
+		if(Application::IsKeyPressed('I') && !b_IKeyState)
+		{
+			b_IKeyState = true;
+		}
+		if(!Application::IsKeyPressed('I') && b_IKeyState)
+		{
+			b_IKeyState = false;
+			tempHighScore.SetCharToAdd('i');
+		}
+
+		//J Key
+		if(Application::IsKeyPressed('J') && !b_JKeyState)
+		{
+			b_JKeyState = true;
+		}
+		if(!Application::IsKeyPressed('J') && b_JKeyState)
+		{
+			b_JKeyState = false;
+			tempHighScore.SetCharToAdd('j');
+		}
+
+		//K Key
+		if(Application::IsKeyPressed('K') && !b_KKeyState)
+		{
+			b_KKeyState = true;
+		}
+		if(!Application::IsKeyPressed('K') && b_KKeyState)
+		{
+			b_KKeyState = false;
+			tempHighScore.SetCharToAdd('k');
+		}
+
+		//L Key
+		if(Application::IsKeyPressed('L') && !b_LKeyState)
+		{
+			b_LKeyState = true;
+		}
+		if(!Application::IsKeyPressed('L') && b_LKeyState)
+		{
+			b_LKeyState = false;
+			tempHighScore.SetCharToAdd('l');
+		}
+
+		//M Key
+		if(Application::IsKeyPressed('M') && !b_MKeyState)
+		{
+			b_MKeyState = true;
+		}
+		if(!Application::IsKeyPressed('M') && b_MKeyState)
+		{
+			b_MKeyState = false;
+			tempHighScore.SetCharToAdd('m');
+		}
+
+		//N Key
+		if(Application::IsKeyPressed('N') && !b_NKeyState)
+		{
+			b_NKeyState = true;
+		}
+		if(!Application::IsKeyPressed('N') && b_NKeyState)
+		{
+			b_NKeyState = false;
+			tempHighScore.SetCharToAdd('n');
+		}
+
+		//O Key
+		if(Application::IsKeyPressed('O') && !b_OKeyState)
+		{
+			b_OKeyState = true;
+		}
+		if(!Application::IsKeyPressed('O') && b_OKeyState)
+		{
+			b_OKeyState = false;
+			tempHighScore.SetCharToAdd('o');
+		}
+
+		//P Key
+		if(Application::IsKeyPressed('P') && !b_PKeyState)
+		{
+			b_PKeyState = true;
+		}
+		if(!Application::IsKeyPressed('P') && b_PKeyState)
+		{
+			b_PKeyState = false;
+			tempHighScore.SetCharToAdd('p');
+		}
+
+		//Q Key
+		if(Application::IsKeyPressed('Q') && !b_QKeyState)
+		{
+			b_QKeyState = true;
+		}
+		if(!Application::IsKeyPressed('Q') && b_QKeyState)
+		{
+			b_QKeyState = false;
+			tempHighScore.SetCharToAdd('q');
+		}
+
+		//R Key
+		if(Application::IsKeyPressed('R') && !b_RKeyState)
+		{
+			b_RKeyState = true;
+		}
+		if(!Application::IsKeyPressed('R') && b_RKeyState)
+		{
+			b_RKeyState = false;
+			tempHighScore.SetCharToAdd('r');
+		}
+
+		//S Key
+		if(Application::IsKeyPressed('S') && !b_SKeyState)
+		{
+			b_SKeyState = true;
+		}
+		if(!Application::IsKeyPressed('S') && b_SKeyState)
+		{
+			b_SKeyState = false;
+			tempHighScore.SetCharToAdd('s');
+		}
+
+		//T Key
+		if(Application::IsKeyPressed('T') && !b_TKeyState)
+		{
+			b_TKeyState = true;
+		}
+		if(!Application::IsKeyPressed('T') && b_TKeyState)
+		{
+			b_TKeyState = false;
+			tempHighScore.SetCharToAdd('t');
+		}
+
+		//U Key
+		if(Application::IsKeyPressed('U') && !b_UKeyState)
+		{
+			b_UKeyState = true;
+		}
+		if(!Application::IsKeyPressed('U') && b_UKeyState)
+		{
+			b_UKeyState = false;
+			tempHighScore.SetCharToAdd('u');
+		}
+
+		//V Key
+		if(Application::IsKeyPressed('V') && !b_VKeyState)
+		{
+			b_VKeyState = true;
+		}
+		if(!Application::IsKeyPressed('V') && b_VKeyState)
+		{
+			b_VKeyState = false;
+			tempHighScore.SetCharToAdd('v');
+		}
+
+		//W Key
+		if(Application::IsKeyPressed('W') && !b_WKeyState)
+		{
+			b_WKeyState = true;
+		}
+		if(!Application::IsKeyPressed('W') && b_WKeyState)
+		{
+			b_WKeyState = false;
+			tempHighScore.SetCharToAdd('w');
+		}
+
+		//X Key
+		if(Application::IsKeyPressed('X') && !b_XKeyState)
+		{
+			b_XKeyState = true;
+		}
+		if(!Application::IsKeyPressed('X') && b_XKeyState)
+		{
+			b_XKeyState = false;
+			tempHighScore.SetCharToAdd('x');
+		}
+
+		//Y Key
+		if(Application::IsKeyPressed('Y') && !b_YKeyState)
+		{
+			b_YKeyState = true;
+		}
+		if(!Application::IsKeyPressed('Y') && b_YKeyState)
+		{
+			b_YKeyState = false;
+			tempHighScore.SetCharToAdd('y');
+		}
+
+		//Z Key
+		if(Application::IsKeyPressed('Z') && !b_ZKeyState)
+		{
+			b_ZKeyState = true;
+		}
+		if(!Application::IsKeyPressed('Z') && b_ZKeyState)
+		{
+			b_ZKeyState = false;
+			tempHighScore.SetCharToAdd('z');
+		}
+
+		//Only adds non empty character
+		if(tempHighScore.GetCharToAdd() != ' ')
+		{
+			if(tempHighScore.GetCapitalLetter())
+			{
+				tempHighScore.SetCharToAdd(tempHighScore.GetCharToAdd() - 32);
+			}
+			tempHighScore.SetNameInput();
+		}
+
+		//Backspace
+		else if(Application::IsKeyPressed(VK_BACK) && tempHighScore.GetNameCharCount() > 0)
+		{
+			tempHighScore.SetCharToRemoved();
+		}
+	}
+
+	static bool b_ReturnKeyState = false;
+	//Confirm name
+	if(Application::IsKeyPressed(VK_RETURN) && !b_ReturnKeyState)
+	{
+		b_ReturnKeyState = true;
+	}
+	if(!Application::IsKeyPressed(VK_RETURN) && b_ReturnKeyState)
+	{
+		b_ReturnKeyState = false;
+
+		std::stringstream name;
+		for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
+		{
+			name << tempHighScore.GetNameString().at(i);
+		}
+		//name << tempHighScore.GetName();
+		//CHighscore replace = CHighscore(name.str(), LeftPlayer->score);
+		//Score_List.at(HighScoreCount-1) = replace;
+		//HS_List.SortHighScore();
 	}
 }
 
@@ -298,6 +662,27 @@ void SceneStealth::RenderMenu(void)
 			menu_main.m_menuList[i]->GetSize(), menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
 	}
 	RenderDesc(menu_main);
+
+	//High score text
+	if(menu_main.GetSelection() == 2)
+	{
+		//Display high scores
+		for(int i = 0; i < HS_List.GetHighScoreCount(); ++i)
+		{
+			std::ostringstream HighScore;
+			HighScore << "#" << i+1 << ": " << HS_List.GetScoreList().at(i);
+			RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
+		}
+	}
+
+	RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! You have acquired a new high score!!", Color(), 4.f, 4.f, 44.f);
+
+	std::ostringstream HighScoreName;
+	for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
+	{
+		HighScoreName << tempHighScore.GetNameString()[i];
+	}
+	RenderTextOnScreen(meshList[GEO_TEXT], "Please enter your name: " + HighScoreName.str(), Color(0, 1, 0), 3.f, 4.f, 40.f);
 }
 
 void SceneStealth::RenderDesc(CMenu &menuItem)

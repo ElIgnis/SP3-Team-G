@@ -15,6 +15,8 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Camera3.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Source\Enemy_Patrol.cpp" />
+    <ClCompile Include="Source\Enemy_Still.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Highscore.cpp" />
     <ClCompile Include="Source\HighscoreList.cpp" />
@@ -38,6 +40,8 @@
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Camera3.h" />
     <ClInclude Include="Source\Enemy.h" />
+    <ClInclude Include="Source\Enemy_Patrol.h" />
+    <ClInclude Include="Source\Enemy_Still.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\Geometry.h" />
     <ClInclude Include="Source\Highscore.h" />

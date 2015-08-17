@@ -11,25 +11,22 @@ using std::string;
 class CEnemy : public GameObject
 {
 public:
-	CEnemy();
-	~CEnemy();
-
-	void Update(const double dt);
-
 	enum ENEMY_STATE
 	{
+		STATE_IDLE,
 		STATE_PATROL,
 		STATE_WAIT,
 		STATE_ATTACK,
 		NUM_STATES,
 	};
 
-	std::vector<Vector3> m_patrolposList;
+	CEnemy();
+	CEnemy(Vector3 pos, ENEMY_STATE state);
+	~CEnemy();
 
-private:
-	int m_iCurrentPatrolpoint;
-	bool m_bPatrolDir;
-	float m_fWaitTime;
+	virtual void Update(const double dt) = 0;
+
+protected:
 	ENEMY_STATE state;
 };
 
