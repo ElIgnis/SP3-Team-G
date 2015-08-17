@@ -26,6 +26,21 @@ void SceneStealth::Init()
 		GameObject *go = new GameObject(GameObject::GO_BALL);
 		m_goList.push_back(go);
 	}
+
+	CMenuItem *m;
+	m = new CMenuItem(Vector3(5, 45, 0), "Play");
+	menu_main.m_menuList.push_back(m);
+	m = new CMenuItem(Vector3(5, 40, 0), "Level Select");
+	menu_main.m_menuList.push_back(m);
+	m = new CMenuItem(Vector3(5, 35, 0), "Highscore");
+	menu_main.m_menuList.push_back(m);
+	m = new CMenuItem(Vector3(5, 30, 0), "Instructions");
+	menu_main.m_menuList.push_back(m);
+	m = new CMenuItem(Vector3(5, 25, 0), "Controls guide");
+	menu_main.m_menuList.push_back(m);
+	m = new CMenuItem(Vector3(5, 20, 0), "Exit");
+	menu_main.m_menuList.push_back(m);
+	menu_main.m_menuList[0]->SetIs_Selected(true);
 }
 
 void SceneStealth::InitGame(void)
@@ -172,6 +187,13 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
+
+	if(Application::IsKeyPressed(VK_UP))//change
+		menu_main.UpdateSelection(true);
+	if(Application::IsKeyPressed(VK_DOWN))//change
+		menu_main.UpdateSelection(false);
+
+	menu_main.Update(dt);
 }
 
 void SceneStealth::RenderGO(GameObject *go)
@@ -207,6 +229,10 @@ void SceneStealth::RenderMenu(void)
 	modelStack.Scale(224.f, 126.f, 1.f);
 	//RenderMesh(meshList[GEO_MENUSCREEN], false);
 	modelStack.PopMatrix();
+
+	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
+		RenderTextOnScreen(meshList[GEO_TEXT], menu_main.m_menuList[i]->GetText(), menu_main.m_menuList[i]->GetColour(), menu_main.m_menuList[i]->GetSize()
+			, menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
 }
 
 void SceneStealth::RenderUI(void)

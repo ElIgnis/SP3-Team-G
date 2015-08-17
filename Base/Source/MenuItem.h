@@ -15,8 +15,14 @@ public:
 
 	void SetIs_Selected(const bool b_IsSelected);
 
+	float GetSize();
+	Color GetColour();
+	std::string GetText();
+
 public:
 	Vector3 pos;
+
+private:
 	float f_size;
 	bool b_IsSelected;
 	bool b_IsMax;
@@ -25,6 +31,7 @@ public:
 	bool b_IsShrinking;
 	Color colour;
 	std::string text;
+
 };
 
 #endif

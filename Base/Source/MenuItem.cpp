@@ -77,3 +77,18 @@ void CMenuItem::Update(double dt)
 		this->f_size -= 5 * dt;
 	}
 }
+
+float CMenuItem::GetSize()
+{
+	return f_size;
+}
+
+Color CMenuItem::GetColour()
+{
+	return colour;
+}
+
+std::string CMenuItem::GetText()
+{
+	return text;
+}

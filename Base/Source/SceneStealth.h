@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include "SceneBase.h"
+#include "Menu.h"
 
 using std::vector;
 using std::string;
@@ -68,6 +69,9 @@ private:
 
 	//Scene rotation
 	float rotateScene;
+
+	//Menu
+	CMenu menu_main;
 };
 
 #endif
