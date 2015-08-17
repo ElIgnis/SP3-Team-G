@@ -9,6 +9,8 @@
 #include <vector>
 #include <string>
 #include "SceneBase.h"
+#include "Highscore.h"
+#include "HighscoreList.h"
 #include "Menu.h"
 
 using std::vector;
@@ -55,16 +57,21 @@ public:
 	//Update keypress
 	void UpdateKeypress(const unsigned char key);
 
+	//Process key input
+	void ProcessKeys(void);
+
+
+	//Rendering section
+	////////////////////////////////////////
+
 	//Render game
 	void RenderGame(void);
 	//Render menu items
 	void RenderMenu(void);
 	//Render Menu Description
 	void RenderDesc(CMenu &menuItem);
-
 	//Render Background Image
 	void RenderBackground();
-
 	//Render UI items
 	void RenderUI(void);
 
@@ -96,6 +103,10 @@ private:
 
 	//Game state
 	GAME_STATE GameState;
+
+	//Highscore
+	CHighscore_List HS_List;
+	CHighscore tempHighScore;
 };
 
 #endif
