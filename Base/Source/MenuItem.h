@@ -8,6 +8,7 @@ class CMenuItem
 {
 public:
 	CMenuItem();
+	CMenuItem(std::string text);
 	CMenuItem(Vector3 pos, std::string text);
 	~CMenuItem();
 

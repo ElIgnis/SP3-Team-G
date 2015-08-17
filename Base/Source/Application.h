@@ -3,6 +3,7 @@
 #define APPLICATION_H
 
 #include "timer.h"
+#include "Scene.h"
 
 class Application
 {
@@ -42,6 +43,8 @@ private:
 
 	const static int m_window_deadzone = 100;
 	static double camera_yaw, camera_pitch;
+
+	Scene *scene;
 };
 
 #endif

@@ -44,6 +44,9 @@ public:
 	//Update everything in the game scene here(Not Menu)
 	void UpdateGame(void);
 
+	//Update keypress
+	void UpdateKeypress(const unsigned char key);
+
 	//Render menu items
 	void RenderMenu(void);
 

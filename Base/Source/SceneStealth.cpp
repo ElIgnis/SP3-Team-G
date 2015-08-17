@@ -28,19 +28,20 @@ void SceneStealth::Init()
 	}
 
 	CMenuItem *m;
-	m = new CMenuItem(Vector3(5, 45, 0), "Play");
+	m = new CMenuItem("Play");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem(Vector3(5, 40, 0), "Level Select");
+	m = new CMenuItem("Level Select");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem(Vector3(5, 35, 0), "Highscore");
+	m = new CMenuItem("Highscore");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem(Vector3(5, 30, 0), "Instructions");
+	m = new CMenuItem("Instructions");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem(Vector3(5, 25, 0), "Controls guide");
+	m = new CMenuItem("Controls guide");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem(Vector3(5, 20, 0), "Exit");
+	m = new CMenuItem("Exit");
 	menu_main.m_menuList.push_back(m);
 	menu_main.m_menuList[0]->SetIs_Selected(true);
+	menu_main.SpaceOptions(45,10, 5);
 }
 
 void SceneStealth::InitGame(void)
@@ -187,13 +188,16 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
+	menu_main.Update(dt);
+}
 
-	if(Application::IsKeyPressed(VK_UP))//change
+void SceneStealth::UpdateKeypress(const unsigned char key)
+{
+	if(key == VK_UP)//change
 		menu_main.UpdateSelection(true);
-	if(Application::IsKeyPressed(VK_DOWN))//change
+	if(key == VK_DOWN)//change
 		menu_main.UpdateSelection(false);
 
-	menu_main.Update(dt);
 }
 
 void SceneStealth::RenderGO(GameObject *go)
@@ -231,8 +235,8 @@ void SceneStealth::RenderMenu(void)
 	modelStack.PopMatrix();
 
 	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
-		RenderTextOnScreen(meshList[GEO_TEXT], menu_main.m_menuList[i]->GetText(), menu_main.m_menuList[i]->GetColour(), menu_main.m_menuList[i]->GetSize()
-			, menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
+		RenderTextOnScreen(meshList[GEO_TEXT], menu_main.m_menuList[i]->GetText(), menu_main.m_menuList[i]->GetColour(), 
+		menu_main.m_menuList[i]->GetSize(), menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
 }
 
 void SceneStealth::RenderUI(void)

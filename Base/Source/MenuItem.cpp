@@ -13,6 +13,19 @@ CMenuItem::CMenuItem()
 {
 }
 
+CMenuItem::CMenuItem(std::string text)
+	: colour(0.8, 1.0, 0.2)
+	, f_size(5)
+	, b_IsGrowing(false)
+	, b_IsShrinking(false)
+	, b_IsMax(false)
+	, b_IsMin(false)
+	, b_IsSelected(false)
+	, text("NULL")
+{
+	this->text = text;
+}
+
 CMenuItem::CMenuItem(Vector3 pos, std::string text)
 	: colour(0.8, 1.0, 0.2)
 	, f_size(5)
@@ -37,6 +50,8 @@ void CMenuItem::SetIs_Selected(const bool b_IsSelected)
 
 static const float MAXSIZE = 6.5f;
 static const float MINSIZE = 5.f;
+static const Color UNSELECTED_COLOR(0.8, 1.0, 0.2);
+static const Color SELECTED_COLOR(1.0, 0.8, 0.0);
 
 void CMenuItem::Update(double dt)
 {
@@ -45,14 +60,14 @@ void CMenuItem::Update(double dt)
 		b_IsMax = false;
 		b_IsShrinking = true;
 		b_IsGrowing = false;
-		colour.Set(0.8, 1.0, 0.2);
+		colour.Set(UNSELECTED_COLOR.r, UNSELECTED_COLOR.g, UNSELECTED_COLOR.b);
 	}
 	else if(this->b_IsSelected && !b_IsGrowing && !b_IsMax)
 	{
 		b_IsMin = false;
 		b_IsGrowing = true;
 		b_IsShrinking = false;
-		colour.Set(1.0, 0.8, 0.0);
+		colour.Set(SELECTED_COLOR.r, SELECTED_COLOR.g, SELECTED_COLOR.b);
 	}
 
 	if(this->f_size < MINSIZE && b_IsShrinking)

@@ -97,6 +97,32 @@ bool Application::GetMouseUpdate()
 	return false;
 }
 
+bool Application::GetKeyboardUpdate()
+{
+	if(IsKeyPressed(VK_RETURN))
+		scene->UpdateKeypress(VK_RETURN);
+
+	static bool UpKey = false;
+	if(IsKeyPressed(VK_UP) && !UpKey)
+	{
+		scene->UpdateKeypress(VK_UP);
+		UpKey = true;
+	}
+	else if(!IsKeyPressed(VK_UP) && UpKey)
+		UpKey = false;
+
+	static bool DownKey = false;
+	if(IsKeyPressed(VK_DOWN) && !DownKey)
+	{
+		scene->UpdateKeypress(VK_DOWN);
+		DownKey = true;
+	}
+	else if(!IsKeyPressed(VK_DOWN) && DownKey)
+		DownKey = false;
+
+	return false;
+}
+
 
 Application::Application()
 {
@@ -183,7 +209,7 @@ void Application::Run()
 	//Main Loop
 	//Scene *scene = new SceneAsteroid();
 	//Scene *scene = new SceneKinematics();
-	Scene *scene = new SceneStealth();
+	scene = new SceneStealth();
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
@@ -195,6 +221,7 @@ void Application::Run()
 		glfwSwapBuffers(m_window);
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 		GetMouseUpdate();	//Update mouse
+		GetKeyboardUpdate();
 		glfwPollEvents();
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
 
