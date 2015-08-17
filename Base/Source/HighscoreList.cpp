@@ -1,21 +1,12 @@
 #include "HighscoreList.h"
 
 CHighscore_List::CHighscore_List() 
-	//High score writing
-	: b_CaptialLetter(false)
-	, b_newHighScore(false)
-	, c_CharToBeAdded(' ')
-	, i_NameCharCount(0)
-	, i_HighScoreCount(0)
+	: i_HighScoreCount(0)
 	//High score reading
 	, c_split_char(',')
 	, s_scoreData("")
 	, i_ObjLine(0)
 {
-	for(int i = 0; i < sizeof(arr_NameInput); ++i)
-	{
-		arr_NameInput[i] = ' ';
-	}
 }
 
 CHighscore_List::~CHighscore_List()
@@ -49,8 +40,8 @@ void CHighscore_List::LoadHighScore(void)
 				, std::stoi(vec_ScoreTokens.at(CHighscore::SCORE + (i_ObjLine * CHighscore::SCORE_INDEX))));
 
 			vec_ScoreList.push_back(Highscore);
-			++i_ObjLine;
-			++i_HighScoreCount;
+			++this->i_ObjLine;
+			++this->i_HighScoreCount;
 		}
 		inHighScore.close();
 	}
@@ -92,4 +83,14 @@ void CHighscore_List::SortHighScore(void)
 		}
 	}
 	WriteHighScore();
+}
+
+vector<CHighscore> CHighscore_List::GetScoreList(void)
+{
+	return vec_ScoreList;
+}
+
+int CHighscore_List::GetHighScoreCount(void)
+{
+	return i_HighScoreCount;
 }
