@@ -277,7 +277,7 @@ void SceneStealth::RenderMenu(void)
 	//Background screen
 	modelStack.PushMatrix();
 	modelStack.Scale(224.f, 126.f, 1.f);
-	//RenderMesh(meshList[GEO_MENUSCREEN], false);
+	RenderMesh(meshList[GEO_STARTMENU], false);
 	modelStack.PopMatrix();
 
 	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
@@ -290,6 +290,11 @@ void SceneStealth::RenderUI(void)
 	std::stringstream ssFPS;
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
+}
+
+void SceneStealth::RenderBackground()
+{
+	Render2DMesh(meshList[GEO_STARTMENU], false, 1.0f);
 }
 
 void SceneStealth::Render()
@@ -381,6 +386,9 @@ void SceneStealth::Render()
 	
 	//Calling of render UI
 	RenderUI();
+
+	// Render the background image
+	RenderBackground();
 }
 
 void SceneStealth::Exit()

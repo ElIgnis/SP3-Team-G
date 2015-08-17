@@ -68,6 +68,7 @@ public:
 	{
 		GEO_AXES,
 		GEO_TEXT,
+		GEO_STARTMENU,
 		GEO_BALL,
 		GEO_CUBE,
 		GEO_QUAD,
@@ -91,6 +92,7 @@ public:
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderMeshIn2D(Mesh *mesh, float size, float x, float y);
+	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size=1.0f, const float x=0.0f, const float y=0.0f, const bool rotate=false, const bool flip=false);
 	void SetHUD(const bool m_bHUDmode);
 	void RenderGO(GameObject *go);
 
@@ -102,6 +104,8 @@ protected:
 	unsigned m_parameters[U_TOTAL];
 
 	Camera3 camera;
+
+	float rotateAngle;
 
 	MS modelStack;
 	MS viewStack;

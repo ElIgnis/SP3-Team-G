@@ -161,8 +161,8 @@ void SceneBase::Init()
 	meshList[GEO_QUAD] = MeshBuilder::GenerateQuad("Background quad", Color(0.2f, 0.2f, 0.2f), 1.f);
 
 	//Background
-	meshList[GEO_BACKGROUND] = MeshBuilder::GenerateQuad("Background", Color(1, 0, 0), 1.f);
-	meshList[GEO_BACKGROUND]->textureID = LoadTGA("Image//Background//BG_Grass_Tex.tga");
+	meshList[GEO_STARTMENU] = MeshBuilder::GenerateQuad("Background", Color(1, 0, 0), 1.f);
+	meshList[GEO_STARTMENU]->textureID = LoadTGA("Image//StartMenu_Background.tga");
 	
 	//Text
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
@@ -354,6 +354,47 @@ void SceneBase::RenderMeshIn2D(Mesh *mesh, float size, float x, float y)
 
 	modelStack.PopMatrix();
 	viewStack.PopMatrix();
+}
+
+void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, float y, bool rotate, bool flip)
+{
+	Mtx44 ortho;
+	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
+	projectionStack.PushMatrix();
+		projectionStack.LoadMatrix(ortho);
+		viewStack.PushMatrix();
+			viewStack.LoadIdentity();
+			modelStack.PushMatrix();
+				modelStack.LoadIdentity();
+				modelStack.Translate(x, y, 0);
+				modelStack.Scale(size, size, size);
+				if (rotate)
+					modelStack.Rotate(rotateAngle, 0, 0, 1);
+       
+				Mtx44 MVP, modelView, modelView_inverse_transpose;
+	
+				MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top();
+				glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
+				if(mesh->textureID > 0)
+				{
+					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 1);
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, mesh->textureID);
+					glUniform1i(m_parameters[U_COLOR_TEXTURE], 0);
+				}
+				else
+				{
+					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
+				}
+				mesh->Render();
+				if(mesh->textureID > 0)
+				{
+					glBindTexture(GL_TEXTURE_2D, 0);
+				}
+       
+			modelStack.PopMatrix();
+		viewStack.PopMatrix();
+	projectionStack.PopMatrix();
 }
 
 void SceneBase::SetHUD(const bool m_bHUDmode)
