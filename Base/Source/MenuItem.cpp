@@ -24,9 +24,24 @@ CMenuItem::CMenuItem(std::string text)
 	, text("NULL")
 {
 	this->text = text;
+	this->textFile = textFile;
 }
 
-CMenuItem::CMenuItem(Vector3 pos, std::string text, std::string textFile)
+CMenuItem::CMenuItem(std::string text, std::string textFile)
+	: colour(0.8, 1.0, 0.2)
+	, f_size(5)
+	, b_IsGrowing(false)
+	, b_IsShrinking(false)
+	, b_IsMax(false)
+	, b_IsMin(false)
+	, b_IsSelected(false)
+	, text("NULL")
+{
+	this->text = text;
+	this->textFile = textFile;
+}
+
+CMenuItem::CMenuItem(Vector3 pos, std::string text)
 	: colour(0.8, 1.0, 0.2)
 	, f_size(5)
 	, b_IsGrowing(false)
@@ -37,7 +52,6 @@ CMenuItem::CMenuItem(Vector3 pos, std::string text, std::string textFile)
 {
 	this->pos = pos;
 	this->text = text;
-	this->textFile = textFile;
 }
 
 CMenuItem::~CMenuItem()

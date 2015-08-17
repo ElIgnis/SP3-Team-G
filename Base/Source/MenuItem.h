@@ -11,7 +11,8 @@ class CMenuItem
 public:
 	CMenuItem();
 	CMenuItem(std::string text);
-	CMenuItem(Vector3 pos, std::string text, std::string textFile);
+	CMenuItem(std::string text, std::string textFile);
+	CMenuItem(Vector3 pos, std::string text);
 	~CMenuItem();
 
 	void Update(const double dt);

@@ -30,17 +30,17 @@ void SceneStealth::Init()
 	}
 
 	CMenuItem *m;
-	m = new CMenuItem("Play");
+	m = new CMenuItem("Play", "Play.txt");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Level Select");
+	m = new CMenuItem("Level Select", "LevelSelect");
 	menu_main.m_menuList.push_back(m);
 	m = new CMenuItem("Highscore");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Instructions");
+	m = new CMenuItem("Instructions", "Instructions");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Controls guide");
+	m = new CMenuItem("Controls guide", "ControlsGuide");
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Exit");
+	m = new CMenuItem("Exit", "Exit");
 	menu_main.m_menuList.push_back(m);
 	menu_main.m_menuList[0]->SetIs_Selected(true);
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
