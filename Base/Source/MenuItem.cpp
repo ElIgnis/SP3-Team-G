@@ -117,15 +117,14 @@ std::string CMenuItem::GetTextFile()
 void CMenuItem::ReadDescription(CMenuItem *item)
 {
 	std::string line;
-	//std::ifstream ("description.txt");
-	/*if (myfile.is_open())
+	std::ifstream theFile (item->GetTextFile());
+	if (theFile.is_open())
 	{
-		while ( getline (myfile,line) )
+		while ( std::getline (theFile,line) )
 		{
-			cout << line << endl;
+			std::cout << line << std::endl;
 		}
-		myfile.close();
+		theFile.close();
 	}
-
-	else std::cout << "Unable to open file"; */
+	else std::cout << "Unable to open file"; 
 }

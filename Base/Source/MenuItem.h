@@ -3,6 +3,8 @@
 
 #include "Vertex.h"
 #include <string>
+#include <iostream>
+#include <fstream>
 
 class CMenuItem
 {
