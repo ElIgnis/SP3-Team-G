@@ -101,24 +101,35 @@ bool Application::GetKeyboardUpdate()
 {
 	if(IsKeyPressed(VK_RETURN))
 		scene->UpdateKeypress(VK_RETURN);
+	if(IsKeyPressed(VK_BACK))
+		scene->UpdateKeypress(VK_BACK);
 
-	static bool UpKey = false;
-	if(IsKeyPressed(VK_UP) && !UpKey)
+	static bool b_UpKey = false;
+	if(IsKeyPressed(VK_UP) && !b_UpKey)
 	{
 		scene->UpdateKeypress(VK_UP);
-		UpKey = true;
+		b_UpKey = true;
 	}
-	else if(!IsKeyPressed(VK_UP) && UpKey)
-		UpKey = false;
+	else if(!IsKeyPressed(VK_UP) && b_UpKey)
+		b_UpKey = false;
 
-	static bool DownKey = false;
-	if(IsKeyPressed(VK_DOWN) && !DownKey)
+	static bool b_DownKey = false;
+	if(IsKeyPressed(VK_DOWN) && !b_DownKey)
 	{
 		scene->UpdateKeypress(VK_DOWN);
-		DownKey = true;
+		b_DownKey = true;
 	}
-	else if(!IsKeyPressed(VK_DOWN) && DownKey)
-		DownKey = false;
+	else if(!IsKeyPressed(VK_DOWN) && b_DownKey)
+		b_DownKey = false;
+
+	if(IsKeyPressed('W'))
+		scene->UpdateKeypress('W');
+	if(IsKeyPressed('A'))
+		scene->UpdateKeypress('A');
+	if(IsKeyPressed('S'))
+		scene->UpdateKeypress('S');
+	if(IsKeyPressed('D'))
+		scene->UpdateKeypress('D');
 
 	return false;
 }

@@ -219,9 +219,9 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 	{
 	case STATE_MENU:
 		{
-			if(key == VK_UP)//change
+			if(key == VK_UP)
 				menu_main.UpdateSelection(true);
-			if(key == VK_DOWN)//change
+			if(key == VK_DOWN)
 				menu_main.UpdateSelection(false);
 			if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
 				GameState = STATE_PLAYING;
@@ -231,7 +231,8 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 		break;
 	case STATE_PLAYING:
 		{
-
+			if(key == VK_BACK)//change game state
+				GameState = STATE_MENU;
 
 		}
 		break;
@@ -286,7 +287,9 @@ void SceneStealth::RenderMenu(void)
 
 void SceneStealth::RenderUI(void)
 {
-
+	std::stringstream ssFPS;
+	ssFPS << "FPS:" << fps;
+	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
 }
 
 void SceneStealth::Render()
