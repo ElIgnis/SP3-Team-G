@@ -9,26 +9,22 @@ using std::vector;
 class CHighscore_List
 {
 private:
-	string Name;
-	int Score;
-
 	//High score writing
-	bool CaptialLetter;
-	bool newHighScore;
-	char NameInput[HS_NameLength];
-	char CharToBeAdded;
-	int NameCharCount;
-	int HighScoreCount;
+	bool b_CaptialLetter;
+	bool b_newHighScore;
+	char arr_NameInput[26];
+	char c_CharToBeAdded;
+	int i_NameCharCount;
+	int i_HighScoreCount;
 
 	//High score reading
-	char split_char;
-	string levelData;
-	string scoreData;
-	int ObjLine;
+	char c_split_char;
+	string s_scoreData;
+	int i_ObjLine;
 
 	//Storage
-	vector<string>Score_Tokens;
-	vector<CHighscore> Score_List;
+	vector<string>vec_ScoreTokens;
+	vector<CHighscore> vec_ScoreList;
 	CHighscore Highscore;
 
 public:

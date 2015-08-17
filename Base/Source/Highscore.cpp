@@ -6,8 +6,8 @@ CHighscore::CHighscore()
 
 CHighscore::CHighscore(string newName, int newScore)
 {
-	this->Name = newName;
-	this->Score = newScore;
+	this->s_Name = newName;
+	this->i_Score = newScore;
 }
 
 CHighscore::~CHighscore()
@@ -16,25 +16,25 @@ CHighscore::~CHighscore()
 
 string CHighscore::GetName(void)
 {
-	return Name;
+	return s_Name;
 }
 
 int CHighscore::GetScore(void)
 {
-	return Score;
+	return i_Score;
 }
 
 void CHighscore::SetName(string newName)
 {
-	this->Name = newName;
+	this->s_Name = newName;
 }
 
 void CHighscore::SetScore(int newScore)
 {
-	this->Score = newScore;
+	this->i_Score = newScore;
 }
 
 ostream & operator<<(ostream &os, CHighscore &Highscore)
 {
-	return os << "Name: " << Highscore.Name << "  Score: " << Highscore.Score;
+	return os << "Name: " << Highscore.s_Name << "  Score: " << Highscore.i_Score;
 }

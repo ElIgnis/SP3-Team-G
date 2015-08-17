@@ -1,7 +1,21 @@
 #include "HighscoreList.h"
 
-CHighscore_List::CHighscore_List()
+CHighscore_List::CHighscore_List() 
+	//High score writing
+	: b_CaptialLetter(false)
+	, b_newHighScore(false)
+	, c_CharToBeAdded(' ')
+	, i_NameCharCount(0)
+	, i_HighScoreCount(0)
+	//High score reading
+	, c_split_char(',')
+	, s_scoreData("")
+	, i_ObjLine(0)
 {
+	for(int i = 0; i < sizeof(arr_NameInput); ++i)
+	{
+		arr_NameInput[i] = ' ';
+	}
 }
 
 CHighscore_List::~CHighscore_List()
@@ -15,28 +29,28 @@ void CHighscore_List::LoadHighScore(void)
 	inHighScore.open("High Score.txt");
 	if(inHighScore.good())
 	{
-		while(getline(inHighScore, scoreData))
+		while(getline(inHighScore, s_scoreData))
 		{
-			std::istringstream split(scoreData);
+			std::istringstream split(s_scoreData);
 
 			//Dont read lines with #
-			if(scoreData[0] == '#')
+			if(s_scoreData[0] == '#')
 			{
 				continue;
 			}
 
-			for(string each; std::getline(split, each, split_char);)
+			for(string each; std::getline(split, each, c_split_char);)
 			{
-				Score_Tokens.push_back(each);
+				vec_ScoreTokens.push_back(each);
 			}
 
 			//Assign scores
-			Highscore = CHighscore(Score_Tokens.at(CHighscore::NAME + (ObjLine * CHighscore::SCORE_INDEX))
-				, stoi(Score_Tokens.at(CHighscore::SCORE + (ObjLine * CHighscore::SCORE_INDEX))));
+			Highscore = CHighscore(vec_ScoreTokens.at(CHighscore::NAME + (i_ObjLine * CHighscore::SCORE_INDEX))
+				, std::stoi(vec_ScoreTokens.at(CHighscore::SCORE + (i_ObjLine * CHighscore::SCORE_INDEX))));
 
-			Score_List.push_back(Highscore);
-			++ObjLine;
-			++HighScoreCount;
+			vec_ScoreList.push_back(Highscore);
+			++i_ObjLine;
+			++i_HighScoreCount;
 		}
 		inHighScore.close();
 	}
@@ -51,7 +65,7 @@ void CHighscore_List::WriteHighScore(void)
 	
 	if(outHighScore.good())
 	{
-		for(std::vector<CHighscore>::iterator it = Score_List.begin(); it != Score_List.end(); ++it)
+		for(std::vector<CHighscore>::iterator it = vec_ScoreList.begin(); it != vec_ScoreList.end(); ++it)
 		{
 			CHighscore temp = *it;
 			outHighScore << temp.GetName() << "," << temp.GetScore() << std::endl;
@@ -65,15 +79,15 @@ void CHighscore_List::WriteHighScore(void)
 void CHighscore_List::SortHighScore(void)
 {
 	//Sort high score in descending order
-	for(int i = 1; i < HighScoreCount; ++i)
+	for(int i = 1; i < i_HighScoreCount; ++i)
 	{
-		for(int j = 0; j < HighScoreCount-1; ++j)
+		for(int j = 0; j < i_HighScoreCount-1; ++j)
 		{
-			if(Score_List.at(j).GetScore() < Score_List.at(j+1).GetScore())
+			if(vec_ScoreList.at(j).GetScore() < vec_ScoreList.at(j+1).GetScore())
 			{
-				CHighscore temp = Score_List.at(j);
-				Score_List.at(j) = Score_List.at(j+1);
-				Score_List.at(j+1) = temp;
+				CHighscore temp = vec_ScoreList.at(j);
+				vec_ScoreList.at(j) = vec_ScoreList.at(j+1);
+				vec_ScoreList.at(j+1) = temp;
 			}
 		}
 	}
