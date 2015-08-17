@@ -1,27 +1,46 @@
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <fstream>
+#include "Highscore.h"
 
-#define NameLength 26
+#include <vector>
 
-using std::string;
-using std::ostream;
+using std::vector;
 
-class CHighscore
+class CHighscore_List
 {
 private:
 	string Name;
 	int Score;
 
+	//High score writing
+	bool CaptialLetter;
+	bool newHighScore;
+	char NameInput[HS_NameLength];
+	char CharToBeAdded;
+	int NameCharCount;
+	int HighScoreCount;
+
+	//High score reading
+	char split_char;
+	string levelData;
+	string scoreData;
+	int ObjLine;
+
+	//Storage
+	vector<string>Score_Tokens;
+	vector<CHighscore> Score_List;
+	CHighscore Highscore;
+
 public:
-	CHighscore();
-	CHighscore(string newName, int newScore);
-	~CHighscore();
+	CHighscore_List();
+	~CHighscore_List();
 
 	string GetName(void);
 	int GetScore(void);
+
+	void LoadHighScore(void);
+	void WriteHighScore(void);
+	void SortHighScore(void);
 
 	void SetName(string newName);
 	void SetScore(int newScore);
