@@ -1,7 +1,11 @@
 #pragma once
 
 #include <string>
-#include <ostream>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+#define HS_NameLength 26
 
 using std::string;
 using std::ostream;
@@ -11,11 +15,20 @@ class CHighscore
 private:
 	string Name;
 	int Score;
+	int ScoreIndex;
 
 public:
 	CHighscore();
 	CHighscore(string newName, int newScore);
 	~CHighscore();
+
+	//Highscore
+	enum ScoreIndex
+	{
+		NAME = 0,
+		SCORE,
+		SCORE_INDEX,
+	};
 
 	string GetName(void);
 	int GetScore(void);
