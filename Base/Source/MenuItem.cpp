@@ -128,17 +128,22 @@ std::string CMenuItem::GetTextFile()
 	return textFile;
 }
 
-void CMenuItem::ReadDescription(CMenuItem *item)
+bool CMenuItem::GetSelected()
 {
+	return b_IsSelected;
+}
+
+void CMenuItem::ReadDescription()
+{
+	std::ifstream theFile(this->GetTextFile());
 	std::string line;
-	std::ifstream theFile (item->GetTextFile());
 	if (theFile.is_open())
 	{
 		while ( std::getline (theFile,line) )
 		{
-			std::cout << line << std::endl;
+				vec_DescTokens.push_back(line);
 		}
 		theFile.close();
 	}
-	else std::cout << "Unable to open file"; 
+	else std::cout << "Unable to open file";
 }

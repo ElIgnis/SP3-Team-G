@@ -1,10 +1,8 @@
 #ifndef MENUITEM_H
 #define MENUITEM_H
 
+#include "HighscoreList.h"
 #include "Vertex.h"
-#include <string>
-#include <iostream>
-#include <fstream>
 
 class CMenuItem
 {
@@ -19,15 +17,17 @@ public:
 
 	void SetIs_Selected(const bool b_IsSelected);
 
-	void ReadDescription(CMenuItem *item);
+	void ReadDescription();
 
 	float GetSize();
 	Color GetColour();
 	std::string GetText();
 	std::string GetTextFile();
+	bool GetSelected();
 
 public:
 	Vector3 pos;
+	vector<string>vec_DescTokens;
 
 private:
 	float f_size;
@@ -38,8 +38,9 @@ private:
 	bool b_IsShrinking;
 	Color colour;
 	std::string text;
-	std::string textFile;
 
+	//For reading the description
+	std::string textFile;
 };
 
 #endif

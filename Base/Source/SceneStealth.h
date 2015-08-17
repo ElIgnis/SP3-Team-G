@@ -59,6 +59,8 @@ public:
 	void RenderGame(void);
 	//Render menu items
 	void RenderMenu(void);
+	//Render Menu Description
+	void RenderDesc(CMenu &menuItem);
 
 	//Render Background Image
 	void RenderBackground();
