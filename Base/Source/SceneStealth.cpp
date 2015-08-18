@@ -7,6 +7,7 @@ SceneStealth::SceneStealth()
 	: GameState(STATE_MENU)
 	, b_ExitScene (false)
 {
+	//Test
 }
 
 SceneStealth::~SceneStealth()
