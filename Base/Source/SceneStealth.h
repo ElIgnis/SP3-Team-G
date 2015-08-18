@@ -12,6 +12,8 @@
 #include "Highscore.h"
 #include "HighscoreList.h"
 #include "Menu.h"
+#include "Enemy.h"
+#include "FactoryEnemy.h"
 
 using std::vector;
 using std::string;
@@ -94,6 +96,9 @@ private:
 
 	//Powerups
 	vector<GameObject *> PowerUp_List;
+
+	//Enemies
+	vector<CEnemy *> Enemy_List;
 
 	//Scene rotation
 	float rotateScene;

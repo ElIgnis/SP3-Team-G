@@ -11,8 +11,10 @@
 #include "GameObject.h"
 #include <vector>
 #include "SpriteAnimation.h"
+#include "Enemy.h"
 #include "Highscore.h"
 #include <fstream>
+#include <istream>
 
 #include "irrKlang.h"
 
@@ -76,7 +78,9 @@ public:
 		GEO_BALL2,
 		//Game Objects
 		GEO_WALL_BLUE,
-
+		GEO_PLAYER,
+		GEO_FIREWALL,
+		GEO_ANTIVIRUS,
 		NUM_GEOMETRY,
 	};
 public:
