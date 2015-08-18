@@ -12,6 +12,7 @@
 #include "SceneBase.h"
 #include "Highscore.h"
 #include "HighscoreList.h"
+#include "LevelHandler.h"
 #include "Menu.h"
 #include "Enemy.h"
 #include "FactoryEnemy.h"
@@ -115,6 +116,9 @@ private:
 	//Highscore
 	CHighscore_List HS_List;
 	CHighscore tempHighScore;
+
+	//Level handler
+	CLevelHandler LvlHandler;
 };
 
 #endif

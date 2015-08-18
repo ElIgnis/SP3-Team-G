@@ -52,7 +52,7 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
-
+	LvlHandler.LoadMap("Level//Level 1.txt");
 	InitGame();
 }
 void SceneStealth::InitGame(void)

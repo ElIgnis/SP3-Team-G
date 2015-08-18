@@ -2,6 +2,10 @@
 
 
 CLevelHandler::CLevelHandler(void)
+	: split_char(',')
+	, levelData("")
+	, scoreData("")
+	, ObjLine(0)
 {
 }
 
