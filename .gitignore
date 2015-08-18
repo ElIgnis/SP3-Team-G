@@ -9,6 +9,9 @@ Release/
 glew/
 glfw/
 
+*.vcxproj
+*.vcxproj.filters
+
 ## Images
 *.tga
 

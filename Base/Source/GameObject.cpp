@@ -16,3 +16,13 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 GameObject::~GameObject()
 {
 }
+
+void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNormal, Vector3 newScale)
+{
+	if(newType == "GO_WALL")
+		this->type = GO_WALL;
+
+	this->pos = newPos;
+	this->normal = newNormal;
+	this->scale = newScale;
+}
