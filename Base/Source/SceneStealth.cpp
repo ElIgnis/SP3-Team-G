@@ -228,11 +228,6 @@ void SceneStealth::UpdateGame(const double dt)
 		{
 			go->Update(dt);
 		}
-		/*CPlayer *go2 = (CPlayer *)*it;
-		if(go2->active)
-		{
-			go->Update(dt);
-		}*/
 	}
 	Virus->pos += Virus->vel * dt;
 }
