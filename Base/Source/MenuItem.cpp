@@ -135,7 +135,7 @@ bool CMenuItem::GetSelected()
 
 void CMenuItem::ReadDescription()
 {
-	std::ifstream theFile(this->GetTextFile());
+	std::ifstream theFile("Descriptions//" + this->GetTextFile());
 	std::string line;
 	if (theFile.is_open())
 	{
