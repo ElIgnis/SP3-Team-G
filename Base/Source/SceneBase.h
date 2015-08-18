@@ -74,7 +74,9 @@ public:
 		GEO_QUAD,
 		GEO_BACKGROUND,
 		GEO_BALL2,
-		GEO_WALL,
+		//Game Objects
+		GEO_WALL_BLUE,
+
 		NUM_GEOMETRY,
 	};
 public:

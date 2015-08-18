@@ -168,6 +168,12 @@ void SceneBase::Init()
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
+	//Game Objects
+	//Wall
+	//meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
+	meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
+	meshList[GEO_WALL_BLUE]->textureID = LoadTGA("Image//GameObjects/Walls/wall_blue.tga");
+
 	//Sound
 	engine = createIrrKlangDevice();
 	if(!engine)
