@@ -55,7 +55,7 @@ void SceneStealth::Init()
 
 	InitGame();
 }
-
+//I am sorry.
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here

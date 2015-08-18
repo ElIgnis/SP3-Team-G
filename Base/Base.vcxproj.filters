@@ -12,11 +12,11 @@
     <Filter Include="Source Files\Enemy">
       <UniqueIdentifier>{49b7662c-e8a6-4887-b439-aa0e6d462121}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Header Files">
+    <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Source Files\Header Files\Enemy">
+    <Filter Include="Header Files\Enemy">
       <UniqueIdentifier>{c2a9b362-80dd-41d1-8702-34a639026bda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -108,100 +108,100 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Geometry.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\shader.hpp">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Camera.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mesh.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Vertex.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\MeshBuilder.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Light.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Utility.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Material.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\LoadTGA.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\LoadOBJ.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneKinematics.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GameObject.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneBase.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\SpriteAnimation.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Camera3.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Highscore.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneStealth.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Menu.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\MenuItem.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\HighscoreList.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Wall_Interactable.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy.h">
-      <Filter>Source Files\Header Files\Enemy</Filter>
+      <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy_Patrol.h">
-      <Filter>Source Files\Header Files\Enemy</Filter>
+      <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy_Still.h">
-      <Filter>Source Files\Header Files\Enemy</Filter>
+      <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\FactoryEnemy.h">
-      <Filter>Source Files\Header Files\Enemy</Filter>
+      <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\LevelHandler.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Inventory.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Item.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Player.h">
-      <Filter>Source Files\Header Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
