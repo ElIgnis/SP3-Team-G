@@ -657,7 +657,7 @@ void SceneStealth::RenderMenu(void)
 
 	RenderDesc(menu_main);
 
-
+	//Entering Highscore codes here
 	/*RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! You have acquired a new high score!!", Color(), 4.f, 4.f, 44.f);
 	std::ostringstream HighScoreName;
 	for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
