@@ -1,12 +1,11 @@
 #pragma once
-#include "GameObject.h"
+#include "Inventory.h"
 class CPlayer : public GameObject
 {
 private:
-	//Player HAS an inventory
-		//Inventory HAS items inside.
+	CInventory m_PlayerInv;
 public:
 	CPlayer(void);
+	CPlayer(Vector3 pos);
 	~CPlayer(void);
 };
-

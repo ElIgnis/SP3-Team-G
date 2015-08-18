@@ -12,6 +12,7 @@
 #include "Highscore.h"
 #include "HighscoreList.h"
 #include "Menu.h"
+#include "Player.h"
 
 using std::vector;
 using std::string;

@@ -56,6 +56,8 @@ void SceneStealth::Init()
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
+	CPlayer *Virus;
+	Virus = new CPlayer;
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -627,7 +629,6 @@ void SceneStealth::RenderGO(GameObject *go)
 			modelStack.PopMatrix();
 		}
 		break;
-	
 	case GameObject::GO_BALL:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
