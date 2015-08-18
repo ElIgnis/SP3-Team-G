@@ -78,7 +78,9 @@ public:
 		GEO_BALL2,
 		//Game Objects
 		GEO_WALL_BLUE,
-
+		GEO_PLAYER,
+		GEO_FIREWALL,
+		GEO_ANTIVIRUS,
 		NUM_GEOMETRY,
 	};
 public:

@@ -656,11 +656,35 @@ void SceneStealth::RenderGame(void)
 	RenderTextOnScreen(meshList[GEO_TEXT], "playing screen test", Color(1, 0, 0), 5, 10, 10);
 
 	//TEST OBJECT - REMOVE
-	/*modelStack.PushMatrix();
+	modelStack.PushMatrix();
 	modelStack.Translate(0, 0, 0);
 	modelStack.Scale(10, 50, 1);
 	RenderMesh(meshList[GEO_WALL_BLUE], bLightEnabled);
-	modelStack.PopMatrix();*/
+	modelStack.PopMatrix();
+
+	//Player
+	modelStack.PushMatrix();
+	modelStack.Translate(-80, 0, 0);
+	//modelStack.Rotate(-120, 0.5, 1, 0.5);
+	modelStack.Scale(10, 10, 10);
+	RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+	modelStack.PopMatrix();
+
+	//Firewall
+	modelStack.PushMatrix();
+	modelStack.Translate(80, 0, 0);
+	modelStack.Rotate(180, 0, 0, 1);
+	modelStack.Scale(30, 30, 30);
+	RenderMesh(meshList[GEO_FIREWALL], bLightEnabled);
+	modelStack.PopMatrix();
+
+	//Antivirus
+	modelStack.PushMatrix();
+	modelStack.Translate(40, 0, 0);
+	//modelStack.Rotate(180, 0, 0, 1);
+	modelStack.Scale(10, 10, 10);
+	RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
+	modelStack.PopMatrix();
 
 	//Render enemy here
 	float theta;
@@ -679,6 +703,7 @@ void SceneStealth::RenderGame(void)
 		}
 	}
 }
+
 
 void SceneStealth::RenderMenu(void)
 {

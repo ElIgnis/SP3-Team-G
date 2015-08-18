@@ -174,6 +174,18 @@ void SceneBase::Init()
 	meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
 	meshList[GEO_WALL_BLUE]->textureID = LoadTGA("Image//GameObjects/Walls/wall_blue.tga");
 
+	//Player
+	meshList[GEO_PLAYER] = MeshBuilder::GenerateOBJ("Player", "OBJ//Player.obj");
+	meshList[GEO_PLAYER]->textureID = LoadTGA("Image//PlayerTexture.tga");
+
+	//Firewall
+	meshList[GEO_FIREWALL] = MeshBuilder::GenerateOBJ("Melee", "OBJ//Firewall.obj");
+	meshList[GEO_FIREWALL]->textureID = LoadTGA("Image//Firewall.tga");
+
+	//Antivirus
+	meshList[GEO_ANTIVIRUS] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Antivirus.obj");
+	meshList[GEO_ANTIVIRUS]->textureID = LoadTGA("Image//Antivirus.tga");
+
 	//Sound
 	engine = createIrrKlangDevice();
 	if(!engine)
