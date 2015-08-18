@@ -17,3 +17,7 @@ CPlayer::CPlayer(Vector3 pos)
 CPlayer::~CPlayer(void)
 {
 }
+
+void CPlayer::Update(const double dt)
+{
+}

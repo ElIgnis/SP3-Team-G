@@ -58,12 +58,12 @@ void SceneStealth::Init()
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
-
+	
 	//Load enemies from text file
 	LoadEnemies("Enemy//enemy.txt", Enemy_List);
 	
-	CPlayer *Virus;
 	Virus = new CPlayer;
+	Virus->scale.Set(10,10,10);
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -228,7 +228,13 @@ void SceneStealth::UpdateGame(const double dt)
 		{
 			go->Update(dt);
 		}
+		CPlayer *go2 = (CPlayer *)*it;
+		if(go2->active)
+		{
+			go->Update(dt);
+		}
 	}
+	Virus->pos += Virus->vel * dt;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -256,7 +262,38 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 		{
 			if(key == VK_BACK)//change game state
 				GameState = STATE_MENU;
-
+			if(key == 'W')
+			{
+				if(Virus->vel.y < 50.f)
+				{
+					Virus->vel.y += 1.f  * MoveSpeedModifier;
+					Virus->dir = Virus->vel;
+				}
+			}
+			if(key == 'S')
+			{
+				if(Virus->vel.y < 50.f)
+				{
+					Virus->vel.y -= 1.f  * MoveSpeedModifier;
+					Virus->dir = Virus->vel;
+				}
+			}
+			if(key == 'D')
+			{
+				if(Virus->vel.x < 50.f)
+				{
+   					Virus->vel.x += 1.f  * MoveSpeedModifier;
+					Virus->dir = Virus->vel;
+				}
+			}
+			if(key == 'A')
+			{
+				if(Virus->vel.x > -50.f)
+				{
+   					Virus->vel.x -= 1.f  * MoveSpeedModifier;
+					Virus->dir = Virus->vel;
+				}
+			}
 		}
 		break;
 	default:
@@ -642,7 +679,6 @@ void SceneStealth::RenderGO(GameObject *go)
 			modelStack.PopMatrix();
 		}
 		break;
-	
 	case GameObject::GO_BALL:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -665,12 +701,12 @@ void SceneStealth::RenderGame(void)
 	modelStack.PopMatrix();
 
 	//Player
-	modelStack.PushMatrix();
-	modelStack.Translate(-80, 0, 0);
-	//modelStack.Rotate(-120, 0.5, 1, 0.5);
-	modelStack.Scale(10, 10, 10);
-	RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
-	modelStack.PopMatrix();
+	//modelStack.PushMatrix();
+	//modelStack.Translate(-80, 0, 0);
+	////modelStack.Rotate(-120, 0.5, 1, 0.5);
+	//modelStack.Scale(10, 10, 10);
+	//RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+	//modelStack.PopMatrix();
 
 	//Firewall
 	modelStack.PushMatrix();
@@ -688,8 +724,16 @@ void SceneStealth::RenderGame(void)
 	RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
 	modelStack.PopMatrix();
 
-	//Render enemy here
 	float theta;
+	theta = Math::RadianToDegree(atan2(Virus->dir.y, Virus->dir.x));
+	modelStack.PushMatrix();
+	modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z);
+	modelStack.Scale(Virus->scale.x, Virus->scale.y, Virus->scale.z);
+	modelStack.Rotate(theta, 0, 0, 1);
+	RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+	modelStack.PopMatrix();
+
+	//Render enemy here
 	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
 	{
 		CEnemy *go = (CEnemy  *)*it;

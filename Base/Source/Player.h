@@ -8,4 +8,6 @@ public:
 	CPlayer(void);
 	CPlayer(Vector3 pos);
 	~CPlayer(void);
+	
+	virtual void Update(const double dt);
 };

@@ -5,6 +5,7 @@
 #define ScreenUD 63.f
 
 #define ReboundFactor 2.f
+#define MoveSpeedModifier 1.f
 
 #include <vector>
 #include <string>
@@ -46,6 +47,7 @@ public:
 	void RenderGO(GameObject *go);
 
 	GameObject* FetchGO();
+	CPlayer *Virus;
 
 	bool CheckCollision(GameObject *go1, GameObject *go2, float dt);
 	void CollisionResponse(GameObject *go1, GameObject *go2, float dt);
