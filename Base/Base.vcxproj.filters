@@ -90,6 +90,9 @@
     <ClCompile Include="Source\Enemy_Still.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\FactoryEnemy.cpp">
+      <Filter>Source Files\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -171,6 +174,9 @@
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy_Still.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FactoryEnemy.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,8 +11,10 @@
 #include "GameObject.h"
 #include <vector>
 #include "SpriteAnimation.h"
+#include "Enemy.h"
 #include "Highscore.h"
 #include <fstream>
+#include <istream>
 
 #include "irrKlang.h"
 

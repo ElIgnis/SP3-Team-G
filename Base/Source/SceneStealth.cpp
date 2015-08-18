@@ -51,11 +51,17 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
+
+	InitGame();
 }
 
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
+
+	//Load enemies from text file
+	LoadEnemies("Enemy//enemy.txt", Enemy_List);
+	
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -213,7 +219,14 @@ void SceneStealth::Update(double dt)
 
 void SceneStealth::UpdateGame(const double dt)
 {
-
+	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
+	{
+		CEnemy *go = (CEnemy *)*it;
+		if(go->active)
+		{
+			go->Update(dt);
+		}
+	}
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -643,11 +656,28 @@ void SceneStealth::RenderGame(void)
 	RenderTextOnScreen(meshList[GEO_TEXT], "playing screen test", Color(1, 0, 0), 5, 10, 10);
 
 	//TEST OBJECT - REMOVE
-	modelStack.PushMatrix();
+	/*modelStack.PushMatrix();
 	modelStack.Translate(0, 0, 0);
 	modelStack.Scale(10, 50, 1);
 	RenderMesh(meshList[GEO_WALL_BLUE], bLightEnabled);
-	modelStack.PopMatrix();
+	modelStack.PopMatrix();*/
+
+	//Render enemy here
+	float theta;
+	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
+	{
+		CEnemy *go = (CEnemy  *)*it;
+		if(go->active)
+		{
+			theta = Math::RadianToDegree(atan2(go->dir.y, go->dir.x));
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+			modelStack.Rotate(theta, 0, 0, 1);
+			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+			modelStack.PopMatrix();
+		}
+	}
 }
 
 void SceneStealth::RenderMenu(void)

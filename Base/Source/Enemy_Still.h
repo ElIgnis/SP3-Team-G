@@ -12,7 +12,7 @@ class CEnemy_Still : public CEnemy
 {
 public:
 	CEnemy_Still();
-	CEnemy_Still(Vector3 pos, ENEMY_STATE state, bool m_bLookDir);
+	CEnemy_Still(Vector3 pos, Vector3 scale, Vector3 norm);
 	~CEnemy_Still();
 
 	void Update(const double dt);
