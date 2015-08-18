@@ -17,7 +17,7 @@ void CHighscore_List::LoadHighScore(void)
 {
 	//Load High score
 	std::ifstream inHighScore;
-	inHighScore.open("Descriptions//High Score.txt");
+	inHighScore.open("Descriptions//HighScore.txt");
 	if(inHighScore.good())
 	{
 		while(getline(inHighScore, s_scoreData))

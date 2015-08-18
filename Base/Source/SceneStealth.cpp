@@ -49,6 +49,8 @@ void SceneStealth::Init()
 	menu_main.m_menuList.push_back(m);
 	menu_main.m_menuList[0]->SetIs_Selected(true);
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
+
+	HS_List.LoadHighScore();
 }
 
 void SceneStealth::InitGame(void)
