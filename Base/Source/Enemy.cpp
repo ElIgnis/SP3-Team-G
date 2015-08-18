@@ -18,3 +18,8 @@ CEnemy::~CEnemy()
 void CEnemy::Update(const double dt)
 {
 }
+
+void CEnemy::AddPatrolPoint(Vector3)
+{
+
+}

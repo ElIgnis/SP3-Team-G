@@ -1,0 +1,6 @@
+#
+#Format - Enemy type, posX, posY, posZ, scaleX, scaleY, scaleZ, normX, normY, normZ
+#STILL,5,-5,0,10,10,10,0,1,0
+#STILL,10,30,0,10,10,10,0,1,0
+PATROL,0,-20,0,10,10,10,0,1,0,2,0,0,0,50,0,0
+PATROL,-20,-20,0,10,10,10,0,1,0,2,-20,30,0,50,30,0

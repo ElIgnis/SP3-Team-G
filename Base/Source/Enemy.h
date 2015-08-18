@@ -4,7 +4,6 @@
 #include "GameObject.h"
 #include "Vector3.h"
 #include <string>
-#include <vector>
 
 using std::string;
 
@@ -17,6 +16,7 @@ public:
 		STATE_PATROL,
 		STATE_WAIT,
 		STATE_ATTACK,
+		STATE_SCAN,
 		NUM_STATES,
 	};
 
@@ -24,7 +24,8 @@ public:
 	CEnemy(Vector3 pos, ENEMY_STATE state);
 	~CEnemy();
 
-	virtual void Update(const double dt) = 0;
+	virtual void Update(const double dt);
+	virtual void AddPatrolPoint(Vector3);
 
 protected:
 	ENEMY_STATE state;
