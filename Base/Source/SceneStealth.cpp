@@ -290,23 +290,19 @@ void SceneStealth::UpdateGame(const double dt)
 					float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
 					if(f_DirToPlayer < go->dir.z + 30.f && f_DirToPlayer > go->dir.z - 30.f)
 					{
-						//go->dir.z = f_DirToPlayer;
-						go->SetState(CEnemy::STATE_ATTACK);
-						go->SetIsDetected(true);
+						go->Aggro();
 						std::cout << "in cone range" << std::endl;
 					}
 					else
 					{
-						
 						std::cout << "not in cone range" << std::endl;		
 					}
 					std::cout << f_DirToPlayer << "   " << go->dir.z << "   " << std::endl;
 				}
 				else
 				{
-					go->SetState(CEnemy::STATE_PATROL);
 					go->SetIsDetected(false);
-				std::cout << "not detected" << std::endl;
+					std::cout << "not detected" << std::endl;
 				}
 			}
 		}
