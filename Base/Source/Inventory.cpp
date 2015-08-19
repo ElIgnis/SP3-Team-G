@@ -46,7 +46,7 @@ bool CInventory::AddItem(CItem *item)
 	}
 }
 
-bool CInventory::UseItem(CItem *item)
+bool CInventory::DelItem(CItem *item)
 {
 	if(m_iHolding == 0)
 	{
