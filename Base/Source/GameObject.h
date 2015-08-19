@@ -31,6 +31,9 @@ public:
 	float mass;
 	
 	void SetDetails(std::string newType, Vector3 newPos, Vector3 newNormal, Vector3 newScale);
+
+	virtual void CheckBonusInteraction(Vector3);
+	
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();
 };

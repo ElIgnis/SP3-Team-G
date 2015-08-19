@@ -1,6 +1,9 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Enemy.h"
+#include "Enemy_Patrol.h"
+#include "Enemy_Sentry.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -15,7 +18,9 @@ class CLevelHandler
 private:
 	//Data storage
 	vector<GameObject *> Structure_List;
+	vector<CEnemy *> Enemy_List;
 	vector<string>Level_Tokens;
+	vector<string>Level_Tokens2;
 	char split_char;
 	string levelData;
 	string scoreData;
@@ -39,6 +44,9 @@ public:
 
 	CLevelHandler(void);
 	~CLevelHandler(void);
+
+	vector<GameObject *> &GetStructure_List(void);
+	vector<CEnemy *> &GetEnemy_List(void);
 
 	void LoadMap(string newMap);
 };

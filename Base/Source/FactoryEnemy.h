@@ -1,6 +1,6 @@
 #include "Enemy.h"
 #include "Enemy_Patrol.h"
-#include "Enemy_Still.h"
+#include "Enemy_Sentry.h"
 #include "Vector3.h"
 #include <iostream>
 #include <vector>

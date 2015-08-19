@@ -101,9 +101,6 @@ private:
 	//Powerups
 	vector<GameObject *> PowerUp_List;
 
-	//Enemies
-	vector<CEnemy *> Enemy_List;
-
 	//Scene rotation
 	float rotateScene;
 
