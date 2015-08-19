@@ -55,7 +55,7 @@ void CLevelHandler::LoadMap(string mapLevel)
 					Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])));
 				int i_tempNum = stoi(Level_Tokens2[10]);//Number of patrol points
 				for(int i = 0; i < i_tempNum; ++i)
-					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[11 + i * 3]), stof(Level_Tokens2[12 + i * 3]), stof(Level_Tokens2[13 + i * 3])));
+					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[11 + i * 3]), stof(Level_Tokens2[12 + i * 3]), 0));
 				Enemy_List.push_back(en);
 			}
 			else

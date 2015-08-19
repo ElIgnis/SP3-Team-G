@@ -45,14 +45,14 @@ void CEnemy_Sentry::Update(const double dt)
 			rotation.SetToRotation(-m_fCurrentRot, 0, 0, 1);
 			normal = rotation * Vector3(0, 1, 0);
 			normal.Normalize();
-			dir = normal;
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 		}
 		break;
 	case STATE_ATTACK:
 		{
-			dir = (player_position - pos).Normalized();
-			normal = dir;
-			if((player_position - pos).Length() > 30.f)//CHANGE TO LINE OF SIGHT CODE
+			normal = (player_position - pos).Normalized();
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			if(!m_bIsDetected)//CHANGE TO LINE OF SIGHT CODE
 				state = STATE_SCAN;
 		}
 		break;
