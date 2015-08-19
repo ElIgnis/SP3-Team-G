@@ -68,6 +68,8 @@ void SceneStealth::InitGame(void)
 	Virus = new CPlayer;
 	Virus->scale.Set(10,10,10);
 	Virus->mass = 1.f;
+
+	//Test Box
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -141,6 +143,22 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
+	case GameObject::GO_BOX:
+		{
+			//|(w0 - b1).N| < r + h / 2
+			Vector3 w0 = go2->pos;
+			Vector3 b1 = go1->pos + go1->vel * dt;
+			Vector3 N = go2->normal;
+			float r = go1->scale.x;
+			float h = go2->scale.x;
+			//|(w0 - b1).NP| < r + l / 2
+			Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
+			float l = go2->scale.y;
+
+			if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.5f)
+				return true;
+			return false;
+		}
 	}
 	return false;
 }
@@ -202,6 +220,11 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 			Vector3 N = (go2->pos - go1->pos).Normalized();
 			Vector3 uN = u1.Dot(N) * N;
 			go1->vel = u1 - ReboundFactor * uN;
+		}
+	case GameObject::GO_BOX:
+		{
+			go2->vel = Virus->vel;
+			go2->dir = Virus->dir;
 		}
 		break;
 	}
@@ -761,6 +784,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		}
 		break;
 	case GameObject::GO_BALL:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_BOX:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
