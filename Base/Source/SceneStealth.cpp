@@ -62,8 +62,14 @@ void SceneStealth::InitGame(void)
 	//Load enemies from text file
 	LoadEnemies("Enemy//enemy.txt", Enemy_List);
 	
+	//Initializing m_force for the player
+	m_force = 0.f;
+	m_speed = 1.f;
+
+	//Initializing the player
 	Virus = new CPlayer;
 	Virus->scale.Set(10,10,10);
+	Virus->mass = 1.f;
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -221,6 +227,21 @@ void SceneStealth::Update(double dt)
 
 void SceneStealth::UpdateGame(const double dt)
 {
+	//Physics simulation for the player here.
+	Vector3 acc = m_force * ( 1 / Virus->mass);
+	Virus->vel += acc * dt;
+	
+	if(acc.IsZero())
+	{
+		Virus->vel *= 0.89f;
+	}
+
+	Virus->vel.x = Math::Clamp(Virus->vel.x,-static_cast<float>(65),static_cast<float>(65));
+	Virus->vel.y = Math::Clamp(Virus->vel.y,-static_cast<float>(65),static_cast<float>(65));
+
+	Virus->dir = Virus->vel;
+	Virus->pos += Virus->vel * dt;
+
 	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
 	{
 		CEnemy *go = (CEnemy *)*it;
@@ -229,7 +250,6 @@ void SceneStealth::UpdateGame(const double dt)
 			go->Update(dt);
 		}
 	}
-	Virus->pos += Virus->vel * dt;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -259,35 +279,62 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 				GameState = STATE_MENU;
 			if(key == 'W')
 			{
+				//m_force.y += 65;
 				if(Virus->vel.y < 50.f)
 				{
 					Virus->vel.y += 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
 			}
+			else if(!key == 'W' && !key == 'S')
+			{
+				//m_force.y = 0;
+				if(Virus->vel.y > 0.f)
+				{
+					Virus->vel.y -= 1.f  * MoveSpeedModifier;
+				}
+			}
 			if(key == 'S')
 			{
-				if(Virus->vel.y < 50.f)
+				//m_force.y -= 65;
+				if(Virus->vel.y > -50.f)
 				{
 					Virus->vel.y -= 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
 			}
+			else if(!key == 'S' && !key == 'W')
+			{
+				if(Virus->vel.y < 0.f)
+					Virus->vel.y += 1.f  * MoveSpeedModifier;
+			}
 			if(key == 'D')
 			{
+				//m_force.x += 65;
 				if(Virus->vel.x < 50.f)
 				{
    					Virus->vel.x += 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
 			}
+			else if(!key == 'D' && !key == 'A')
+			{
+				if(Virus->vel.x > 0.f)
+					Virus->vel.x -= 1.f  * MoveSpeedModifier;
+			}
 			if(key == 'A')
 			{
+				//m_force.x -= 65;
 				if(Virus->vel.x > -50.f)
 				{
    					Virus->vel.x -= 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
+			}
+			else if(!key == 'A' && !key == 'D')
+			{
+				if(Virus->vel.x < 0.f)
+					Virus->vel.x += 1.f  * MoveSpeedModifier;
 			}
 		}
 		break;
