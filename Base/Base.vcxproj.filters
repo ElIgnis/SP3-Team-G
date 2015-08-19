@@ -19,6 +19,18 @@
     <Filter Include="Header Files\Enemy">
       <UniqueIdentifier>{c2a9b362-80dd-41d1-8702-34a639026bda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Player">
+      <UniqueIdentifier>{cdb64fdb-1c56-4a47-8c62-aa177eeced36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Player">
+      <UniqueIdentifier>{c915050a-3808-47f8-b8ce-a775a69881aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Menu">
+      <UniqueIdentifier>{b8b8a960-0e26-4f44-8af6-bbf5124fb1ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Menu">
+      <UniqueIdentifier>{cdc25877-9993-4870-8c4f-def44e5fde2b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\GameObjects">
       <UniqueIdentifier>{bc73bce5-216d-4533-876b-f5c5f9df724c}</UniqueIdentifier>
     </Filter>
@@ -75,12 +87,6 @@
     <ClCompile Include="Source\SceneStealth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MenuItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\HighscoreList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,14 +102,20 @@
     <ClCompile Include="Source\LevelHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Inventory.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Player.cpp">
+      <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="Source\Item.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Player.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Inventory.cpp">
+      <Filter>Source Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MenuItem.cpp">
+      <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Menu.cpp">
+      <Filter>Source Files\Menu</Filter>
     </ClCompile>
     <ClCompile Include="Source\Enemy_Sentry.cpp">
       <Filter>Source Files\Enemy</Filter>
@@ -173,12 +185,6 @@
     <ClInclude Include="Source\SceneStealth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MenuItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\HighscoreList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -194,14 +200,20 @@
     <ClInclude Include="Source\LevelHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Inventory.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Player.h">
+      <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="Source\Item.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Player.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Inventory.h">
+      <Filter>Header Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Menu.h">
+      <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MenuItem.h">
+      <Filter>Header Files\Menu</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy_Sentry.h">
       <Filter>Header Files\Enemy</Filter>
