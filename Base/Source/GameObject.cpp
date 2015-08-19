@@ -26,3 +26,7 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 	this->normal = newNormal;
 	this->scale = newScale;
 }
+
+void GameObject::CheckBonusInteraction(Vector3)
+{
+}

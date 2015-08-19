@@ -26,9 +26,12 @@ public:
 
 	virtual void Update(const double dt);
 	virtual void AddPatrolPoint(Vector3);
+	virtual void Aggro(void);
+	virtual void PlayerCurrentPosition(Vector3 player_position);
 
 protected:
 	ENEMY_STATE state;
+	Vector3 player_position;
 };
 
 #endif

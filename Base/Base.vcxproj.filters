@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Menu">
       <UniqueIdentifier>{cdc25877-9993-4870-8c4f-def44e5fde2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GameObjects">
+      <UniqueIdentifier>{bc73bce5-216d-4533-876b-f5c5f9df724c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects">
+      <UniqueIdentifier>{eac07a0e-ed1f-4813-8d1f-14aea447f868}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -84,16 +90,10 @@
     <ClCompile Include="Source\HighscoreList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Wall_Interactable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Enemy.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Enemy_Patrol.cpp">
-      <Filter>Source Files\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Enemy_Still.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\FactoryEnemy.cpp">
@@ -116,6 +116,12 @@
     </ClCompile>
     <ClCompile Include="Source\Menu.cpp">
       <Filter>Source Files\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Enemy_Sentry.cpp">
+      <Filter>Source Files\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lever.cpp">
+      <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,16 +188,10 @@
     <ClInclude Include="Source\HighscoreList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Wall_Interactable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Enemy.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy_Patrol.h">
-      <Filter>Header Files\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Enemy_Still.h">
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\FactoryEnemy.h">
@@ -214,6 +214,12 @@
     </ClInclude>
     <ClInclude Include="Source\MenuItem.h">
       <Filter>Header Files\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy_Sentry.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lever.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

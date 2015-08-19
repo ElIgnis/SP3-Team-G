@@ -58,9 +58,7 @@ void SceneStealth::Init()
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
-	
-	//Load enemies from text file
-	LoadEnemies("Enemy//enemy.txt", Enemy_List);
+
 	
 	//Initializing m_force for the player
 	m_force = 0.f;
@@ -240,16 +238,25 @@ void SceneStealth::UpdateGame(const double dt)
 	Virus->vel.y = Math::Clamp(Virus->vel.y,-static_cast<float>(65),static_cast<float>(65));
 
 	Virus->dir = Virus->vel;
-	Virus->pos += Virus->vel * dt;
 
-	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
+	//Update enemies
+	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
-		CEnemy *go = (CEnemy *)*it;
+		CEnemy *go = (CEnemy  *)*it;
 		if(go->active)
 		{
+			go->PlayerCurrentPosition(Virus->pos);
+			if((Virus->pos - go->pos).Length() < 20)//PUT LINE OF SIGHT CODE DETECTION HERE
+				go->Aggro();
 			go->Update(dt);
 		}
 	}
+	//Check player collision with structure
+
+	//Check player collision with enemies
+
+	//Update player position based on velocity
+	Virus->pos += Virus->vel * (float)dt;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -277,6 +284,12 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 		{
 			if(key == VK_BACK)//change game state
 				GameState = STATE_MENU;
+			if(key == VK_RETURN)
+			{
+				//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
+
+
+			}
 			if(key == 'W')
 			{
 				//m_force.y += 65;
@@ -776,7 +789,7 @@ void SceneStealth::RenderGame(void)
 	modelStack.PopMatrix();
 
 	//Render enemy here
-	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
+	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
 		CEnemy *go = (CEnemy  *)*it;
 		if(go->active)
@@ -786,12 +799,11 @@ void SceneStealth::RenderGame(void)
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			modelStack.Rotate(theta, 0, 0, 1);
-			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+			RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
 			modelStack.PopMatrix();
 		}
 	}
 }
-
 
 void SceneStealth::RenderMenu(void)
 {

@@ -1,8 +1,10 @@
 #include "Enemy_Patrol.h"
 
 #define Patrol_moveSpd 15.f
-#define Chase_modeSpd 35.f
+#define Chase_moveSpd 20.f
+#define Enraged_moveSpd 55.f
 #define Patrol_waitTime 1.f
+#define AggroTime 1.f
 
 CEnemy_Patrol::CEnemy_Patrol() 
 	: m_bPatrolDir(true)
@@ -21,7 +23,8 @@ CEnemy_Patrol::CEnemy_Patrol(Vector3 pos, Vector3 scale, Vector3 norm)
 	this->pos = pos;
 	this->scale = scale;
 	this->normal = norm;
-
+	this->active = true;
+	this->normal.Normalize();
 	m_patrolposList.push_back(pos);
 }
 
@@ -43,8 +46,9 @@ void CEnemy_Patrol::Update(const double dt)
 				dir = (m_patrolposList[m_iCurrentPatrolpoint] - pos).Normalized();
 				normal = dir;
 				pos += dir * Patrol_moveSpd * (float)dt;
-				if((m_patrolposList[m_iCurrentPatrolpoint] - pos).Length() < 5)//dist check to next patrolpoint
+				if((m_patrolposList[m_iCurrentPatrolpoint] - pos).Length() < 1)//dist check to next patrolpoint
 				{
+					pos = m_patrolposList[m_iCurrentPatrolpoint];
 					state = STATE_WAIT;
 					m_fWaitTime = Patrol_waitTime;
 					if((unsigned)m_iCurrentPatrolpoint >= m_patrolposList.size() - 1 || m_iCurrentPatrolpoint <= 0)//Change patrol direction if at end of patrol list
@@ -66,14 +70,26 @@ void CEnemy_Patrol::Update(const double dt)
 		break;
 	case STATE_ATTACK:
 		{
-
-
-
+			dir = (player_position - pos).Normalized();
+			normal = dir;
+			pos += dir * Chase_moveSpd * (float)dt;
+			if((player_position - pos).Length() > 30.f)//CHANGE TO LINE OF SIGHT CODE
+				m_fAggroTime -= 1.f * dt;
+			else
+				m_fAggroTime = AggroTime;
+			if(m_fAggroTime < 0.f)
+				state = STATE_PATROL;
 		}
 		break;
 	default:
 		break;
 	}
+}
+
+void CEnemy_Patrol::Aggro()
+{
+	this->state = STATE_ATTACK;
+	m_fAggroTime = AggroTime;
 }
 
 void CEnemy_Patrol::AddPatrolPoint(Vector3 p)
