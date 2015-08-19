@@ -281,7 +281,7 @@ void SceneStealth::UpdateGame(const double dt)
 		{
 			go->PlayerCurrentPosition(Virus->pos);
 			
-			go->Update(dt);
+			
 			//if((Virus->pos - go->pos).Length() < 1000)//PUT LINE OF SIGHT CODE DETECTION HERE
 			{
 				if(CheckDetection(go, Virus))
@@ -305,6 +305,7 @@ void SceneStealth::UpdateGame(const double dt)
 					std::cout << "not detected" << std::endl;
 				}
 			}
+			go->Update(dt);
 		}
 	}
 	//Check player collision with structure
