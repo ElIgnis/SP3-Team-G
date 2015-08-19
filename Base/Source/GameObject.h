@@ -14,6 +14,7 @@ public:
 		GO_NONE = 0,
 		GO_CUBE,
 		GO_BALL,
+		GO_BOX,
 		GO_PILLAR,
 		GO_WALL,
 		GO_PLAYER,
