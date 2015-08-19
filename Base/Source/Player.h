@@ -3,7 +3,8 @@
 class CPlayer : public GameObject
 {
 private:
-	CInventory m_PlayerInv;
+	CInventory m_pInv;
+	unsigned int m_pHealth;
 public:
 	CPlayer(void);
 	CPlayer(Vector3 pos);

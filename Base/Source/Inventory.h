@@ -16,6 +16,6 @@ public:
 	unsigned int getHold(void);
 
 	bool AddItem(CItem *item);
-	bool UseItem(CItem *item);
+	bool DelItem(CItem *item);
 };
 

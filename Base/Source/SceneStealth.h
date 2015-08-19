@@ -5,7 +5,7 @@
 #define ScreenUD 63.f
 
 #define ReboundFactor 2.f
-#define MoveSpeedModifier 1.f
+#define MoveSpeedModifier 5.f
 
 #include <vector>
 #include <string>
@@ -15,6 +15,7 @@
 #include "LevelHandler.h"
 #include "Menu.h"
 #include "Enemy.h"
+#include "Interactables.h"
 #include "FactoryEnemy.h"
 #include "Player.h"
 
@@ -48,9 +49,9 @@ public:
 	void RenderGO(GameObject *go);
 
 	GameObject* FetchGO();
-	CPlayer *Virus;
 
 	bool CheckCollision(GameObject *go1, GameObject *go2, float dt);
+	bool CheckDetection(CEnemy *go1, GameObject *go2);
 	void CollisionResponse(GameObject *go1, GameObject *go2, float dt);
 
 	//Initialise game variables
@@ -97,12 +98,12 @@ private:
 
 	//Player vars
 	GameObject *Player;
+	CPlayer *Virus;
+	Vector3 m_force;
+	float m_speed;
 
 	//Powerups
 	vector<GameObject *> PowerUp_List;
-
-	//Enemies
-	vector<CEnemy *> Enemy_List;
 
 	//Scene rotation
 	float rotateScene;

@@ -19,7 +19,7 @@ void LoadEnemies(const char *file_path, vector<CEnemy *> &path)
 				Level_Tokens.push_back(section);
 			}
 			if(Level_Tokens[0] == "STILL")
-				temp = new CEnemy_Still(Vector3(stof(Level_Tokens[1]), stof(Level_Tokens[2]), stof(Level_Tokens[3])),
+				temp = new CEnemy_Sentry(Vector3(stof(Level_Tokens[1]), stof(Level_Tokens[2]), stof(Level_Tokens[3])),
 				Vector3(stof(Level_Tokens[4]), stof(Level_Tokens[5]), stof(Level_Tokens[6])),
 				Vector3(stof(Level_Tokens[7]), stof(Level_Tokens[8]), stof(Level_Tokens[9])));
 			else if(Level_Tokens[0] == "PATROL")
@@ -27,7 +27,6 @@ void LoadEnemies(const char *file_path, vector<CEnemy *> &path)
 				temp = new CEnemy_Patrol(Vector3(stof(Level_Tokens[1]), stof(Level_Tokens[2]), stof(Level_Tokens[3])),Vector3(stof(Level_Tokens[4]), stof(Level_Tokens[5]), 
 					stof(Level_Tokens[6])),	Vector3(stof(Level_Tokens[7]), stof(Level_Tokens[8]), stof(Level_Tokens[9])));
 				int i_tempNum = stoi(Level_Tokens[10]);
-				std::cout<<i_tempNum<<std::endl;
 				for(int i = 0; i < i_tempNum; ++i)
 					temp->AddPatrolPoint(Vector3(stof(Level_Tokens[11 + i * 3]), stof(Level_Tokens[12 + i * 3]), stof(Level_Tokens[13 + i * 3])));
 			}

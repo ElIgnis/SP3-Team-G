@@ -16,11 +16,12 @@
     <ClCompile Include="Source\Camera3.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\Enemy_Patrol.cpp" />
-    <ClCompile Include="Source\Enemy_Still.cpp" />
+    <ClCompile Include="Source\Enemy_Sentry.cpp" />
     <ClCompile Include="Source\FactoryEnemy.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Highscore.cpp" />
     <ClCompile Include="Source\HighscoreList.cpp" />
+    <ClCompile Include="Source\Interactables.cpp" />
     <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\Item.cpp" />
     <ClCompile Include="Source\LevelHandler.cpp" />
@@ -38,7 +39,7 @@
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\SpriteAnimation.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
-    <ClCompile Include="Source\Wall_Interactable.cpp" />
+    <ClCompile Include="Source\Lever.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
@@ -46,12 +47,13 @@
     <ClInclude Include="Source\Camera3.h" />
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\Enemy_Patrol.h" />
-    <ClInclude Include="Source\Enemy_Still.h" />
+    <ClInclude Include="Source\Enemy_Sentry.h" />
     <ClInclude Include="Source\FactoryEnemy.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\Geometry.h" />
     <ClInclude Include="Source\Highscore.h" />
     <ClInclude Include="Source\HighscoreList.h" />
+    <ClInclude Include="Source\Interactables.h" />
     <ClInclude Include="Source\Inventory.h" />
     <ClInclude Include="Source\Item.h" />
     <ClInclude Include="Source\LevelHandler.h" />
@@ -72,7 +74,7 @@
     <ClInclude Include="Source\SpriteAnimation.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
-    <ClInclude Include="Source\Wall_Interactable.h" />
+    <ClInclude Include="Source\Lever.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B172635-4E2B-46F1-A403-08F4194D00F5}</ProjectGuid>

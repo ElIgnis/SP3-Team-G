@@ -58,12 +58,18 @@ void SceneStealth::Init()
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
+
 	
-	//Load enemies from text file
-	LoadEnemies("Enemy//enemy.txt", Enemy_List);
-	
+	//Initializing m_force for the player
+	m_force = 0.f;
+	m_speed = 1.f;
+
+	//Initializing the player
 	Virus = new CPlayer;
 	Virus->scale.Set(10,10,10);
+	Virus->mass = 1.f;
+
+	//Test Box
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -112,6 +118,25 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
+			Vector3 b1 = go1->pos + go1->vel;
+			Vector3 N = go2->normal;
+			float r = go1->scale.x;
+			float h = go2->scale.x;
+			//|(w0 - b1).NP| < r + l / 2
+			Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
+			float l = go2->scale.y;
+
+			if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.5f)
+			{
+				return true;
+			}
+			return false;
+		}
+		break;
+	case GameObject::GO_BOX:
+		{
+			//|(w0 - b1).N| < r + h / 2
+			Vector3 w0 = go2->pos;
 			Vector3 b1 = go1->pos + go1->vel * dt;
 			Vector3 N = go2->normal;
 			float r = go1->scale.x;
@@ -124,7 +149,17 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 				return true;
 			return false;
 		}
-		break;
+	}
+	return false;
+}
+
+bool SceneStealth::CheckDetection(CEnemy *go1, GameObject *go2)
+{
+	float distSquared = (go2->pos - go1->pos).LengthSquared();
+	float combinedRadius =  go1->GetDetectionRange().x + go2->scale.x;
+	if(distSquared <= combinedRadius * combinedRadius)
+	{
+		return true;
 	}
 	return false;
 }
@@ -187,6 +222,11 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 			Vector3 uN = u1.Dot(N) * N;
 			go1->vel = u1 - ReboundFactor * uN;
 		}
+	case GameObject::GO_BOX:
+		{
+			go2->vel = Virus->vel;
+			go2->dir = Virus->dir;
+		}
 		break;
 	}
 
@@ -221,15 +261,87 @@ void SceneStealth::Update(double dt)
 
 void SceneStealth::UpdateGame(const double dt)
 {
-	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
+	//Physics simulation for the player here.
+	Vector3 acc = m_force * ( 1 / Virus->mass);
+	Virus->vel += acc * dt;
+	
+	if(acc.IsZero())
 	{
-		CEnemy *go = (CEnemy *)*it;
+		Virus->vel *= 0.89f;
+	}
+
+	Virus->vel.x = Math::Clamp(Virus->vel.x,-static_cast<float>(65),static_cast<float>(65));
+	Virus->vel.y = Math::Clamp(Virus->vel.y,-static_cast<float>(65),static_cast<float>(65));
+
+	Virus->dir = Virus->vel;
+
+	//Update enemies
+	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
+	{
+		CEnemy *go = (CEnemy  *)*it;
 		if(go->active)
 		{
+			go->PlayerCurrentPosition(Virus->pos);
+			
+			//if((Virus->pos - go->pos).Length() < 1000)//
+			{
+				if(CheckDetection(go, Virus))
+				{
+					Vector3 direction = Virus->pos - go->pos;
+					float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
+					if(f_DirToPlayer < go->dir.z + 30.f && f_DirToPlayer > go->dir.z - 30.f)
+					{
+						go->SetState(CEnemy::STATE_ATTACK);
+						go->SetIsDetected(true);
+						//std::cout << "in cone range" << std::endl;
+					}
+					else
+					{
+						//std::cout << "not in cone range" << std::endl;		
+					}
+					//std::cout << f_DirToPlayer << "   " << go->dir.z << "   " << std::endl;
+				}
+				else
+				{
+					go->SetIsDetected(false);
+					//std::cout << "not detected" << std::endl;
+				}
+			}
 			go->Update(dt);
+			//Check player collision with enemies
+			bool b_colCheck = false;
+			for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+			{
+				GameObject *go2 = (GameObject  *)*it;
+				if(go2->active)
+				{
+					if(CheckCollision(go, go2, dt))
+					{
+						b_colCheck = true;
+						break;
+					}
+					else 
+						b_colCheck = false;
+				}
+			}
+			if(!b_colCheck)
+				go->pos += go->vel;//If no collision update enemy pos
 		}
 	}
-	Virus->pos += Virus->vel * dt;
+	//Check player collision with structure
+
+	//Check player collision with interactables
+	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
+	{
+		CInteractables *go = (CInteractables *)* it;
+		if(go->active)
+		{
+			if(Application::IsKeyPressed(VK_RETURN))
+				go->CheckBonusInteraction(Virus->pos);
+		}
+	}
+	//Update player position based on velocity
+	Virus->pos += Virus->vel * (float)dt;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -243,51 +355,114 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 	{
 	case STATE_MENU:
 		{
-			if(key == VK_UP)
-				menu_main.UpdateSelection(true);
-			if(key == VK_DOWN)
-				menu_main.UpdateSelection(false);
-			if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
-				GameState = STATE_PLAYING;
-			if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
-				b_ExitScene = true;
+			//Enable scrolling of menu if not selecting stages
+			if(!LvlHandler.GetStageSelection())
+			{
+				if(key == VK_UP)
+					menu_main.UpdateSelection(true);
+				if(key == VK_DOWN)
+					menu_main.UpdateSelection(false);
+				if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
+					GameState = STATE_PLAYING;
+				if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
+					b_ExitScene = true;
+			}
+			//Scrolling of stage selection
+			if(menu_main.GetSelection() == 1)
+			{
+				//Enable stage selection
+				if(key == VK_RIGHT)
+					LvlHandler.SetStageSelection(true);
+				else if(key == VK_LEFT)
+					LvlHandler.SetStageSelection(false);
+				
+				//Starts selecting stage
+				if(LvlHandler.GetStageSelection())
+				{
+					int i_TempLevelSelect = LvlHandler.GetCurrentStage();
+					//Up/Down keys to select level
+					if(key == VK_UP)
+						LvlHandler.SetCurrentStage(--i_TempLevelSelect);
+					else if(key == VK_DOWN)
+						LvlHandler.SetCurrentStage(++i_TempLevelSelect);
+
+					//Allows for scrolling and re wrapping
+					if(LvlHandler.GetCurrentStage() > 4)
+						LvlHandler.SetCurrentStage(1);
+					if(LvlHandler.GetCurrentStage() < 0)
+						LvlHandler.SetCurrentStage(4);
+				}
+			}
 		}
 		break;
 	case STATE_PLAYING:
 		{
 			if(key == VK_BACK)//change game state
 				GameState = STATE_MENU;
+			if(key == VK_RETURN)
+			{
+				//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
+
+
+			}
 			if(key == 'W')
 			{
+				//m_force.y += 65;
 				if(Virus->vel.y < 50.f)
 				{
 					Virus->vel.y += 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
 			}
+			else if(!key == 'W' && !key == 'S')
+			{
+				//m_force.y = 0;
+				if(Virus->vel.y > 0.f)
+				{
+					Virus->vel.y -= 1.f  * MoveSpeedModifier;
+				}
+			}
 			if(key == 'S')
 			{
-				if(Virus->vel.y < 50.f)
+				//m_force.y -= 65;
+				if(Virus->vel.y > -50.f)
 				{
 					Virus->vel.y -= 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
 			}
+			else if(!key == 'S' && !key == 'W')
+			{
+				if(Virus->vel.y < 0.f)
+					Virus->vel.y += 1.f  * MoveSpeedModifier;
+			}
 			if(key == 'D')
 			{
+				//m_force.x += 65;
 				if(Virus->vel.x < 50.f)
 				{
    					Virus->vel.x += 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
 			}
+			else if(!key == 'D' && !key == 'A')
+			{
+				if(Virus->vel.x > 0.f)
+					Virus->vel.x -= 1.f  * MoveSpeedModifier;
+			}
 			if(key == 'A')
 			{
+				//m_force.x -= 65;
 				if(Virus->vel.x > -50.f)
 				{
    					Virus->vel.x -= 1.f  * MoveSpeedModifier;
 					Virus->dir = Virus->vel;
 				}
+			}
+			else if(!key == 'A' && !key == 'D')
+			{
+				if(Virus->vel.x < 0.f)
+					Virus->vel.x += 1.f  * MoveSpeedModifier;
 			}
 		}
 		break;
@@ -681,44 +856,44 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_BALL], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_LEVER:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_BOX:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
 	}
 }
 
 void SceneStealth::RenderGame(void)
 {
-	RenderTextOnScreen(meshList[GEO_TEXT], "playing screen test", Color(1, 0, 0), 5, 10, 10);
+	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
 
-	//TEST OBJECT - REMOVE
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0, 0);
-	modelStack.Scale(10, 50, 1);
-	RenderMesh(meshList[GEO_WALL_BLUE], bLightEnabled);
-	modelStack.PopMatrix();
-
-	//Player
+	////Firewall
 	//modelStack.PushMatrix();
-	//modelStack.Translate(-80, 0, 0);
-	////modelStack.Rotate(-120, 0.5, 1, 0.5);
-	//modelStack.Scale(10, 10, 10);
-	//RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+	//modelStack.Translate(80, 0, 0);
+	//modelStack.Rotate(180, 0, 0, 1);
+	//modelStack.Scale(30, 30, 30);
+	//RenderMesh(meshList[GEO_FIREWALL], bLightEnabled);
 	//modelStack.PopMatrix();
 
-	//Firewall
-	modelStack.PushMatrix();
-	modelStack.Translate(80, 0, 0);
-	modelStack.Rotate(180, 0, 0, 1);
-	modelStack.Scale(30, 30, 30);
-	RenderMesh(meshList[GEO_FIREWALL], bLightEnabled);
-	modelStack.PopMatrix();
-
-	//Antivirus
-	modelStack.PushMatrix();
-	modelStack.Translate(40, 0, 0);
-	//modelStack.Rotate(180, 0, 0, 1);
-	modelStack.Scale(10, 10, 10);
-	RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
-	modelStack.PopMatrix();
-
+	////Antivirus
+	//modelStack.PushMatrix();
+	//modelStack.Translate(40, 0, 0);
+	////modelStack.Rotate(180, 0, 0, 1);
+	//modelStack.Scale(10, 10, 10);
+	//RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
+	//modelStack.PopMatrix();
+	
+	//Render player
 	float theta;
 	theta = Math::RadianToDegree(atan2(Virus->dir.y, Virus->dir.x));
 	modelStack.PushMatrix();
@@ -728,23 +903,49 @@ void SceneStealth::RenderGame(void)
 	RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
 	modelStack.PopMatrix();
 
-	//Render enemy here
-	for(std::vector<CEnemy  *>::iterator it = Enemy_List.begin(); it != Enemy_List.end(); ++it)
+	//Render structures here
+	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject  *)*it;
+		if(go->active)
+			RenderGO(go);
+	}
+
+	//Render interactables here
+	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
+	{
+		CInteractables *go = (CInteractables *)* it;
+		if(go->active)
+			RenderGO(go);
+		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
+		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
+		modelStack.Scale(5, 5, 5);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+	}
+
+	//Render enemies here
+	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
 		CEnemy *go = (CEnemy  *)*it;
 		if(go->active)
 		{
-			theta = Math::RadianToDegree(atan2(go->dir.y, go->dir.x));
+			//theta = Math::RadianToDegree(atan2(go->dir.y, go->dir.x));
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-			modelStack.Rotate(theta, 0, 0, 1);
-			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+			modelStack.Rotate(go->dir.z, 0, 0, 1);
+			RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+			modelStack.PopMatrix();
+
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
+			RenderMesh(meshList[GEO_PLAYER_INDICATOR], bLightEnabled);
 			modelStack.PopMatrix();
 		}
 	}
 }
-
 
 void SceneStealth::RenderMenu(void)
 {
@@ -788,12 +989,21 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 		break;
 	case 1: //Option 2 for Level Select
 		{
-			for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
-			{
-				std::stringstream ssDesc;
-				ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
-			}
+			//for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
+			//{
+			//	std::stringstream ssDesc;
+			//	ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
+			//	RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+			//}
+			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
+			if(LvlHandler.GetCurrentStage() == 1)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
+			else if(LvlHandler.GetCurrentStage() == 2)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 3, 40, 45);
+			else if(LvlHandler.GetCurrentStage() == 3)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 3, 40, 45);
+			else if(LvlHandler.GetCurrentStage() == 4)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 3, 40, 45);
 		}
 		break;
 	case 2: //Option 3 for Highscore

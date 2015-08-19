@@ -14,9 +14,11 @@ public:
 		GO_NONE = 0,
 		GO_CUBE,
 		GO_BALL,
+		GO_BOX,
 		GO_PILLAR,
 		GO_WALL,
 		GO_PLAYER,
+		GO_LEVER,
 		NUM_GO
 	};
 	GAMEOBJECT_TYPE type;
@@ -31,6 +33,9 @@ public:
 	float mass;
 	
 	void SetDetails(std::string newType, Vector3 newPos, Vector3 newNormal, Vector3 newScale);
+
+	virtual void CheckBonusInteraction(Vector3);
+	
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_BALL);
 	~GameObject();
 };
