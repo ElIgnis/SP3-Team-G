@@ -96,6 +96,18 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	switch(go2->type)
 	{
 	//Ball to ball
+	case GameObject::GO_PLAYER:
+		{
+			float distSquared = (go2->pos - go1->pos).LengthSquared();
+			float combinedRadius = go1->scale.x + go2->scale.x;
+
+			if(distSquared <= combinedRadius * combinedRadius)
+			{
+				return true;
+			}
+			return false;
+		}
+		break;
 	case GameObject::GO_BALL:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
@@ -246,8 +258,22 @@ void SceneStealth::UpdateGame(const double dt)
 		if(go->active)
 		{
 			go->PlayerCurrentPosition(Virus->pos);
-			if((Virus->pos - go->pos).Length() < 20)//PUT LINE OF SIGHT CODE DETECTION HERE
-				go->Aggro();
+			if((Virus->pos - go->pos).Length() < 50)//PUT LINE OF SIGHT CODE DETECTION HERE
+			{
+				if(CheckCollision(go, Virus, dt))
+				{
+					Vector3 direction = go->pos - Virus->pos;
+					float f_DirToPlayer = Math::DegreeToRadian(atan2(direction.y, direction.x)) + 180.f;
+					if(go->dir.z >= 360.f)
+						go->dir.z = 0.f;
+					if(go->dir.z < 0.f)
+						go->dir.z = 360.f;
+
+					if(f_DirToPlayer < go->dir.z + 30.f && f_DirToPlayer > go->dir.z - 30.f)
+						go->Aggro();
+				}
+				//go->Aggro();
+			}
 			go->Update(dt);
 		}
 	}
