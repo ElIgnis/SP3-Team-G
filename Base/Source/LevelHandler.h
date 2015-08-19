@@ -21,10 +21,11 @@ private:
 	vector<CEnemy *> Enemy_List;
 	vector<string>Level_Tokens;
 	vector<string>Level_Tokens2;
-	char split_char;
-	string levelData;
-	string scoreData;
-	int ObjLine;
+	char m_cSplit_Char;
+	string m_sLevelData;
+	int m_iObjLine;
+	int m_iCurrentStage;
+	bool m_bStageSelection;
 
 public:
 	//Tokens indexing
@@ -44,6 +45,12 @@ public:
 
 	CLevelHandler(void);
 	~CLevelHandler(void);
+
+	void SetStageSelection(const bool newStageSelect);
+	bool GetStageSelection(void);
+
+	void SetCurrentStage(const int newCurrentStage);
+	int GetCurrentStage(void);
 
 	vector<GameObject *> &GetStructure_List(void);
 	vector<CEnemy *> &GetEnemy_List(void);

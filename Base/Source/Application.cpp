@@ -104,6 +104,7 @@ bool Application::GetKeyboardUpdate()
 	if(IsKeyPressed(VK_BACK))
 		scene->UpdateKeypress(VK_BACK);
 
+	//Up arrow key
 	static bool b_UpKey = false;
 	if(IsKeyPressed(VK_UP) && !b_UpKey)
 	{
@@ -113,6 +114,7 @@ bool Application::GetKeyboardUpdate()
 	else if(!IsKeyPressed(VK_UP) && b_UpKey)
 		b_UpKey = false;
 
+	//Down arrow key
 	static bool b_DownKey = false;
 	if(IsKeyPressed(VK_DOWN) && !b_DownKey)
 	{
@@ -121,6 +123,26 @@ bool Application::GetKeyboardUpdate()
 	}
 	else if(!IsKeyPressed(VK_DOWN) && b_DownKey)
 		b_DownKey = false;
+
+	//Left arrow key
+	static bool b_LeftKey = false;
+	if(IsKeyPressed(VK_LEFT) && !b_LeftKey)
+	{
+		scene->UpdateKeypress(VK_LEFT);
+		b_LeftKey = true;
+	}
+	else if(!IsKeyPressed(VK_LEFT) && b_LeftKey)
+		b_LeftKey = false;
+
+	//Right arrow key
+	static bool b_RightKey = false;
+	if(IsKeyPressed(VK_RIGHT) && !b_RightKey)
+	{
+		scene->UpdateKeypress(VK_RIGHT);
+		b_RightKey = true;
+	}
+	else if(!IsKeyPressed(VK_RIGHT) && b_RightKey)
+		b_RightKey = false;
 
 	if(IsKeyPressed('W'))
 		scene->UpdateKeypress('W');

@@ -2,13 +2,13 @@
 
 
 CLevelHandler::CLevelHandler(void)
-	: split_char(',')
-	, levelData("")
-	, scoreData("")
-	, ObjLine(0)
+	: m_cSplit_Char(',')
+	, m_sLevelData("")
+	, m_iObjLine(0)
+	, m_iCurrentStage(1)
+	, m_bStageSelection(false)
 {
 }
-
 
 CLevelHandler::~CLevelHandler(void)
 {
@@ -17,24 +17,24 @@ CLevelHandler::~CLevelHandler(void)
 void CLevelHandler::LoadMap(string mapLevel)
 {
 	//Reset line
-	ObjLine = 0;
+	m_iObjLine = 0;
 
 	//Load Level details
 	std::ifstream inGameLevel;
 	inGameLevel.open(mapLevel);
 	if(inGameLevel.good())
 	{
-		while(getline(inGameLevel, levelData))
+		while(getline(inGameLevel, m_sLevelData))
 		{
-			std::istringstream split(levelData);
+			std::istringstream split(m_sLevelData);
 
 			//Dont read lines with #
-			if(levelData[0] == '#')
+			if(m_sLevelData[0] == '#')
 			{
 				continue;
 			}
 
-			for(string each; std::getline(split, each, split_char);)
+			for(string each; std::getline(split, each, m_cSplit_Char);)
 			{
 				Level_Tokens.push_back(each);
 				Level_Tokens2.push_back(each);
@@ -66,25 +66,25 @@ void CLevelHandler::LoadMap(string mapLevel)
 
 				go->SetDetails(
 					//GO_TYPE
-					(Level_Tokens.at(GO_TYPE + (ObjLine * NUM_INDEX)))
+					(Level_Tokens.at(GO_TYPE + (m_iObjLine * NUM_INDEX)))
 					//pos
-					, Vector3(stof(Level_Tokens.at(POSX + (ObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(POSY + (ObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(POSZ + (ObjLine * NUM_INDEX))))
+					, Vector3(stof(Level_Tokens.at(POSX + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(POSY + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(POSZ + (m_iObjLine * NUM_INDEX))))
 					//normal
-					, Vector3(stof(Level_Tokens.at(NORMALX + (ObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(NORMALY + (ObjLine * NUM_INDEX))))
+					, Vector3(stof(Level_Tokens.at(NORMALX + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(NORMALY + (m_iObjLine * NUM_INDEX))))
 					//scale
-					, Vector3(stof(Level_Tokens.at(SCALEX + (ObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(SCALEY + (ObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(SCALEZ + (ObjLine * NUM_INDEX)))));
+					, Vector3(stof(Level_Tokens.at(SCALEX + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(SCALEY + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(SCALEZ + (m_iObjLine * NUM_INDEX)))));
 
 				//Normalize walls
 				if(go->type == GameObject::GO_WALL)
 					go->normal.Normalize();
 				Structure_List.push_back(go);
 			}
-			++ObjLine;
+			++m_iObjLine;
 			while(Level_Tokens2.size() > 0)
 				Level_Tokens2.pop_back();
 		}
@@ -102,4 +102,22 @@ vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 vector<CEnemy *> &CLevelHandler::GetEnemy_List(void)
 {
 	return Enemy_List;
+}
+
+void CLevelHandler::SetStageSelection(const bool newStageSelect)
+{
+	this->m_bStageSelection = newStageSelect;
+}
+bool CLevelHandler::GetStageSelection(void)
+{
+	return m_bStageSelection;
+}
+
+void CLevelHandler::SetCurrentStage(const int newCurrentStage)
+{
+	this->m_iCurrentStage = newCurrentStage;
+}
+int CLevelHandler::GetCurrentStage(void)
+{
+	return m_iCurrentStage;
 }

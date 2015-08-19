@@ -306,7 +306,7 @@ void SceneStealth::UpdateGame(const double dt)
 				{
 					go->SetState(CEnemy::STATE_PATROL);
 					go->SetIsDetected(false);
-				std::cout << "not detected      " << go->state << std::endl;
+				std::cout << "not detected" << std::endl;
 				}
 			}
 		}
@@ -330,14 +330,44 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 	{
 	case STATE_MENU:
 		{
-			if(key == VK_UP)
-				menu_main.UpdateSelection(true);
-			if(key == VK_DOWN)
-				menu_main.UpdateSelection(false);
-			if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
-				GameState = STATE_PLAYING;
-			if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
-				b_ExitScene = true;
+			//Enable scrolling of menu if not selecting stages
+			if(!LvlHandler.GetStageSelection())
+			{
+				if(key == VK_UP)
+					menu_main.UpdateSelection(true);
+				if(key == VK_DOWN)
+					menu_main.UpdateSelection(false);
+				if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
+					GameState = STATE_PLAYING;
+				if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
+					b_ExitScene = true;
+			}
+			//Scrolling of stage selection
+			if(menu_main.GetSelection() == 1)
+			{
+				//Enable stage selection
+				if(key == VK_RIGHT)
+					LvlHandler.SetStageSelection(true);
+				else if(key == VK_LEFT)
+					LvlHandler.SetStageSelection(false);
+				
+				//Starts selecting stage
+				if(LvlHandler.GetStageSelection())
+				{
+					int i_TempLevelSelect = LvlHandler.GetCurrentStage();
+					//Up/Down keys to select level
+					if(key == VK_UP)
+						LvlHandler.SetCurrentStage(--i_TempLevelSelect);
+					else if(key == VK_DOWN)
+						LvlHandler.SetCurrentStage(++i_TempLevelSelect);
+
+					//Allows for scrolling and re wrapping
+					if(LvlHandler.GetCurrentStage() > 4)
+						LvlHandler.SetCurrentStage(1);
+					if(LvlHandler.GetCurrentStage() < 0)
+						LvlHandler.SetCurrentStage(4);
+				}
+			}
 		}
 		break;
 	case STATE_PLAYING:
@@ -920,12 +950,21 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 		break;
 	case 1: //Option 2 for Level Select
 		{
-			for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
-			{
-				std::stringstream ssDesc;
-				ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
-			}
+			//for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
+			//{
+			//	std::stringstream ssDesc;
+			//	ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
+			//	RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+			//}
+			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
+			if(LvlHandler.GetCurrentStage() == 1)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
+			else if(LvlHandler.GetCurrentStage() == 2)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 3, 40, 45);
+			else if(LvlHandler.GetCurrentStage() == 3)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 3, 40, 45);
+			else if(LvlHandler.GetCurrentStage() == 4)
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 3, 40, 45);
 		}
 		break;
 	case 2: //Option 3 for Highscore
