@@ -77,7 +77,7 @@ void CEnemy_Patrol::Update(const double dt)
 			normal = (player_position - pos).Normalized();
 			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			pos += normal * Chase_moveSpd * (float)dt;
-			if((player_position - pos).Length() > 30.f)//CHANGE TO LINE OF SIGHT CODE
+			if(!m_bIsDetected)
 				m_fAggroTime -= 1.f * dt;
 			else
 				m_fAggroTime = AggroTime;

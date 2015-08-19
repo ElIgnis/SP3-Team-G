@@ -3,6 +3,7 @@
 CEnemy::CEnemy() 
 	: state(STATE_IDLE)
 	, detection_range(50,50,1)
+	, m_bIsDetected(false)
 {
 }
 
@@ -38,4 +39,9 @@ void CEnemy::PlayerCurrentPosition(Vector3 player_position)
 Vector3 CEnemy::GetDetectionRange(void)
 {
 	return detection_range;
+}
+
+void CEnemy::SetIsDetected(bool b_IsDetected)
+{
+	this->m_bIsDetected = b_IsDetected;
 }

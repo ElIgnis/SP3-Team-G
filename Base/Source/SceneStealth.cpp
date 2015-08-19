@@ -267,8 +267,10 @@ void SceneStealth::UpdateGame(const double dt)
 					float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x)) + 180.f;
 					if(f_DirToPlayer < go->dir.z + 60.f && f_DirToPlayer > go->dir.z - 60.f)
 						go->Aggro();
+					go->SetIsDetected(true);
 				}
-				//go->Aggro();
+				else
+					go->SetIsDetected(false);
 			}
 		}
 	}
