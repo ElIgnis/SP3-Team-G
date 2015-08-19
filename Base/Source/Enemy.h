@@ -26,11 +26,12 @@ public:
 
 	virtual void Update(const double dt);
 	virtual void AddPatrolPoint(Vector3);
-	virtual void Aggro(void);
+	virtual void SetState(ENEMY_STATE newState);
+
 	virtual void PlayerCurrentPosition(Vector3 player_position);
 	virtual Vector3 GetDetectionRange(void);
 	virtual void SetIsDetected(bool b_IsDetected);
-
+	
 protected:
 	ENEMY_STATE state;
 	Vector3 player_position;

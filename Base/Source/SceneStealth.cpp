@@ -154,7 +154,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 bool SceneStealth::CheckDetection(CEnemy *go1, GameObject *go2)
 {
 	float distSquared = (go2->pos - go1->pos).LengthSquared();
-	float combinedRadius = go1->scale.x + go1->GetDetectionRange().x + go2->scale.x;
+	float combinedRadius =  go1->GetDetectionRange().x + go2->scale.x;
 	if(distSquared <= combinedRadius * combinedRadius)
 	{
 		return true;
@@ -286,14 +286,26 @@ void SceneStealth::UpdateGame(const double dt)
 			{
 				if(CheckDetection(go, Virus))
 				{
-					Vector3 direction = go->pos - Virus->pos;
-					float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x)) + 180.f;
-					if(f_DirToPlayer < go->dir.z + 60.f && f_DirToPlayer > go->dir.z - 60.f)
-						go->Aggro();
-					go->SetIsDetected(true);
+					Vector3 direction = Virus->pos - go->pos;
+					float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
+					if(f_DirToPlayer < go->dir.z + 30.f && f_DirToPlayer > go->dir.z - 30.f)
+					{
+						//go->SetState(CEnemy::STATE_ATTACK);
+						go->SetIsDetected(true);
+						std::cout << "in cone range" << std::endl;
+					}
+					else
+					{
+						//go->SetState(CEnemy::STATE_PATROL);
+						std::cout << "not in cone range" << std::endl;		
+					}
+					std::cout << f_DirToPlayer << "   " << go->dir.z << std::endl;
 				}
 				else
+				{
 					go->SetIsDetected(false);
+				std::cout << "not detected" << std::endl;
+				}
 			}
 		}
 	}
@@ -853,6 +865,12 @@ void SceneStealth::RenderGame(void)
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			modelStack.Rotate(go->dir.z, 0, 0, 1);
 			RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+			modelStack.PopMatrix();
+
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
+			RenderMesh(meshList[GEO_PLAYER_INDICATOR], bLightEnabled);
 			modelStack.PopMatrix();
 		}
 	}

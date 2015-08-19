@@ -17,7 +17,7 @@ public:
 
 	void Update(const double dt);
 	virtual void AddPatrolPoint(Vector3);
-	virtual void Aggro();
+	virtual void SetState(ENEMY_STATE newState);
 
 	std::vector<Vector3> m_patrolposList;//List of positions to patrol to
 

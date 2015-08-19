@@ -44,7 +44,8 @@ void CEnemy_Patrol::Update(const double dt)
 				//pos.x += cos(temp) * Patrol_moveSpd * dt;//Change to velocity?
 				//pos.y += sin(temp) * Patrol_moveSpd * dt;
 				normal = (m_patrolposList[m_iCurrentPatrolpoint] - pos).Normalized();
-				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+				Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
+				dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
 				/*	if(go->dir.z >= 360.f)
 						go->dir.z = 0.f;
 					if(go->dir.z < 0.f)
@@ -75,7 +76,9 @@ void CEnemy_Patrol::Update(const double dt)
 	case STATE_ATTACK:
 		{
 			normal = (player_position - pos).Normalized();
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
+			dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
+			//dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			pos += normal * Chase_moveSpd * (float)dt;
 			if(!m_bIsDetected)
 				m_fAggroTime -= 1.f * dt;
@@ -90,9 +93,9 @@ void CEnemy_Patrol::Update(const double dt)
 	}
 }
 
-void CEnemy_Patrol::Aggro()
+void CEnemy_Patrol::SetState(ENEMY_STATE newState)
 {
-	this->state = STATE_ATTACK;
+	this->state = newState;
 	m_fAggroTime = AggroTime;
 }
 

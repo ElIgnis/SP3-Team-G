@@ -81,9 +81,10 @@ public:
 		GEO_PLAYER,
 		GEO_FIREWALL,
 		GEO_ANTIVIRUS,
+		GEO_PLAYER_INDICATOR,
 		NUM_GEOMETRY,
 	};
-public:
+protected:
 	SceneBase();
 	~SceneBase();
 

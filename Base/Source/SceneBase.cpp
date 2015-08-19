@@ -186,6 +186,10 @@ void SceneBase::Init()
 	meshList[GEO_ANTIVIRUS] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Antivirus.obj");
 	meshList[GEO_ANTIVIRUS]->textureID = LoadTGA("Image//Antivirus.tga");
 
+	//Player indicator
+	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
+	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//Indicator_Blue2.tga");
+
 	//Sound
 	engine = createIrrKlangDevice();
 	if(!engine)
