@@ -43,9 +43,13 @@ void CEnemy_Patrol::Update(const double dt)
 				//float temp = atan2(pos.y + m_patrolposList[m_iCurrentPatrolpoint].y, pos.x + m_patrolposList[m_iCurrentPatrolpoint].x);
 				//pos.x += cos(temp) * Patrol_moveSpd * dt;//Change to velocity?
 				//pos.y += sin(temp) * Patrol_moveSpd * dt;
-				dir = (m_patrolposList[m_iCurrentPatrolpoint] - pos).Normalized();
-				normal = dir;
-				pos += dir * Patrol_moveSpd * (float)dt;
+				normal = (m_patrolposList[m_iCurrentPatrolpoint] - pos).Normalized();
+				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+				/*	if(go->dir.z >= 360.f)
+						go->dir.z = 0.f;
+					if(go->dir.z < 0.f)
+						dir.z = 360.0f*/
+				pos += normal * Patrol_moveSpd * (float)dt;
 				if((m_patrolposList[m_iCurrentPatrolpoint] - pos).Length() < 1)//dist check to next patrolpoint
 				{
 					pos = m_patrolposList[m_iCurrentPatrolpoint];
@@ -70,9 +74,9 @@ void CEnemy_Patrol::Update(const double dt)
 		break;
 	case STATE_ATTACK:
 		{
-			dir = (player_position - pos).Normalized();
-			normal = dir;
-			pos += dir * Chase_moveSpd * (float)dt;
+			normal = (player_position - pos).Normalized();
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			pos += normal * Chase_moveSpd * (float)dt;
 			if((player_position - pos).Length() > 30.f)//CHANGE TO LINE OF SIGHT CODE
 				m_fAggroTime -= 1.f * dt;
 			else

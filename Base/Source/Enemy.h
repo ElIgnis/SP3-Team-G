@@ -28,10 +28,12 @@ public:
 	virtual void AddPatrolPoint(Vector3);
 	virtual void Aggro(void);
 	virtual void PlayerCurrentPosition(Vector3 player_position);
+	virtual Vector3 GetDetectionRange(void);
 
 protected:
 	ENEMY_STATE state;
 	Vector3 player_position;
+	Vector3 detection_range;
 };
 
 #endif
