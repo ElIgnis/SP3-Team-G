@@ -70,6 +70,11 @@ void SceneStealth::InitGame(void)
 	Virus->mass = 1.f;
 
 	//Test Box
+	GameObject *box = FetchGO();
+	box->type = GameObject::GO_BOX;
+	box->scale.Set(20.0,20.0,1);
+	box->pos.Set(-5,-5,0);
+	box->active = true;
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -222,8 +227,28 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 		}
 	case GameObject::GO_BOX:
 		{
-			go2->vel = Virus->vel;
-			go2->dir = Virus->dir;
+			//|(w0 - b1).N| < r + h / 2
+			Vector3 w0 = go2->pos;
+			Vector3 b1 = go1->pos;
+			Vector3 N = go2->normal;
+			float r = go1->scale.x;
+			float h = go2->scale.x;
+			Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
+			float l = go2->scale.y;
+
+			if(abs((w0 - b1).Dot(N)) > r + h * 0.5f)
+			{
+				//v = u - (2 * u.N)N
+				Vector3 u = go1->vel;
+				go1->vel = 0;
+			}
+
+			if(abs((w0 - b1).Dot(NP)) > r + l * 0.5f)
+			{
+				//v = u - (2 * u.N)NP
+				Vector3 u = go1->vel;
+				go1->vel = 0;
+			}
 		}
 		break;
 	}
@@ -270,7 +295,11 @@ void SceneStealth::UpdateGame(const double dt)
 
 	Virus->vel.x = Math::Clamp(Virus->vel.x,-static_cast<float>(65),static_cast<float>(65));
 	Virus->vel.y = Math::Clamp(Virus->vel.y,-static_cast<float>(65),static_cast<float>(65));
+	
+	//Update player position based on velocity
+	Virus->pos += Virus->vel * (float)dt;
 
+	//Update player direction based on vel.
 	Virus->dir = Virus->vel;
 
 	//Update enemies
@@ -313,8 +342,6 @@ void SceneStealth::UpdateGame(const double dt)
 
 	//Check player collision with enemies
 
-	//Update player position based on velocity
-	Virus->pos += Virus->vel * (float)dt;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -833,7 +860,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		RenderMesh(meshList[GEO_BOX], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
 	}
@@ -844,11 +871,11 @@ void SceneStealth::RenderGame(void)
 	RenderTextOnScreen(meshList[GEO_TEXT], "playing screen test", Color(1, 0, 0), 5, 10, 10);
 
 	//TEST OBJECT - REMOVE
-	modelStack.PushMatrix();
+	/*modelStack.PushMatrix();
 	modelStack.Translate(0, 0, 0);
 	modelStack.Scale(10, 50, 1);
 	RenderMesh(meshList[GEO_WALL_BLUE], bLightEnabled);
-	modelStack.PopMatrix();
+	modelStack.PopMatrix();*/
 
 	//Player
 	//modelStack.PushMatrix();
@@ -902,6 +929,15 @@ void SceneStealth::RenderGame(void)
 			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
 			RenderMesh(meshList[GEO_PLAYER_INDICATOR], bLightEnabled);
 			modelStack.PopMatrix();
+		}
+	}
+	//Render any GameObject here eg wall, box, door.
+	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+		{
+			RenderGO(go);
 		}
 	}
 }
