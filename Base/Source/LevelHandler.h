@@ -2,6 +2,8 @@
 
 #include "GameObject.h"
 #include "Enemy.h"
+#include "Lever.h"
+#include "Interactables.h"
 #include "Enemy_Patrol.h"
 #include "Enemy_Sentry.h"
 #include <string>
@@ -19,6 +21,7 @@ private:
 	//Data storage
 	vector<GameObject *> Structure_List;
 	vector<CEnemy *> Enemy_List;
+	vector<CInteractables *> Interactables_List;
 	vector<string>Level_Tokens;
 	vector<string>Level_Tokens2;
 	char m_cSplit_Char;
@@ -54,7 +57,9 @@ public:
 
 	vector<GameObject *> &GetStructure_List(void);
 	vector<CEnemy *> &GetEnemy_List(void);
+	vector<CInteractables *> &GetInteractables_List(void);
 
 	void LoadMap(string newMap);
+	void LoadEnemies(string newMap);
 };
 

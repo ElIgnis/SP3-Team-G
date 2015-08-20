@@ -15,6 +15,7 @@
 #include "LevelHandler.h"
 #include "Menu.h"
 #include "Enemy.h"
+#include "Interactables.h"
 #include "FactoryEnemy.h"
 #include "Player.h"
 

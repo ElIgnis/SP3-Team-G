@@ -53,6 +53,7 @@ void SceneStealth::Init()
 
 	HS_List.LoadHighScore();
 	LvlHandler.LoadMap("Level//Level 1.txt");
+	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	InitGame();
 }
 void SceneStealth::InitGame(void)
@@ -286,8 +287,7 @@ void SceneStealth::UpdateGame(const double dt)
 		{
 			go->PlayerCurrentPosition(Virus->pos);
 			
-			
-			//if((Virus->pos - go->pos).Length() < 1000)//PUT LINE OF SIGHT CODE DETECTION HERE
+			//if((Virus->pos - go->pos).Length() < 1000)//
 			{
 				if(CheckDetection(go, Virus))
 				{
@@ -297,28 +297,51 @@ void SceneStealth::UpdateGame(const double dt)
 					{
 						go->SetState(CEnemy::STATE_ATTACK);
 						go->SetIsDetected(true);
-						std::cout << "in cone range" << std::endl;
+						//std::cout << "in cone range" << std::endl;
 					}
-					else
-					{
-						std::cout << "not in cone range" << std::endl;		
-					}
-					std::cout << f_DirToPlayer << "   " << go->dir.z << "   " << std::endl;
 				}
 				else
 				{
 					go->SetIsDetected(false);
-					std::cout << "not detected" << std::endl;
 				}
 			}
 			go->Update(dt);
-			bool b_colCheck = false;
-			for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+			//Update enemy bullets
+			for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
 			{
-				GameObject *go2 = (GameObject  *)*it;
+				bool b_ColCheck1 = false;
+				GameObject *bul = (GameObject  *)*it2;
+				if(bul->active)
+				{
+					bul->mass -= 1.f * dt;
+					if(bul->mass < 0.f)
+						bul->active = false;
+					//Check bullet - structure collision
+					for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
+					{
+						GameObject *go3 = (GameObject  *)*it3;
+						if(go3->active)
+						{
+							if(CheckCollision(bul, go3, (float)dt))
+							{
+								bul->active = false;
+								b_ColCheck1 = true;
+								break;
+							}
+						}
+					}
+					if(!b_ColCheck1)
+						bul->pos += bul->vel;//If no collision, update bullet pos
+				}
+			}
+			//Check enemy collision with structures
+			bool b_colCheck = false;
+			for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
+			{
+				GameObject *go2 = (GameObject  *)*it3;
 				if(go2->active)
 				{
-					if(CheckCollision(go, go2, dt))
+					if(CheckCollision(go, go2, (float)dt))
 					{
 						b_colCheck = true;
 						break;
@@ -331,11 +354,6 @@ void SceneStealth::UpdateGame(const double dt)
 				go->pos += go->vel;//If no collision update enemy pos
 		}
 	}
-	Vector3 h1, h2;
-	h1.Set(0,1,0);
-	h2.Set(0,0,1);
-	//std::cout<<h1.Cross(h2)<<std::endl;
-
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 	{
@@ -350,8 +368,17 @@ void SceneStealth::UpdateGame(const double dt)
 		}
 	}
 
-	//Check player collision with enemies
 
+	//Check player collision with interactables
+	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
+	{
+		CInteractables *go = (CInteractables *)* it;
+		if(go->active)
+		{
+			if(Application::IsKeyPressed(VK_RETURN))
+				go->CheckBonusInteraction(Virus->pos);
+		}
+	}
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -866,6 +893,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_BALL], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_LEVER:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
 	case GameObject::GO_BOX:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -906,7 +940,28 @@ void SceneStealth::RenderGame(void)
 	RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
 	modelStack.PopMatrix();
 
-	//Render enemy here
+	//Render structures here
+	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject  *)*it;
+		if(go->active)
+			RenderGO(go);
+	}
+
+	//Render interactables here
+	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
+	{
+		CInteractables *go = (CInteractables *)* it;
+		if(go->active)
+			RenderGO(go);
+		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
+		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
+		modelStack.Scale(5, 5, 5);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+	}
+
+	//Render enemies here
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
 		CEnemy *go = (CEnemy  *)*it;
@@ -925,6 +980,18 @@ void SceneStealth::RenderGame(void)
 			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
 			RenderMesh(meshList[GEO_PLAYER_INDICATOR], bLightEnabled);
 			modelStack.PopMatrix();
+		}
+		for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
+		{
+			GameObject *bul = (GameObject  *)*it2;
+			if(bul->active)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(bul->pos.x, bul->pos.y, bul->pos.z);
+				modelStack.Scale(bul->scale.x, bul->scale.y, bul->scale.z);
+				RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+				modelStack.PopMatrix();
+			}
 		}
 	}
 	//Render any GameObject here eg wall, box, door.

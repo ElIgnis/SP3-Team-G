@@ -18,6 +18,7 @@ public:
 		GO_PILLAR,
 		GO_WALL,
 		GO_PLAYER,
+		GO_LEVER,
 		NUM_GO
 	};
 	GAMEOBJECT_TYPE type;

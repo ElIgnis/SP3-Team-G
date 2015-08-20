@@ -1,7 +1,6 @@
 #include "Interactables.h"
 
 CInteractables::CInteractables() 
-	: activationPos(0,0,0)
 {
 }
 
@@ -11,6 +10,9 @@ CInteractables::~CInteractables()
 
 void CInteractables::CheckBonusInteraction(Vector3 playerPos)
 {
-	if((playerPos - activationPos).Length() < 2)
-		this->active = false;
+}
+
+Vector3 CInteractables::GetSecondaryPosition(void)
+{
+	return Vector3(-1, -1, -1);
 }

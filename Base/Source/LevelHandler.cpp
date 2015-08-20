@@ -37,28 +37,8 @@ void CLevelHandler::LoadMap(string mapLevel)
 			for(string each; std::getline(split, each, m_cSplit_Char);)
 			{
 				Level_Tokens.push_back(each);
-				Level_Tokens2.push_back(each);
 			}
 
-			if(Level_Tokens2.at(GO_TYPE) == "ENEMY_SENTRY")
-			{
-				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[POSX]), stof(Level_Tokens2[POSY]), stof(Level_Tokens2[POSZ])),
-				Vector3(stof(Level_Tokens2[4]), stof(Level_Tokens2[5]), stof(Level_Tokens2[6])),
-				Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])),stof(Level_Tokens2[10]), stof(Level_Tokens2[11]));
-				//std::cout<<stof(Level_Tokens2[10])<<" "<<stof(Level_Tokens2[11])<<std::endl;
-				Enemy_List.push_back(en);
-			}
-			else if(Level_Tokens2.at(GO_TYPE) == "ENEMY_PATROL")
-			{
-				CEnemy *en = new CEnemy_Patrol(Vector3(stof(Level_Tokens2[POSX]), stof(Level_Tokens2[POSY]), stof(Level_Tokens2[POSZ])),
-					Vector3(stof(Level_Tokens2[4]), stof(Level_Tokens2[5]), stof(Level_Tokens2[6])), 
-					Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])));
-				int i_tempNum = stoi(Level_Tokens2[10]);//Number of patrol points
-				for(int i = 0; i < i_tempNum; ++i)
-					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[11 + i * 3]), stof(Level_Tokens2[12 + i * 3]), 0));
-				Enemy_List.push_back(en);
-			}
-			else
 			{
 				//Create new objects
 				GameObject *go = new GameObject();
@@ -85,13 +65,80 @@ void CLevelHandler::LoadMap(string mapLevel)
 				Structure_List.push_back(go);
 			}
 			++m_iObjLine;
+		}
+		inGameLevel.close();
+	}
+	else
+		std::cout << "Load level file failed" << std::endl;
+}
+
+void CLevelHandler::LoadEnemies(string mapLevel)
+{
+	//Load Level details
+	std::ifstream inGameLevel;
+	inGameLevel.open(mapLevel);
+	if(inGameLevel.good())
+	{
+		while(getline(inGameLevel, m_sLevelData))
+		{
+			std::istringstream split(m_sLevelData);
+
+			//Dont read lines with #
+			if(m_sLevelData[0] == '#')
+			{
+				continue;
+			}
+
+			for(string each; std::getline(split, each, m_cSplit_Char);)
+			{
+				Level_Tokens2.push_back(each);
+			}
+
+			if(Level_Tokens2.at(GO_TYPE) == "ENEMY_SENTRY")
+			{
+				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[POSX]), stof(Level_Tokens2[POSY]), stof(Level_Tokens2[POSZ])),
+				Vector3(stof(Level_Tokens2[4]), stof(Level_Tokens2[5]), stof(Level_Tokens2[6])),
+				Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])),stof(Level_Tokens2[10]), stof(Level_Tokens2[11])
+				, stof(Level_Tokens2[12]));
+				//std::cout<<stof(Level_Tokens2[10])<<" "<<stof(Level_Tokens2[11])<<std::endl;
+				Enemy_List.push_back(en);
+			}
+			else if(Level_Tokens2.at(GO_TYPE) == "ENEMY_PATROL")
+			{
+				CEnemy *en = new CEnemy_Patrol(Vector3(stof(Level_Tokens2[POSX]), stof(Level_Tokens2[POSY]), stof(Level_Tokens2[POSZ])),
+					Vector3(stof(Level_Tokens2[4]), stof(Level_Tokens2[5]), stof(Level_Tokens2[6])), 
+					Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])));
+				int i_tempNum = stoi(Level_Tokens2[10]);//Number of patrol points
+				for(int i = 0; i < i_tempNum; ++i)
+					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[11 + i * 3]), stof(Level_Tokens2[12 + i * 3]), 0));
+				Enemy_List.push_back(en);
+			}
+			else if(Level_Tokens2.at(GO_TYPE) == "GO_LEVER")
+			{
+				CInteractables *in = new CLever( 
+					Vector3(stof(Level_Tokens2.at(POSX))
+					, stof(Level_Tokens2.at(POSY))
+					, stof(Level_Tokens2.at(POSZ )))
+					//normal
+					, Vector3(stof(Level_Tokens2.at(NORMALX))
+					, stof(Level_Tokens2.at(NORMALY)))
+					//scale
+					, Vector3(stof(Level_Tokens2.at(SCALEX))
+					, stof(Level_Tokens2.at(SCALEY))
+					, stof(Level_Tokens2.at(SCALEZ)))
+					
+					,Vector3(stof(Level_Tokens2.at(9))
+					, stof(Level_Tokens2.at(10))
+					, stof(Level_Tokens2.at(11))));
+				Interactables_List.push_back(in);
+			}
 			while(Level_Tokens2.size() > 0)
 				Level_Tokens2.pop_back();
 		}
 		inGameLevel.close();
 	}
 	else
-		std::cout << "Load level file failed" << std::endl;
+		std::cout << "Load level file failed OHNO" << std::endl;
 }
 
 vector<GameObject *> &CLevelHandler::GetStructure_List(void)
@@ -102,6 +149,11 @@ vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 vector<CEnemy *> &CLevelHandler::GetEnemy_List(void)
 {
 	return Enemy_List;
+}
+
+vector<CInteractables *> &CLevelHandler::GetInteractables_List(void)
+{
+	return Interactables_List;
 }
 
 void CLevelHandler::SetStageSelection(const bool newStageSelect)
