@@ -45,3 +45,8 @@ void CEnemy::SetIsDetected(bool b_IsDetected)
 {
 	this->m_bIsDetected = b_IsDetected;
 }
+
+vector<GameObject *> &CEnemy::GetBullet_List(void)
+{
+	return m_BulletList;
+}

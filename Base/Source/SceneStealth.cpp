@@ -53,6 +53,7 @@ void SceneStealth::Init()
 
 	HS_List.LoadHighScore();
 	LvlHandler.LoadMap("Level//Level 1.txt");
+	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	InitGame();
 }
 void SceneStealth::InitGame(void)
@@ -295,27 +296,49 @@ void SceneStealth::UpdateGame(const double dt)
 						go->SetIsDetected(true);
 						//std::cout << "in cone range" << std::endl;
 					}
-					else
-					{
-						//std::cout << "not in cone range" << std::endl;		
-					}
-					//std::cout << f_DirToPlayer << "   " << go->dir.z << "   " << std::endl;
 				}
 				else
 				{
 					go->SetIsDetected(false);
-					//std::cout << "not detected" << std::endl;
 				}
 			}
 			go->Update(dt);
-			//Check player collision with enemies
-			bool b_colCheck = false;
-			for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+			//Update enemy bullets
+			for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
 			{
-				GameObject *go2 = (GameObject  *)*it;
+				bool b_ColCheck1 = false;
+				GameObject *bul = (GameObject  *)*it2;
+				if(bul->active)
+				{
+					bul->mass -= 1.f * dt;
+					if(bul->mass < 0.f)
+						bul->active = false;
+					//Check bullet - structure collision
+					for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
+					{
+						GameObject *go3 = (GameObject  *)*it3;
+						if(go3->active)
+						{
+							if(CheckCollision(bul, go3, (float)dt))
+							{
+								bul->active = false;
+								b_ColCheck1 = true;
+								break;
+							}
+						}
+					}
+					if(!b_ColCheck1)
+						bul->pos += bul->vel;//If no collision, update bullet pos
+				}
+			}
+			//Check enemy collision with structures
+			bool b_colCheck = false;
+			for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
+			{
+				GameObject *go2 = (GameObject  *)*it3;
 				if(go2->active)
 				{
-					if(CheckCollision(go, go2, dt))
+					if(CheckCollision(go, go2, (float)dt))
 					{
 						b_colCheck = true;
 						break;
@@ -943,6 +966,18 @@ void SceneStealth::RenderGame(void)
 			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
 			RenderMesh(meshList[GEO_PLAYER_INDICATOR], bLightEnabled);
 			modelStack.PopMatrix();
+		}
+		for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
+		{
+			GameObject *bul = (GameObject  *)*it2;
+			if(bul->active)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(bul->pos.x, bul->pos.y, bul->pos.z);
+				modelStack.Scale(bul->scale.x, bul->scale.y, bul->scale.z);
+				RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+				modelStack.PopMatrix();
+			}
 		}
 	}
 }

@@ -60,5 +60,6 @@ public:
 	vector<CInteractables *> &GetInteractables_List(void);
 
 	void LoadMap(string newMap);
+	void LoadEnemies(string newMap);
 };
 
