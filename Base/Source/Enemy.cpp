@@ -26,10 +26,9 @@ void CEnemy::AddPatrolPoint(Vector3)
 
 }
 
-void CEnemy::Aggro()
+void CEnemy::SetState(ENEMY_STATE state)
 {
-	this->state = STATE_ATTACK;
-	m_bIsDetected = true;
+	this->state = state;
 }
 
 void CEnemy::PlayerCurrentPosition(Vector3 player_position)
