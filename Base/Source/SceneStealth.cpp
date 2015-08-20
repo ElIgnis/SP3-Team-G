@@ -118,7 +118,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
-			Vector3 b1 = go1->pos + go1->vel * dt;
+			Vector3 b1 = go1->pos + go1->vel;
 			Vector3 N = go2->normal;
 			float r = go1->scale.x;
 			float h = go2->scale.x;
@@ -127,7 +127,9 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			float l = go2->scale.y;
 
 			if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.5f)
+			{
 				return true;
+			}
 			return false;
 		}
 		break;
@@ -307,8 +309,30 @@ void SceneStealth::UpdateGame(const double dt)
 				}
 			}
 			go->Update(dt);
+			bool b_colCheck = false;
+			for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+			{
+				GameObject *go2 = (GameObject  *)*it;
+				if(go2->active)
+				{
+					if(CheckCollision(go, go2, dt))
+					{
+						b_colCheck = true;
+						break;
+					}
+					else 
+						b_colCheck = false;
+				}
+			}
+			if(!b_colCheck)
+				go->pos += go->vel;//If no collision update enemy pos
 		}
 	}
+	Vector3 h1, h2;
+	h1.Set(0,1,0);
+	h2.Set(0,0,1);
+	//std::cout<<h1.Cross(h2)<<std::endl;
+
 	//Check player collision with structure
 
 	//Check player collision with enemies
@@ -841,39 +865,25 @@ void SceneStealth::RenderGO(GameObject *go)
 
 void SceneStealth::RenderGame(void)
 {
-	RenderTextOnScreen(meshList[GEO_TEXT], "playing screen test", Color(1, 0, 0), 5, 10, 10);
+	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
 
-	//TEST OBJECT - REMOVE
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0, 0);
-	modelStack.Scale(10, 50, 1);
-	RenderMesh(meshList[GEO_WALL_BLUE], bLightEnabled);
-	modelStack.PopMatrix();
-
-	//Player
+	////Firewall
 	//modelStack.PushMatrix();
-	//modelStack.Translate(-80, 0, 0);
-	////modelStack.Rotate(-120, 0.5, 1, 0.5);
-	//modelStack.Scale(10, 10, 10);
-	//RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+	//modelStack.Translate(80, 0, 0);
+	//modelStack.Rotate(180, 0, 0, 1);
+	//modelStack.Scale(30, 30, 30);
+	//RenderMesh(meshList[GEO_FIREWALL], bLightEnabled);
 	//modelStack.PopMatrix();
 
-	//Firewall
-	modelStack.PushMatrix();
-	modelStack.Translate(80, 0, 0);
-	modelStack.Rotate(180, 0, 0, 1);
-	modelStack.Scale(30, 30, 30);
-	RenderMesh(meshList[GEO_FIREWALL], bLightEnabled);
-	modelStack.PopMatrix();
-
-	//Antivirus
-	modelStack.PushMatrix();
-	modelStack.Translate(40, 0, 0);
-	//modelStack.Rotate(180, 0, 0, 1);
-	modelStack.Scale(10, 10, 10);
-	RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
-	modelStack.PopMatrix();
-
+	////Antivirus
+	//modelStack.PushMatrix();
+	//modelStack.Translate(40, 0, 0);
+	////modelStack.Rotate(180, 0, 0, 1);
+	//modelStack.Scale(10, 10, 10);
+	//RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
+	//modelStack.PopMatrix();
+	
+	//Render player
 	float theta;
 	theta = Math::RadianToDegree(atan2(Virus->dir.y, Virus->dir.x));
 	modelStack.PushMatrix();
@@ -882,6 +892,14 @@ void SceneStealth::RenderGame(void)
 	modelStack.Rotate(theta, 0, 0, 1);
 	RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
 	modelStack.PopMatrix();
+
+	//Render structures here
+	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject  *)*it;
+		if(go->active)
+			RenderGO(go);
+	}
 
 	//Render enemy here
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
