@@ -123,6 +123,9 @@
     <ClCompile Include="Source\Lever.cpp">
       <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Interactables.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -219,6 +222,9 @@
       <Filter>Header Files\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lever.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Interactables.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>

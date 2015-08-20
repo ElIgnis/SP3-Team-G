@@ -1,14 +1,14 @@
 #ifndef LEVER_H
 #define LEVER_H
 
-#include "GameObject.h"
+#include "Interactables.h"
 #include "Vector3.h"
 
-class Lever : public GameObject
+class CLever : public CInteractables
 {
 public:
-	Lever();
-	~Lever();
+	CLever();
+	~CLever();
 
 	virtual void CheckBonusInteraction(Vector3 playerPos);
 

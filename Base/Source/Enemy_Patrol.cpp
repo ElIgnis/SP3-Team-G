@@ -40,14 +40,11 @@ void CEnemy_Patrol::Update(const double dt)
 		{
 			if((unsigned)m_iCurrentPatrolpoint < m_patrolposList.size())
 			{
-				//float temp = atan2(pos.y + m_patrolposList[m_iCurrentPatrolpoint].y, pos.x + m_patrolposList[m_iCurrentPatrolpoint].x);
-				//pos.x += cos(temp) * Patrol_moveSpd * dt;//Change to velocity?
-				//pos.y += sin(temp) * Patrol_moveSpd * dt;
 				normal = (m_patrolposList[m_iCurrentPatrolpoint] - pos).Normalized();
 				Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
 				dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
 
-				pos += normal * Patrol_moveSpd * (float)dt;
+				vel =  normal * Patrol_moveSpd * (float)dt;
 				if((m_patrolposList[m_iCurrentPatrolpoint] - pos).Length() < 1)//dist check to next patrolpoint
 				{
 					pos = m_patrolposList[m_iCurrentPatrolpoint];
@@ -76,7 +73,7 @@ void CEnemy_Patrol::Update(const double dt)
 			//Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
 			//dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
 			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
-			pos += normal * Chase_moveSpd * (float)dt;
+			vel = normal * Chase_moveSpd * (float)dt;
 			if(!m_bIsDetected)
 				m_fAggroTime -= 1.f * dt;
 			else

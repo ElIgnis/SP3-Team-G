@@ -21,6 +21,7 @@
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Highscore.cpp" />
     <ClCompile Include="Source\HighscoreList.cpp" />
+    <ClCompile Include="Source\Interactables.cpp" />
     <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\Item.cpp" />
     <ClCompile Include="Source\LevelHandler.cpp" />
@@ -52,6 +53,7 @@
     <ClInclude Include="Source\Geometry.h" />
     <ClInclude Include="Source\Highscore.h" />
     <ClInclude Include="Source\HighscoreList.h" />
+    <ClInclude Include="Source\Interactables.h" />
     <ClInclude Include="Source\Inventory.h" />
     <ClInclude Include="Source\Item.h" />
     <ClInclude Include="Source\LevelHandler.h" />
