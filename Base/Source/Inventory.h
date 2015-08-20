@@ -1,5 +1,10 @@
 #pragma once
+
 #include "Item.h"
+#include <vector>
+
+using std::vector;
+
 class CInventory
 {
 private:

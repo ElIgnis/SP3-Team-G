@@ -191,8 +191,8 @@ void SceneBase::Init()
 	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//Indicator_Blue2.tga");
 
 	//CPU/Movable box
-	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
-	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
+	//meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
+	//meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Sound
 	engine = createIrrKlangDevice();
