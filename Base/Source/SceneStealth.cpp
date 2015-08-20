@@ -68,13 +68,6 @@ void SceneStealth::InitGame(void)
 	Virus = new CPlayer;
 	Virus->scale.Set(10,10,10);
 	Virus->mass = 1.f;
-
-	//Test Box
-	GameObject *box = FetchGO();
-	box->type = GameObject::GO_BOX;
-	box->scale.Set(20.0,20.0,1);
-	box->pos.Set(-5,-5,0);
-	box->active = true;
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -229,28 +222,9 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 		}
 	case GameObject::GO_BOX:
 		{
-			//|(w0 - b1).N| < r + h / 2
-			Vector3 w0 = go2->pos;
-			Vector3 b1 = go1->pos;
-			Vector3 N = go2->normal;
-			float r = go1->scale.x;
-			float h = go2->scale.x;
-			Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
-			float l = go2->scale.y;
-
-			if(abs((w0 - b1).Dot(N)) > r + h * 0.5f)
-			{
-				//v = u - (2 * u.N)N
-				Vector3 u = go1->vel;
-				go1->vel = 0;
-			}
-
-			if(abs((w0 - b1).Dot(NP)) > r + l * 0.5f)
-			{
-				//v = u - (2 * u.N)NP
-				Vector3 u = go1->vel;
-				go1->vel = 0;
-			}
+			go2->dir = go1->vel;
+			go2->vel = go1->vel;
+			go2->pos += Virus->vel * (float)dt;
 		}
 		break;
 	}
@@ -363,6 +337,18 @@ void SceneStealth::UpdateGame(const double dt)
 	//std::cout<<h1.Cross(h2)<<std::endl;
 
 	//Check player collision with structure
+	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active && go->type == GameObject::GO_BOX)
+		{
+			if(CheckCollision(Virus,go,dt))
+			{
+				cout << "Colliding" << endl;
+				CollisionResponse(Virus,go,dt);
+			}
+		}
+	}
 
 	//Check player collision with enemies
 
@@ -942,7 +928,7 @@ void SceneStealth::RenderGame(void)
 		}
 	}
 	//Render any GameObject here eg wall, box, door.
-	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+	for(std::vector<GameObject *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 	{
 		GameObject *go = (GameObject *)*it;
 		if(go->active)

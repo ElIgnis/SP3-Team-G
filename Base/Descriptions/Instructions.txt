@@ -1,1 +1,12 @@
-TEST TEST TEST TEST TEST
+##########################################
+#   This is the max length of a line     #
+##########################################
+----------Instructions----------
+ Story:
+   You are a rouge internet virus
+that has managed to infect a computer.
+ Misson:
+  You have to AVOID certain anit-virus
+    sentries that gaurd the computer.
+  Solve puzzles to go the next level.
+  Infect the CPU.
