@@ -11,8 +11,7 @@ public:
 	~CInteractables();
 
 	virtual void CheckBonusInteraction(Vector3 playerPos);
-
-	Vector3 activationPos;
+	virtual Vector3 GetSecondaryPosition(void);
 };
 
 #endif

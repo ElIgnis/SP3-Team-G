@@ -13,7 +13,7 @@ class CEnemy_Sentry : public CEnemy
 {
 public:
 	CEnemy_Sentry();
-	CEnemy_Sentry(Vector3 pos, Vector3 scale, Vector3 norm, float m_fScanRot1 = 0, float m_fScanRot2 = 0);
+	CEnemy_Sentry(Vector3 pos, Vector3 scale, Vector3 norm, float m_fScanRot1 = 0, float m_fScanRot2 = 0, float m_fTurnSpd = 1.f);
 	~CEnemy_Sentry();
 
 	void Update(const double dt);
@@ -23,6 +23,7 @@ private:
 	float m_fScanRot1;
 	float m_fScanRot2;
 	float m_fCurrentRot;
+	float m_fTurnSpd;
 };
 
 #endif

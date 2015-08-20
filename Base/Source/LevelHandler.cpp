@@ -44,7 +44,8 @@ void CLevelHandler::LoadMap(string mapLevel)
 			{
 				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[POSX]), stof(Level_Tokens2[POSY]), stof(Level_Tokens2[POSZ])),
 				Vector3(stof(Level_Tokens2[4]), stof(Level_Tokens2[5]), stof(Level_Tokens2[6])),
-				Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])),stof(Level_Tokens2[10]), stof(Level_Tokens2[11]));
+				Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])),stof(Level_Tokens2[10]), stof(Level_Tokens2[11])
+				, stof(Level_Tokens2[12]));
 				//std::cout<<stof(Level_Tokens2[10])<<" "<<stof(Level_Tokens2[11])<<std::endl;
 				Enemy_List.push_back(en);
 			}
@@ -57,6 +58,25 @@ void CLevelHandler::LoadMap(string mapLevel)
 				for(int i = 0; i < i_tempNum; ++i)
 					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[11 + i * 3]), stof(Level_Tokens2[12 + i * 3]), 0));
 				Enemy_List.push_back(en);
+			}
+			else if(Level_Tokens2.at(GO_TYPE) == "GO_LEVER")
+			{
+				CInteractables *in = new CLever( 
+					Vector3(stof(Level_Tokens2.at(POSX))
+					, stof(Level_Tokens2.at(POSY))
+					, stof(Level_Tokens2.at(POSZ )))
+					//normal
+					, Vector3(stof(Level_Tokens2.at(NORMALX))
+					, stof(Level_Tokens2.at(NORMALY)))
+					//scale
+					, Vector3(stof(Level_Tokens2.at(SCALEX))
+					, stof(Level_Tokens2.at(SCALEY))
+					, stof(Level_Tokens2.at(SCALEZ)))
+					
+					,Vector3(stof(Level_Tokens2.at(9))
+					, stof(Level_Tokens2.at(10))
+					, stof(Level_Tokens2.at(11))));
+				Interactables_List.push_back(in);
 			}
 			else
 			{
@@ -102,6 +122,11 @@ vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 vector<CEnemy *> &CLevelHandler::GetEnemy_List(void)
 {
 	return Enemy_List;
+}
+
+vector<CInteractables *> &CLevelHandler::GetInteractables_List(void)
+{
+	return Interactables_List;
 }
 
 void CLevelHandler::SetStageSelection(const bool newStageSelect)
