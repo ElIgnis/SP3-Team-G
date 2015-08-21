@@ -2,7 +2,7 @@
 
 
 CPlayer::CPlayer(void)
-	: m_pHealth(5)
+	: m_pLives(3)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
@@ -24,3 +24,16 @@ void CPlayer::Update(const double dt)
 {
 }
 
+unsigned int CPlayer::getLives(void)
+{
+	return this->m_pLives;
+}
+
+void CPlayer::setLives(unsigned int L)
+{
+	this->m_pLives = L;
+}
+
+void CPlayer::add1Life(void)
+{
+	this->m_pLives += 1;
