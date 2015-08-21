@@ -156,7 +156,6 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 
 			if(distSquared <= combinedRadius * combinedRadius)
 			{
-				Virus->m_bIsHiding = true;
 				return true;
 			}
 			return false;
@@ -302,6 +301,7 @@ void SceneStealth::UpdateGame(const double dt)
 			if (CheckCollision(Virus, go, dt))
 			{
 				Virus->m_bIsHiding = true;
+
 			}
 		}
 	}
@@ -322,9 +322,14 @@ void SceneStealth::UpdateGame(const double dt)
 					float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
 					if(f_DirToPlayer < go->dir.z + 30.f && f_DirToPlayer > go->dir.z - 30.f)
 					{
-						go->SetState(CEnemy::STATE_ATTACK);
-						go->SetIsDetected(true);
-						//std::cout << "in cone range" << std::endl;
+						if(!Virus->m_bIsHiding)
+						{
+							go->SetState(CEnemy::STATE_ATTACK);
+							go->SetIsDetected(true);
+							//std::cout << "in cone range" << std::endl;
+						}
+						else
+							go->SetIsDetected(false);
 					}
 				}
 				else 
@@ -377,7 +382,7 @@ void SceneStealth::UpdateGame(const double dt)
 						b_colCheck = false;
 				}
 			}
-			if(!b_colCheck)
+			//if(!b_colCheck)
 				go->pos += go->vel;//If no collision update enemy pos
 		}
 	}
@@ -406,6 +411,7 @@ void SceneStealth::UpdateGame(const double dt)
 				go->CheckBonusInteraction(Virus->pos);
 		}
 	}
+	Virus->m_bIsHiding = false;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
