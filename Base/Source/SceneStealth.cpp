@@ -362,7 +362,6 @@ void SceneStealth::UpdateGame(const double dt)
 		{
 			if(CheckCollision(Virus,go,dt))
 			{
-				cout << "Colliding" << endl;
 				CollisionResponse(Virus,go,dt);
 			}
 		}
