@@ -15,4 +15,6 @@ public:
 	void add1Life(void);
 	
 	virtual void Update(const double dt);
+
+	bool m_bIsHiding;
 };

@@ -6,6 +6,7 @@ CPlayer::CPlayer(void)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
+	this->m_bIsHiding = false;
 }
 
 CPlayer::CPlayer(Vector3 pos)
@@ -36,4 +37,3 @@ void CPlayer::setLives(unsigned int L)
 void CPlayer::add1Life(void)
 {
 	this->m_pLives += 1;
-}
