@@ -1,6 +1,7 @@
 #pragma once
-using namespace std;
-#include "SceneBase.h"
+
+#include "GameObject.h"
+
 class CItem : public GameObject
 {
 private:

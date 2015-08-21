@@ -2,6 +2,7 @@
 
 
 CPlayer::CPlayer(void)
+	: m_pHealth(5)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;

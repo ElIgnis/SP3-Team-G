@@ -18,12 +18,18 @@ public:
 
 	void Update(const double dt);
 
+	GameObject* FetchBullet(void);
+	virtual vector<GameObject *> &GetBullet_List(void);
+
 private:
 	bool m_bLookDir;
 	float m_fScanRot1;
 	float m_fScanRot2;
 	float m_fCurrentRot;
 	float m_fTurnSpd;
+	float m_fShootCD;
+
+	
 };
 
 #endif

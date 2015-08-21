@@ -37,6 +37,60 @@ void CLevelHandler::LoadMap(string mapLevel)
 			for(string each; std::getline(split, each, m_cSplit_Char);)
 			{
 				Level_Tokens.push_back(each);
+			}
+
+			{
+				//Create new objects
+				GameObject *go = new GameObject();
+				go->active = true;
+
+				go->SetDetails(
+					//GO_TYPE
+					(Level_Tokens.at(GO_TYPE + (m_iObjLine * NUM_INDEX)))
+					//pos
+					, Vector3(stof(Level_Tokens.at(POSX + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(POSY + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(POSZ + (m_iObjLine * NUM_INDEX))))
+					//normal
+					, Vector3(stof(Level_Tokens.at(NORMALX + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(NORMALY + (m_iObjLine * NUM_INDEX))))
+					//scale
+					, Vector3(stof(Level_Tokens.at(SCALEX + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(SCALEY + (m_iObjLine * NUM_INDEX)))
+					, stof(Level_Tokens.at(SCALEZ + (m_iObjLine * NUM_INDEX)))));
+
+				//Normalize walls
+				if(go->type == GameObject::GO_WALL)
+					go->normal.Normalize();
+				Structure_List.push_back(go);
+			}
+			++m_iObjLine;
+		}
+		inGameLevel.close();
+	}
+	else
+		std::cout << "Load level file failed" << std::endl;
+}
+
+void CLevelHandler::LoadEnemies(string mapLevel)
+{
+	//Load Level details
+	std::ifstream inGameLevel;
+	inGameLevel.open(mapLevel);
+	if(inGameLevel.good())
+	{
+		while(getline(inGameLevel, m_sLevelData))
+		{
+			std::istringstream split(m_sLevelData);
+
+			//Dont read lines with #
+			if(m_sLevelData[0] == '#')
+			{
+				continue;
+			}
+
+			for(string each; std::getline(split, each, m_cSplit_Char);)
+			{
 				Level_Tokens2.push_back(each);
 			}
 
@@ -78,40 +132,13 @@ void CLevelHandler::LoadMap(string mapLevel)
 					, stof(Level_Tokens2.at(11))));
 				Interactables_List.push_back(in);
 			}
-			else
-			{
-				//Create new objects
-				GameObject *go = new GameObject();
-				go->active = true;
-
-				go->SetDetails(
-					//GO_TYPE
-					(Level_Tokens.at(GO_TYPE + (m_iObjLine * NUM_INDEX)))
-					//pos
-					, Vector3(stof(Level_Tokens.at(POSX + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(POSY + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(POSZ + (m_iObjLine * NUM_INDEX))))
-					//normal
-					, Vector3(stof(Level_Tokens.at(NORMALX + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(NORMALY + (m_iObjLine * NUM_INDEX))))
-					//scale
-					, Vector3(stof(Level_Tokens.at(SCALEX + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(SCALEY + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(SCALEZ + (m_iObjLine * NUM_INDEX)))));
-
-				//Normalize walls
-				if(go->type == GameObject::GO_WALL)
-					go->normal.Normalize();
-				Structure_List.push_back(go);
-			}
-			++m_iObjLine;
 			while(Level_Tokens2.size() > 0)
 				Level_Tokens2.pop_back();
 		}
 		inGameLevel.close();
 	}
 	else
-		std::cout << "Load level file failed" << std::endl;
+		std::cout << "Load level file failed OHNO" << std::endl;
 }
 
 vector<GameObject *> &CLevelHandler::GetStructure_List(void)

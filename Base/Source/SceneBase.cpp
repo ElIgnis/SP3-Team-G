@@ -194,6 +194,10 @@ void SceneBase::Init()
 	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
 	//meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
 
+	//CPU/Movable box
+	//meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
+	//meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
+
 	//Sound
 	engine = createIrrKlangDevice();
 	if(!engine)

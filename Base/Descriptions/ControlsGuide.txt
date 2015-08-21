@@ -1,10 +1,13 @@
-This is the Game Controls thingy that does
-things for the player.
-This is the Game Controls thingy that does
-things for the player.
-This is the Game Controls thingy that does
-things for the player.
-This is the Game Controls thingy that does
-things for the player.
-This is the Game Controls thingy that does
-things for the player.
+##########################################
+#   This is the max length of a line     #
+##########################################
+------------Controls------------
+ Movement:
+   'W' - Moves the character UP
+   'S' - Moves the character Left
+   'A' - Moves the character Down
+   'D' - Moves the character Right
+ Interactions:
+   'E' - Interact with the object infront
+   'Q' - Use the highlighted item in the
+	  hotbar.

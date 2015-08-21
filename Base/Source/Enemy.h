@@ -4,8 +4,10 @@
 #include "GameObject.h"
 #include "Vector3.h"
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
 
 class CEnemy : public GameObject
 {
@@ -19,6 +21,12 @@ public:
 		STATE_SCAN,
 		NUM_STATES,
 	};
+	enum ENEMY_TYPE
+	{
+		ENEMY_PATROL,
+		ENEMY_SENTRY,
+	};
+	ENEMY_TYPE e_type;
 
 	CEnemy();
 	CEnemy(Vector3 pos, ENEMY_STATE state);
@@ -31,12 +39,15 @@ public:
 	virtual void PlayerCurrentPosition(Vector3 player_position);
 	virtual Vector3 GetDetectionRange(void);
 	virtual void SetIsDetected(bool b_IsDetected);
+
+	virtual vector<GameObject *> &GetBullet_List(void);
 	
 protected:
 	ENEMY_STATE state;
 	Vector3 player_position;
 	Vector3 detection_range;
 	bool m_bIsDetected;
+	std::vector<GameObject *> m_BulletList;
 };
 
 #endif

@@ -139,9 +139,21 @@ void CMenuItem::ReadDescription()
 	std::string line;
 	if (theFile.is_open())
 	{
+		//Dont read lines with #
 		while ( std::getline (theFile,line) )
 		{
-				vec_DescTokens.push_back(line);
+			std::istringstream split(line);
+
+			//Dont read lines with #
+			if(line[0] == '#')
+			{
+				continue;
+			}
+
+			for(string each; std::getline(split, each);)
+			{
+				vec_DescTokens.push_back(each);
+			}
 		}
 		theFile.close();
 	}
