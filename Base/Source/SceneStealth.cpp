@@ -292,20 +292,6 @@ void SceneStealth::UpdateGame(const double dt)
 	//Update player direction based on vel.
 	Virus->dir = Virus->vel;
 
-	//Check Player Collision with Hiding Hole
-	for(std::vector<GameObject   *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if (go->active && go->type == GameObject::GO_HOLE)
-		{
-			if (CheckCollision(Virus, go, dt))
-			{
-				Virus->m_bIsHiding = true;
-
-			}
-		}
-	}
-
 	//Update enemies
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
@@ -399,6 +385,19 @@ void SceneStealth::UpdateGame(const double dt)
 		}
 	}
 
+	//Check Player Collision with Hiding Hole
+	for(std::vector<GameObject   *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if (go->active && go->type == GameObject::GO_HOLE)
+		{
+			if (CheckCollision(Virus, go, dt))
+			{
+				Virus->m_bIsHiding = true;
+
+			}
+		}
+	}
 
 	//Check player collision with interactables
 	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
