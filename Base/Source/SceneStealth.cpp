@@ -149,6 +149,20 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 				return true;
 			return false;
 		}
+
+	case GameObject::GO_HOLE:
+		{
+			float distSquared = (go2->pos - go1->pos).LengthSquared();
+			float combinedRadius = go1->scale.x + go2->scale.x;
+
+			if(distSquared <= combinedRadius * combinedRadius)
+			{
+				Virus->m_bIsHiding = true;
+				return true;
+			}
+			return false;
+		}
+		break;
 	}
 	return false;
 }
@@ -275,6 +289,19 @@ void SceneStealth::UpdateGame(const double dt)
 
 	Virus->dir = Virus->vel;
 
+	//Check Player Collision with Hiding Hole
+	for(std::vector<GameObject   *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if (go->active && go->type == GameObject::GO_HOLE)
+		{
+			if (CheckCollision(Virus, go, dt))
+			{
+				Virus->m_bIsHiding = true;
+			}
+		}
+	}
+
 	//Update enemies
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
@@ -291,20 +318,29 @@ void SceneStealth::UpdateGame(const double dt)
 					float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
 					if(f_DirToPlayer < go->dir.z + 30.f && f_DirToPlayer > go->dir.z - 30.f)
 					{
-						go->SetState(CEnemy::STATE_ATTACK);
-						go->SetIsDetected(true);
-						//std::cout << "in cone range" << std::endl;
+						if (Virus->m_bIsHiding)
+						{
+							go->SetIsDetected(false);
+						}
+						else
+						{
+							go->SetState(CEnemy::STATE_ATTACK);
+							go->SetIsDetected(true);
+							//std::cout << "in cone range" << std::endl;
+						}
 					}
-					else
-					{
-						//std::cout << "not in cone range" << std::endl;		
-					}
+					//else
+					//{
+					//	go->SetIsDetected(false);
+					//	//std::cout << "hiding" << std::endl;		
+					//}
 					//std::cout << f_DirToPlayer << "   " << go->dir.z << "   " << std::endl;
 				}
-				else
+				else 
 				{
 					go->SetIsDetected(false);
 					//std::cout << "not detected" << std::endl;
+
 				}
 			}
 			go->Update(dt);
@@ -342,6 +378,9 @@ void SceneStealth::UpdateGame(const double dt)
 	}
 	//Update player position based on velocity
 	Virus->pos += Virus->vel * (float)dt;
+
+	//Changes Hiding State of Player back to normal
+	Virus->m_bIsHiding = false;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -870,6 +909,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_BALL], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_HOLE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_HOLE], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
 	}
 }
 
@@ -938,11 +984,11 @@ void SceneStealth::RenderGame(void)
 			RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
 			modelStack.PopMatrix();
 
-			modelStack.PushMatrix();
+			/*modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
 			RenderMesh(meshList[GEO_PLAYER_INDICATOR], bLightEnabled);
-			modelStack.PopMatrix();
+			modelStack.PopMatrix();*/
 		}
 	}
 }

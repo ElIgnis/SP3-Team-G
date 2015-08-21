@@ -22,6 +22,9 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 	if(newType == "GO_WALL")
 		this->type = GO_WALL;
 
+	if(newType == "GO_HOLE")
+		this->type = GO_HOLE;
+
 	this->pos = newPos;
 	this->normal = newNormal;
 	this->scale = newScale;

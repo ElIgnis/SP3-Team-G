@@ -76,12 +76,14 @@ public:
 		GEO_QUAD,
 		GEO_BACKGROUND,
 		GEO_BALL2,
+
 		//Game Objects
 		GEO_WALL_BLUE,
 		GEO_PLAYER,
 		GEO_FIREWALL,
 		GEO_ANTIVIRUS,
 		GEO_PLAYER_INDICATOR,
+		GEO_HOLE,
 		NUM_GEOMETRY,
 	};
 protected:

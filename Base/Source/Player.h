@@ -11,4 +11,6 @@ public:
 	~CPlayer(void);
 	
 	virtual void Update(const double dt);
+
+	bool m_bIsHiding;
 };

@@ -189,6 +189,10 @@ void SceneBase::Init()
 	//Player indicator
 	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
 	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//Indicator_Blue2.tga");
+	
+	//Hiding Spot
+	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
+	//meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
 
 	//Sound
 	engine = createIrrKlangDevice();
