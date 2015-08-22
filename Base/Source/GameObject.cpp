@@ -30,6 +30,9 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 		this->type = GO_POWERUP_SPEED;
 
 
+	if(newType == "GO_HOLE")
+		this->type = GO_HOLE;
+
 	this->pos = newPos;
 	this->normal = newNormal;
 	this->scale = newScale;

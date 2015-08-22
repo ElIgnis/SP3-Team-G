@@ -31,4 +31,6 @@ public:
 	bool GetPowerupStatus(PowerupList);
 	
 	virtual void Update(const double dt);
+
+	bool m_bIsHiding;
 };

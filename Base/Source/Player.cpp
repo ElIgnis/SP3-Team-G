@@ -6,6 +6,7 @@ CPlayer::CPlayer(void)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
+	this->m_bIsHiding = false;
 	for(int i = 0; i < NUM_POWERUPS; ++i)
 		m_bPowerupStatus[i] = false;
 }

@@ -76,6 +76,7 @@ public:
 		GEO_QUAD,
 		GEO_BACKGROUND,
 		GEO_BALL2,
+
 		//Game Objects
 		GEO_WALL_GREEN,
 		GEO_WALL_BLUE,
@@ -87,6 +88,7 @@ public:
 		GEO_POWERUP_SPEED,
 		GEO_BOX,
 		GEO_PLAYER_INDICATOR,
+		GEO_HOLE,
 		NUM_GEOMETRY,
 	};
 protected:
