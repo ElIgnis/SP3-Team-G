@@ -19,6 +19,8 @@ public:
 		GO_WALL,
 		GO_PLAYER,
 		GO_LEVER,
+		GO_POWERUP_SPEED,
+		GO_POWERUP_FREEZE,
 		NUM_GO
 	};
 	GAMEOBJECT_TYPE type;
@@ -30,6 +32,7 @@ public:
 	Vector3 normal;
 
 	bool active;
+	bool phasing;
 	float mass;
 	
 	void SetDetails(std::string newType, Vector3 newPos, Vector3 newNormal, Vector3 newScale);

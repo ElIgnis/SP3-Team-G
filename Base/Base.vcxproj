@@ -16,6 +16,7 @@
     <ClCompile Include="Source\Camera3.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\Enemy_Patrol.cpp" />
+    <ClCompile Include="Source\Enemy_Patrol_Rage.cpp" />
     <ClCompile Include="Source\Enemy_Sentry.cpp" />
     <ClCompile Include="Source\FactoryEnemy.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
@@ -47,6 +48,7 @@
     <ClInclude Include="Source\Camera3.h" />
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\Enemy_Patrol.h" />
+    <ClInclude Include="Source\Enemy_Patrol_Rage.h" />
     <ClInclude Include="Source\Enemy_Sentry.h" />
     <ClInclude Include="Source\FactoryEnemy.h" />
     <ClInclude Include="Source\GameObject.h" />

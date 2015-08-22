@@ -4,6 +4,7 @@
 CLevelHandler::CLevelHandler(void)
 	: m_cSplit_Char(',')
 	, m_sLevelData("")
+	, m_sLevelData2("")
 	, m_iObjLine(0)
 	, m_iCurrentStage(1)
 	, m_bStageSelection(false)
@@ -62,7 +63,11 @@ void CLevelHandler::LoadMap(string mapLevel)
 				//Normalize walls
 				if(go->type == GameObject::GO_WALL)
 					go->normal.Normalize();
-				Structure_List.push_back(go);
+
+				if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED)
+					Powerup_List.push_back(go);
+				else
+					Structure_List.push_back(go);
 			}
 			++m_iObjLine;
 		}
@@ -79,12 +84,12 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 	inGameLevel.open(mapLevel);
 	if(inGameLevel.good())
 	{
-		while(getline(inGameLevel, m_sLevelData))
+		while(getline(inGameLevel, m_sLevelData2))
 		{
-			std::istringstream split(m_sLevelData);
+			std::istringstream split(m_sLevelData2);
 
 			//Dont read lines with #
-			if(m_sLevelData[0] == '#')
+			if(m_sLevelData2[0] == '#')
 			{
 				continue;
 			}
@@ -96,21 +101,33 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 
 			if(Level_Tokens2.at(GO_TYPE) == "ENEMY_SENTRY")
 			{
-				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[POSX]), stof(Level_Tokens2[POSY]), stof(Level_Tokens2[POSZ])),
-				Vector3(stof(Level_Tokens2[4]), stof(Level_Tokens2[5]), stof(Level_Tokens2[6])),
-				Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])),stof(Level_Tokens2[10]), stof(Level_Tokens2[11])
-				, stof(Level_Tokens2[12]));
-				//std::cout<<stof(Level_Tokens2[10])<<" "<<stof(Level_Tokens2[11])<<std::endl;
+				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
+				Vector3(stof(Level_Tokens2[ESCALEX]), stof(Level_Tokens2[ESCALEY]), stof(Level_Tokens2[ESCALEZ])),
+				Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0)
+				,stof(Level_Tokens2[9]), stof(Level_Tokens2[10])
+				, stof(Level_Tokens2[11]));
 				Enemy_List.push_back(en);
 			}
-			else if(Level_Tokens2.at(GO_TYPE) == "ENEMY_PATROL")
+			else if(Level_Tokens2.at(EGO_TYPE) == "ENEMY_PATROL")
 			{
-				CEnemy *en = new CEnemy_Patrol(Vector3(stof(Level_Tokens2[POSX]), stof(Level_Tokens2[POSY]), stof(Level_Tokens2[POSZ])),
-					Vector3(stof(Level_Tokens2[4]), stof(Level_Tokens2[5]), stof(Level_Tokens2[6])), 
-					Vector3(stof(Level_Tokens2[7]), stof(Level_Tokens2[8]), stof(Level_Tokens2[9])));
-				int i_tempNum = stoi(Level_Tokens2[10]);//Number of patrol points
+				CEnemy *en = new CEnemy_Patrol(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
+					Vector3(stof(Level_Tokens2[ESCALEX]), stof(Level_Tokens2[ESCALEY]), stof(Level_Tokens2[ESCALEZ])), 
+					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0));
+				int i_tempNum = stoi(Level_Tokens2[ENUM_POINTS]);//Number of patrol points
 				for(int i = 0; i < i_tempNum; ++i)
-					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[11 + i * 3]), stof(Level_Tokens2[12 + i * 3]), 0));
+					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[EPOINT1 + i * 2]), stof(Level_Tokens2[EPOINT2 + i * 2]), 0));
+				en->normal.Normalize();
+				Enemy_List.push_back(en);
+			}
+			else if(Level_Tokens2.at(EGO_TYPE) == "ENEMY_PATROL_RAGE")
+			{
+				CEnemy *en = new CEnemy_Patrol_Rage(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
+					Vector3(stof(Level_Tokens2[ESCALEX]), stof(Level_Tokens2[ESCALEY]), stof(Level_Tokens2[ESCALEZ])), 
+					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0));
+				int i_tempNum = stoi(Level_Tokens2[ENUM_POINTS]);//Number of patrol points
+				for(int i = 0; i < i_tempNum; ++i)
+					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[EPOINT1 + i * 2]), stof(Level_Tokens2[EPOINT2 + i * 2]), 0));
+				en->normal.Normalize();
 				Enemy_List.push_back(en);
 			}
 			else if(Level_Tokens2.at(GO_TYPE) == "GO_LEVER")
@@ -144,6 +161,11 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 {
 	return Structure_List;
+}
+
+vector<GameObject *> &CLevelHandler::GetPowerup_List(void)
+{
+	return Powerup_List;
 }
 
 vector<CEnemy *> &CLevelHandler::GetEnemy_List(void)

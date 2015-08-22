@@ -9,7 +9,8 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	dir(0, 0, 0),
 	normal(0, 0, 0),
 	active(false),
-	mass(1.f)
+	mass(1.f),
+	phasing(false)
 {
 }
 
@@ -23,6 +24,11 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 		this->type = GO_WALL;
 	else if(newType == "GO_BOX")
 		this->type = GO_BOX;
+	else if(newType == "GO_POWERUP_FREEZE")
+		this->type = GO_POWERUP_FREEZE;
+	else if(newType == "GO_POWERUP_SPEED")
+		this->type = GO_POWERUP_SPEED;
+
 
 	this->pos = newPos;
 	this->normal = newNormal;

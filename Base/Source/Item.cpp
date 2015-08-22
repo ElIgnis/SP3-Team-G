@@ -10,11 +10,10 @@ CItem::~CItem(void)
 {
 }
 
-CItem::CItem(string item_name, Vector3 pos)
+CItem::CItem(string item_name, ITEM_TYPE t, Vector3 pos)
 	: m_itemName(item_name)
-	, itemType(KEY)
+	, itemType(t)
 {
 	//This constructor needs to be worked on if needed.
-	this->pos = pos;
-	this->type = GameObject::GO_CUBE;//Cube for easier pick up.
+
 }

@@ -1,6 +1,8 @@
 #include "Enemy_Sentry.h"
 
 #define Scan_turnSpd 1.f
+#define Bullet_Size 2.f
+#define Bullet_Spd 60.f
 
 CEnemy_Sentry::CEnemy_Sentry() 
 	: m_bLookDir(true)
@@ -61,8 +63,8 @@ void CEnemy_Sentry::Update(const double dt)
 				GameObject *go = FetchBullet();
 				go->mass = 5.f;
 				go->pos = this->pos;
-				go->vel = this->normal * 60.f * dt;
-				go->scale.Set(2,2,2);
+				go->vel = this->normal * Bullet_Spd * dt;
+				go->scale.Set(Bullet_Size,Bullet_Size,Bullet_Size);
 				m_fShootCD = 1.f;
 			}
 			m_fShootCD -= 1.f * dt;
