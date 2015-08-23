@@ -170,7 +170,9 @@ void SceneBase::Init()
 
 	//Game Objects
 	//Wall
-	meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
+	meshList[GEO_WALL_GREEN] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
+	meshList[GEO_WALL_GREEN]->textureID = LoadTGA("Image//GameObjects/Walls/wall_green.tga");
+	//meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
 	meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
 	meshList[GEO_WALL_BLUE]->textureID = LoadTGA("Image//GameObjects/Walls/wall_blue.tga");
 
@@ -185,6 +187,12 @@ void SceneBase::Init()
 	//Antivirus - Sentry Enemy
 	meshList[GEO_ANTIVIRUS] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Antivirus.obj");
 	meshList[GEO_ANTIVIRUS]->textureID = LoadTGA("Image//Antivirus.tga");
+	meshList[GEO_ANTIVIRUS_INVERTED] = MeshBuilder::GenerateOBJ("Ranged_inverted", "OBJ//Antivirus.obj");
+	meshList[GEO_ANTIVIRUS_INVERTED]->textureID = LoadTGA("Image//Antivirus_inverted.tga");
+
+	//Powerups
+	meshList[GEO_POWERUP_FREEZE] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//TimeFreeze.obj");
+	meshList[GEO_POWERUP_FREEZE]->textureID = LoadTGA("Image//GameObjects/Powerups/TimeFreeze.tga");
 
 	//Player indicator
 	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
@@ -192,11 +200,11 @@ void SceneBase::Init()
 	
 	//Hiding Spot
 	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
-	//meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
+	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
 
 	//CPU/Movable box
-	//meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
-	//meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
+	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
+	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Sound
 	engine = createIrrKlangDevice();

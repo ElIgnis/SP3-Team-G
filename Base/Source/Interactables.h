@@ -2,7 +2,6 @@
 #define Interactables_H
 
 #include "GameObject.h"
-#include "Vector3.h"
 
 class CInteractables : public GameObject
 {

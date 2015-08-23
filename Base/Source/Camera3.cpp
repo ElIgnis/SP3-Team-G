@@ -25,6 +25,7 @@ void Camera3::Init(const Vector3& pos, const Vector3& target, const Vector3& up)
 	right.y = 0;
 	right.Normalize();
 	this->up = defaultUp = right.Cross(view).Normalized();
+	DistFromPlayer = Vector3(0, CamHeight, CamDistance);
 }
 
 void Camera3::Walk(const double dt)
@@ -182,27 +183,21 @@ void Camera3::SetPersp(bool newPersp)
 	this->PerspView = newPersp;
 }
 
+void Camera3::SetTargetPlayer(CPlayer *newTargetPlayer)
+{
+	this->TargetPlayer = newTargetPlayer;
+}
+
 void Camera3::Update(double dt)
 {
-	if(PerspView)
+	if(Application::IsKeyPressed('M'))
+		PerspView = true;
+	if(Application::IsKeyPressed('N'))
 	{
-		//if(Application::IsKeyPressed('W'))
-		//{
-		//	Walk(dt);
-		//}
-		//if(Application::IsKeyPressed('S'))
-		//{
-		//	Walk(-dt);
-		//}
-		//if(Application::IsKeyPressed('A'))
-		//{
-		//	Strafe(-dt);
-		//}
-		//if(Application::IsKeyPressed('D'))
-		//{
-		//	Strafe(dt);
-		//}
+		Reset();
+		PerspView = false;
 	}
+
 	if(Application::IsKeyPressed('R'))
 	{
 		Reset();
@@ -211,23 +206,74 @@ void Camera3::Update(double dt)
 	//FPS Camera Pitch/Yaw
 	if(PerspView)
 	{
+		Mtx44 rotX,rotY;
+
+		
+		
+		if(Application::IsKeyPressed(VK_LEFT))
+		{
+			rotateAngle.y += 1.f * dt;
+		}
+		else if(Application::IsKeyPressed(VK_RIGHT))
+		{
+			rotateAngle.y -= 1.f * dt;
+		}
+		if(Application::IsKeyPressed(VK_UP))
+		{
+			if(DistFromPlayer.y > 25.f)
+				DistFromPlayer.y -= 50.f * dt;
+			//rotateAngle.x += 100.f * dt;
+		}
+		if(Application::IsKeyPressed(VK_DOWN))
+		{
+			if(DistFromPlayer.y < 125.f)
+			DistFromPlayer.y += 50.f * dt;
+			//rotateAngle.x -= 100.f * dt;
+		}
+		if(!Application::IsKeyPressed(VK_UP) && !Application::IsKeyPressed(VK_DOWN))
+		{
+			rotateAngle.x = 0.f;
+		}
+
+		rotY.SetToRotation(rotateAngle.y, 0, 1, 0);
+		rotX.SetToRotation(rotateAngle.x, 1, 0, 0);
+
+		Vector3 view = (target - position).Normalized();
+		Vector3 right = view.Cross(up);
+		right.y = 0;
+		right.Normalize();
+		up = right.Cross(view).Normalized();
+		up = rotX * up;
+		//up = Vector3(0,1,0);
+
+		target.x = TargetPlayer->pos.x;
+		target.y = 0;
+		target.z = -TargetPlayer->pos.y;
+
+		position.x = TargetPlayer->pos.x + (DistFromPlayer.z * sin(rotateAngle.y));
+		position.y = DistFromPlayer.y;
+		position.z = -TargetPlayer->pos.y + (DistFromPlayer.z * cos(rotateAngle.y));
+		//position = rotX * position;
+		// * sin(rotateAngle.x)
+		// * cos(rotateAngle.x)
+
 		//if(position.z <= 60.f && position.y >= 70.f)
-		{
-			//if ( Application::GetCam_Yaw() != 0)
-			//	Yaw( dt );
-			//if ( Application::GetCam_Pitch() != 0 )
-			//	Pitch( dt );
-		}
-		if(position.z >= 60.f)
-		{
-			position.z -= 40.f * (float)dt;
-			target.z -= 40.f * (float)dt;
-		}
-		if(position.y <= 70.f)
-		{
-			position.y += 40.f * (float)dt;
-			target.y -= 40.f * (float)dt;
-		}
+		//{
+		//	if ( Application::GetCam_Yaw() != 0)
+		//		Yaw( dt );
+		//	if ( Application::GetCam_Pitch() != 0 )
+		//		Pitch( dt );
+		//}
+		//if(position.z >= 60.f)
+		//{
+		//	position.z -= 40.f * (float)dt;
+		//	target.z -= 40.f * (float)dt;
+		//}
+		//if(position.y <= 70.f)
+		//{
+		//	position.y += 40.f * (float)dt;
+		//	target.y -= 40.f * (float)dt;
+		//}
 	}
 }
 

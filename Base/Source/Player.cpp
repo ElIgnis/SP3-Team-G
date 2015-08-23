@@ -7,6 +7,8 @@ CPlayer::CPlayer(void)
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
 	this->m_bIsHiding = false;
+	for(int i = 0; i < NUM_POWERUPS; ++i)
+		m_bPowerupStatus[i] = false;
 }
 
 CPlayer::CPlayer(Vector3 pos)
@@ -22,6 +24,15 @@ CPlayer::~CPlayer(void)
 
 void CPlayer::Update(const double dt)
 {
+	for(int i = 0; i < NUM_POWERUPS; ++i)
+	{
+		if(m_bPowerupStatus[i] == true)
+		{
+			m_fPowerupTime[i] -= dt;
+			if(m_fPowerupTime[i] < 0.f)
+				m_bPowerupStatus[i] = false;
+		}
+	}
 }
 
 unsigned int CPlayer::getLives(void)
@@ -37,4 +48,15 @@ void CPlayer::setLives(unsigned int L)
 void CPlayer::add1Life(void)
 {
 	this->m_pLives += 1;
+}
+
+void CPlayer::ActivatePowerup(PowerupList p, float f_timeLimit)
+{
+	m_bPowerupStatus[p] = true;
+	m_fPowerupTime[p] = f_timeLimit;
+}
+
+bool CPlayer::GetPowerupStatus(PowerupList p)
+{
+	return m_bPowerupStatus[p];
 }

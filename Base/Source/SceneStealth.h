@@ -58,11 +58,18 @@ public:
 	void InitGame(void);
 
 	//Update everything in the game scene here(Not Menu)
-	void UpdateGame(const double dt);
 	void UpdateMenu(const double dt);
+
+	//Update everything related to player(player collision to structures, powerups, player movement..)
+	void UpdatePlayer(const double dt);
+	//Update everything related to enemies(enemy collision to player, structures)
+	void UpdateEnemies(const double dt);
 
 	//Update keypress
 	void UpdateKeypress(const unsigned char key);
+	void UpdateMenuKeypress(const unsigned char key);
+	void UpdateGameKeypress(const unsigned char key);
+
 
 	//Process key input
 	void ProcessKeys(void);
@@ -97,13 +104,9 @@ private:
 	bool b_ExitScene;
 
 	//Player vars
-	GameObject *Player;
 	CPlayer *Virus;
 	Vector3 m_force;
 	float m_speed;
-
-	//Powerups
-	vector<GameObject *> PowerUp_List;
 
 	//Scene rotation
 	float rotateScene;

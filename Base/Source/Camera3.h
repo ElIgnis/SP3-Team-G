@@ -2,7 +2,11 @@
 #define CAMERA_3_H
 
 #include "Camera.h"
+#include "Player.h"
 #include <vector>
+
+#define CamHeight 80.f
+#define CamDistance 100.f
 
 using std::vector;
 
@@ -45,10 +49,17 @@ public:
 	bool GetPersp(void);
 	void SetPersp(bool PerspView);
 
+	void SetTargetPlayer(CPlayer *newTargetPlayer);
 private:
+	Vector3 rotateAngle;
+	Vector3 DistFromPlayer;
+	Vector3 Dir;
+
 	float ViewLimiter;
 	float pitch;
 	bool PerspView;
+
+	CPlayer *TargetPlayer;
 };
 
 #endif

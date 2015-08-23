@@ -10,6 +10,12 @@ CInventory::CInventory(void)
 
 CInventory::~CInventory(void)
 {
+	while(Inventory.size() > 0)
+	{
+		CItem *Item = Inventory.back();
+		delete Item;
+		Inventory.pop_back();
+	}
 }
 
 void CInventory::setSize(unsigned int size)

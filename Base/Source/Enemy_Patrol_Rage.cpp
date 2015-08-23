@@ -1,12 +1,13 @@
-#include "Enemy_Patrol.h"
+#include "Enemy_Patrol_Rage.h"
 
 #define Patrol_moveSpd 15.f
 #define Chase_moveSpd 20.f
-#define Enraged_moveSpd 55.f
+#define Enraged_moveSpd 75.f
 #define Patrol_waitTime 1.f
 #define AggroTime 1.f
+#define ChargeTime 0.5f
 
-CEnemy_Patrol::CEnemy_Patrol() 
+CEnemy_Patrol_Rage::CEnemy_Patrol_Rage() 
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(0)
 	, m_fWaitTime(0.f)
@@ -14,12 +15,14 @@ CEnemy_Patrol::CEnemy_Patrol()
 	this->state = STATE_PATROL;
 }
 
-CEnemy_Patrol::CEnemy_Patrol(Vector3 pos, Vector3 scale, Vector3 norm)
+CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm)
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(1)
 	, m_fWaitTime(0.f)
+	, m_bCharge(true)
+	, m_fChargeTime(0.5f)
 {
-	e_type = ENEMY_PATROL;
+	e_type = ENEMY_PATROL_RAGE;
 	this->state = STATE_PATROL;
 	this->pos = pos;
 	this->scale = scale;
@@ -29,11 +32,11 @@ CEnemy_Patrol::CEnemy_Patrol(Vector3 pos, Vector3 scale, Vector3 norm)
 	m_patrolposList.push_back(pos);
 }
 
-CEnemy_Patrol::~CEnemy_Patrol()
+CEnemy_Patrol_Rage::~CEnemy_Patrol_Rage()
 {
 }
 
-void CEnemy_Patrol::Update(const double dt)
+void CEnemy_Patrol_Rage::Update(const double dt)
 {
 	switch(state)
 	{
@@ -70,11 +73,21 @@ void CEnemy_Patrol::Update(const double dt)
 		break;
 	case STATE_ATTACK:
 		{
-			normal = (player_position - pos).Normalized();
-			//Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
-			//dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
-			vel = normal * Chase_moveSpd * (float)dt;
+			m_fChargeTime -= dt;
+			if(m_bCharge)
+			{
+				normal = (player_position - pos).Normalized();
+				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+				vel = normal * Enraged_moveSpd * (float)dt;
+				m_bCharge = false;
+			}
+			if(m_fChargeTime < 0.f)
+				vel.SetZero();
+			if(m_fChargeTime < -ChargeTime)
+			{
+				m_bCharge = true;
+				m_fChargeTime = ChargeTime;
+			}
 			if(!m_bIsDetected)
 				m_fAggroTime -= 1.f * dt;
 			else
@@ -88,13 +101,13 @@ void CEnemy_Patrol::Update(const double dt)
 	}
 }
 
-void CEnemy_Patrol::SetState(ENEMY_STATE newState)
+void CEnemy_Patrol_Rage::SetState(ENEMY_STATE newState)
 {
 	this->state = newState;
 	m_fAggroTime = AggroTime;
 }
 
-void CEnemy_Patrol::AddPatrolPoint(Vector3 p)
+void CEnemy_Patrol_Rage::AddPatrolPoint(Vector3 p)
 {
 	m_patrolposList.push_back(p);
 }

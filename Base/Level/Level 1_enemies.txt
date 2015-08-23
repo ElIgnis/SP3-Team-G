@@ -1,10 +1,9 @@
 ##LEVERS##
 GO_LEVER,0.00,0.00,0.00,1.00,0.00,10.00,10.0,10.0,20.0,20.0,0.0
 ##ENEMIES##
-#   Sentry Enemy Format - Enemy type, posX, posY, posZ, scaleX, scaleY, scaleZ, normX, normY, normZ, rotation1, rotation2, turnSpd
-#   Patrol Enemy Format - Enemy type, posX, posY, posZ, scaleX, scaleY, scaleZ, normX, normY, normZ, (Insert patrol points here(x,y,z))
-ENEMY_SENTRY,-90,-30,0,10,10,10,0,1,0,340,0,5
-ENEMY_SENTRY,-60,-30,0,10,10,10,0,1,0,180,0,3
-ENEMY_PATROL,0,-20,0,10,10,10,0,1,0,2,0,0,0,50,0,0
-#ENEMY_PATROL,-20,-20,0,10,10,10,0,1,0,2,-20,30,0,50,30,0
-GO_WALL,0.00,-33.5,0.00,1.00,0.00,60.00,5.0,10.0
+#   Sentry Enemy Format - Enemy type, posX, posY, posZ, scaleX, scaleY, scaleZ, normX, normY,  rotation1, rotation2, turnSpd
+#   Patrol Enemy Format - Enemy type, posX, posY, posZ, scaleX, scaleY, scaleZ, normX, normY,  (Insert patrol points here(x,y))
+ENEMY_SENTRY,-90,-40,0,5,5,5,0,1,340,0,5
+#ENEMY_SENTRY,-60,-30,0,5,5,5,0,1,180,0,3
+ENEMY_PATROL,0,0,0,5,5,5,0,1,1,20,0
+ENEMY_PATROL_RAGE,0,10,0,5,5,5,0,1,1,20,0

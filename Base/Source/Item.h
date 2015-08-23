@@ -1,8 +1,11 @@
 #pragma once
 
-#include "GameObject.h"
+#include <iostream>
+#include <string>
+#include "Vector3.h"
+using std::string;
 
-class CItem : public GameObject
+class CItem
 {
 private:
 	string m_itemName;
@@ -11,12 +14,14 @@ public:
 	{
 		KEY = 0,
 		HEALTH,
+		FREEZE,
+		SPEED,
 		ITEM_TOTAL,
 	};
 	ITEM_TYPE itemType;
 
 	CItem(void);
-	CItem(string item_name, Vector3 pos);
+	CItem(string item_name, ITEM_TYPE t,Vector3 pos = Vector3(0,0,0));
 	~CItem(void);
 };
 

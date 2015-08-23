@@ -24,6 +24,7 @@ public:
 	enum ENEMY_TYPE
 	{
 		ENEMY_PATROL,
+		ENEMY_PATROL_RAGE,
 		ENEMY_SENTRY,
 	};
 	ENEMY_TYPE e_type;
