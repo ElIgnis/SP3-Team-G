@@ -81,5 +81,6 @@ public:
 
 	void LoadMap(string newMap);
 	void LoadEnemies(string newMap);
+	void Exit(void);
 };
 

@@ -40,35 +40,33 @@ void CLevelHandler::LoadMap(string mapLevel)
 				Level_Tokens.push_back(each);
 			}
 
-			{
-				//Create new objects
-				GameObject *go = new GameObject();
-				go->active = true;
+			//Create new objects
+			GameObject *go = new GameObject();
+			go->active = true;
 
-				go->SetDetails(
-					//GO_TYPE
-					(Level_Tokens.at(GO_TYPE + (m_iObjLine * NUM_INDEX)))
-					//pos
-					, Vector3(stof(Level_Tokens.at(POSX + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(POSY + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(POSZ + (m_iObjLine * NUM_INDEX))))
-					//normal
-					, Vector3(stof(Level_Tokens.at(NORMALX + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(NORMALY + (m_iObjLine * NUM_INDEX))))
-					//scale
-					, Vector3(stof(Level_Tokens.at(SCALEX + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(SCALEY + (m_iObjLine * NUM_INDEX)))
-					, stof(Level_Tokens.at(SCALEZ + (m_iObjLine * NUM_INDEX)))));
+			go->SetDetails(
+				//GO_TYPE
+				(Level_Tokens.at(GO_TYPE + (m_iObjLine * NUM_INDEX)))
+				//pos
+				, Vector3(stof(Level_Tokens.at(POSX + (m_iObjLine * NUM_INDEX)))
+				, stof(Level_Tokens.at(POSY + (m_iObjLine * NUM_INDEX)))
+				, stof(Level_Tokens.at(POSZ + (m_iObjLine * NUM_INDEX))))
+				//normal
+				, Vector3(stof(Level_Tokens.at(NORMALX + (m_iObjLine * NUM_INDEX)))
+				, stof(Level_Tokens.at(NORMALY + (m_iObjLine * NUM_INDEX))))
+				//scale
+				, Vector3(stof(Level_Tokens.at(SCALEX + (m_iObjLine * NUM_INDEX)))
+				, stof(Level_Tokens.at(SCALEY + (m_iObjLine * NUM_INDEX)))
+				, stof(Level_Tokens.at(SCALEZ + (m_iObjLine * NUM_INDEX)))));
 
-				//Normalize walls
-				if(go->type == GameObject::GO_WALL)
-					go->normal.Normalize();
+			//Normalize walls
+			if(go->type == GameObject::GO_WALL)
+				go->normal.Normalize();
 
-				if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED)
-					Powerup_List.push_back(go);
-				else
-					Structure_List.push_back(go);
-			}
+			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED)
+				Powerup_List.push_back(go);
+			else
+				Structure_List.push_back(go);
 			++m_iObjLine;
 		}
 		inGameLevel.close();
@@ -194,4 +192,35 @@ void CLevelHandler::SetCurrentStage(const int newCurrentStage)
 int CLevelHandler::GetCurrentStage(void)
 {
 	return m_iCurrentStage;
+}
+
+void CLevelHandler::Exit(void)
+{
+	while(Structure_List.size() > 0)
+	{
+		GameObject *go = Structure_List.back();
+		delete go;
+		Structure_List.pop_back();
+	}
+
+	while(Powerup_List.size() > 0)
+	{
+		GameObject *go = Powerup_List.back();
+		delete go;
+		Powerup_List.pop_back();
+	}
+
+	while(Enemy_List.size() > 0)
+	{
+		GameObject *go = Enemy_List.back();
+		delete go;
+		Enemy_List.pop_back();
+	}
+
+	while(Interactables_List.size() > 0)
+	{
+		GameObject *go = Interactables_List.back();
+		delete go;
+		Interactables_List.pop_back();
+	}
 }

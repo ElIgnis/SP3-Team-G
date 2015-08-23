@@ -6,8 +6,8 @@
 SceneStealth::SceneStealth()
 	: GameState(STATE_MENU)
 	, b_ExitScene (false)
+	, Virus(NULL)
 {
-	//Test
 }
 
 SceneStealth::~SceneStealth()
@@ -56,10 +56,10 @@ void SceneStealth::Init()
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	InitGame();
 }
+
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
-
 	
 	//Initializing m_force for the player
 	m_force = 0.f;
@@ -268,7 +268,10 @@ void SceneStealth::Update(double dt)
 		UpdateMenu(dt);
 		break;
 	case STATE_PLAYING:
-		UpdateGame(dt);
+		//Set the camera to target this player
+		camera.SetTargetPlayer(Virus);
+		UpdatePlayer(dt);
+		UpdateEnemies(dt);
 		break;
 	default:
 		break;
@@ -276,7 +279,7 @@ void SceneStealth::Update(double dt)
 	ProcessKeys();
 }
 
-void SceneStealth::UpdateGame(const double dt)
+void SceneStealth::UpdatePlayer(const double dt)
 {
 	//Physics simulation for the player here.
 	Vector3 acc = m_force * ( 1 / Virus->mass);
@@ -298,9 +301,71 @@ void SceneStealth::UpdateGame(const double dt)
 
 	//Update player direction based on vel.
 	Virus->dir = Virus->vel;
-
+	std::cout << Virus->dir << std::endl;
 	Virus->Update(dt);
 
+	
+	//Check player collision with structure
+	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		//Only check for active game objects
+		if(go->active)
+		{
+			if(CheckCollision(Virus,go,dt))
+			{
+				switch(go->type)
+				{
+				case GameObject::GO_BOX:
+					CollisionResponse(Virus,go,dt);
+					break;
+				case GameObject::GO_HOLE:
+					Virus->m_bIsHiding = true;
+					break;
+				}
+			}
+		}
+	}
+
+	//Check player collision with powerups
+	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+		{
+			if(CheckCollision(Virus,go,dt))
+			{
+				switch(go->type)
+				{
+				case GameObject::GO_POWERUP_FREEZE:
+					Virus->ActivatePowerup(CPlayer::POWERUP_FREEZE, 3.f);
+					Virus->m_pInv.AddItem(new CItem("Frozen powerup thing", CItem::FREEZE));
+					break;
+				case GameObject::GO_POWERUP_SPEED:
+					Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
+					Virus->m_pInv.AddItem(new CItem("Speedy powerup thingy", CItem::SPEED));
+					break;
+				}
+				go->active = false;
+			}
+		}
+	}
+
+	//Check player collision with interactables
+	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
+	{
+		CInteractables *go = (CInteractables *)* it;
+		if(go->active)
+		{
+			if(Application::IsKeyPressed(VK_RETURN))
+				go->CheckBonusInteraction(Virus->pos);
+		}
+	}
+	Virus->m_bIsHiding = false;
+}
+
+void SceneStealth::UpdateEnemies(const double dt)
+{
 	//Update enemies
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
@@ -389,68 +454,6 @@ void SceneStealth::UpdateGame(const double dt)
 			}
 		}
 	}
-	//Check player collision with structure
-	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active && go->type == GameObject::GO_BOX)
-		{
-			if(CheckCollision(Virus,go,dt))
-			{
-				CollisionResponse(Virus,go,dt);
-			}
-		}
-	}
-
-	//Check Player Collision with Hiding Hole
-	for(std::vector<GameObject   *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if (go->active && go->type == GameObject::GO_HOLE)
-		{
-			if (CheckCollision(Virus, go, dt))
-			{
-				Virus->m_bIsHiding = true;
-
-			}
-		}
-	}
-
-	//Check player collision with powerups
-	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active)
-		{
-			if(CheckCollision(Virus,go,dt))
-			{
-				switch(go->type)
-				{
-				case GameObject::GO_POWERUP_FREEZE:
-					Virus->ActivatePowerup(CPlayer::POWERUP_FREEZE, 3.f);
-					Virus->m_pInv.AddItem(new CItem("Frozen powerup thing", CItem::FREEZE));
-					break;
-				case GameObject::GO_POWERUP_SPEED:
-					Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
-					Virus->m_pInv.AddItem(new CItem("Speedy powerup thingy", CItem::SPEED));
-					break;
-				}
-				go->active = false;
-			}
-		}
-	}
-
-	//Check player collision with interactables
-	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
-	{
-		CInteractables *go = (CInteractables *)* it;
-		if(go->active)
-		{
-			if(Application::IsKeyPressed(VK_RETURN))
-				go->CheckBonusInteraction(Virus->pos);
-		}
-	}
-	Virus->m_bIsHiding = false;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -464,119 +467,129 @@ void SceneStealth::UpdateKeypress(const unsigned char key)
 	{
 	case STATE_MENU:
 		{
-			//Enable scrolling of menu if not selecting stages
-			if(!LvlHandler.GetStageSelection())
-			{
-				if(key == VK_UP)
-					menu_main.UpdateSelection(true);
-				if(key == VK_DOWN)
-					menu_main.UpdateSelection(false);
-				if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
-					GameState = STATE_PLAYING;
-				if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
-					b_ExitScene = true;
-			}
-			//Scrolling of stage selection
-			if(menu_main.GetSelection() == 1)
-			{
-				//Enable stage selection
-				if(key == VK_RIGHT)
-					LvlHandler.SetStageSelection(true);
-				else if(key == VK_LEFT)
-					LvlHandler.SetStageSelection(false);
-				
-				//Starts selecting stage
-				if(LvlHandler.GetStageSelection())
-				{
-					int i_TempLevelSelect = LvlHandler.GetCurrentStage();
-					//Up/Down keys to select level
-					if(key == VK_UP)
-						LvlHandler.SetCurrentStage(--i_TempLevelSelect);
-					else if(key == VK_DOWN)
-						LvlHandler.SetCurrentStage(++i_TempLevelSelect);
-
-					//Allows for scrolling and re wrapping
-					if(LvlHandler.GetCurrentStage() > 4)
-						LvlHandler.SetCurrentStage(1);
-					if(LvlHandler.GetCurrentStage() < 0)
-						LvlHandler.SetCurrentStage(4);
-				}
-			}
+			UpdateMenuKeypress(key);
 		}
 		break;
 	case STATE_PLAYING:
 		{
-			if(key == VK_BACK)//change game state
-				GameState = STATE_MENU;
-			if(key == VK_RETURN)
-			{
-				//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
-
-
-			}
-			if(key == 'W')
-			{
-				//m_force.y += 65;
-				if(Virus->vel.y < 50.f)
-				{
-					Virus->vel.y += 1.f  * MoveSpeedModifier;
-					Virus->dir = Virus->vel;
-				}
-			}
-			else if(!key == 'W' && !key == 'S')
-			{
-				//m_force.y = 0;
-				if(Virus->vel.y > 0.f)
-				{
-					Virus->vel.y -= 1.f  * MoveSpeedModifier;
-				}
-			}
-			if(key == 'S')
-			{
-				//m_force.y -= 65;
-				if(Virus->vel.y > -50.f)
-				{
-					Virus->vel.y -= 1.f  * MoveSpeedModifier;
-					Virus->dir = Virus->vel;
-				}
-			}
-			else if(!key == 'S' && !key == 'W')
-			{
-				if(Virus->vel.y < 0.f)
-					Virus->vel.y += 1.f  * MoveSpeedModifier;
-			}
-			if(key == 'D')
-			{
-				//m_force.x += 65;
-				if(Virus->vel.x < 50.f)
-				{
-   					Virus->vel.x += 1.f  * MoveSpeedModifier;
-					Virus->dir = Virus->vel;
-				}
-			}
-			else if(!key == 'D' && !key == 'A')
-			{
-				if(Virus->vel.x > 0.f)
-					Virus->vel.x -= 1.f  * MoveSpeedModifier;
-			}
-			if(key == 'A')
-			{
-				//m_force.x -= 65;
-				if(Virus->vel.x > -50.f)
-				{
-   					Virus->vel.x -= 1.f  * MoveSpeedModifier;
-					Virus->dir = Virus->vel;
-				}
-			}
-			else if(!key == 'A' && !key == 'D')
-			{
-				if(Virus->vel.x < 0.f)
-					Virus->vel.x += 1.f  * MoveSpeedModifier;
-			}
+			UpdateGameKeypress(key);
 		}
 		break;
 	default:
 		break;
+	}
+}
+
+void SceneStealth::UpdateMenuKeypress(const unsigned char key)
+{
+	//Enable scrolling of menu if not selecting stages
+	if(!LvlHandler.GetStageSelection())
+	{
+		if(key == VK_UP)
+			menu_main.UpdateSelection(true);
+		if(key == VK_DOWN)
+			menu_main.UpdateSelection(false);
+		if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
+			GameState = STATE_PLAYING;
+		if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
+			b_ExitScene = true;
+	}
+	//Scrolling of stage selection
+	if(menu_main.GetSelection() == 1)
+	{
+		//Enable stage selection
+		if(key == VK_RIGHT)
+			LvlHandler.SetStageSelection(true);
+		else if(key == VK_LEFT)
+			LvlHandler.SetStageSelection(false);
+
+		//Starts selecting stage
+		if(LvlHandler.GetStageSelection())
+		{
+			int i_TempLevelSelect = LvlHandler.GetCurrentStage();
+			//Up/Down keys to select level
+			if(key == VK_UP)
+				LvlHandler.SetCurrentStage(--i_TempLevelSelect);
+			else if(key == VK_DOWN)
+				LvlHandler.SetCurrentStage(++i_TempLevelSelect);
+
+			//Allows for scrolling and re wrapping
+			if(LvlHandler.GetCurrentStage() > 4)
+				LvlHandler.SetCurrentStage(1);
+			if(LvlHandler.GetCurrentStage() < 0)
+				LvlHandler.SetCurrentStage(4);
+		}
+	}
+}
+
+void SceneStealth::UpdateGameKeypress(const unsigned char key)
+{
+	if(key == VK_BACK)//change game state
+		GameState = STATE_MENU;
+	if(key == VK_RETURN)
+	{
+		//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
+
+
+	}
+	if(key == 'W')
+	{
+		//m_force.y += 65;
+		if(Virus->vel.y < 50.f)
+		{
+			Virus->vel.y += 1.f  * MoveSpeedModifier;
+			Virus->dir = Virus->vel;
+		}
+	}
+	else if(!key == 'W' && !key == 'S')
+	{
+		//m_force.y = 0;
+		if(Virus->vel.y > 0.f)
+		{
+			Virus->vel.y -= 1.f  * MoveSpeedModifier;
+		}
+	}
+	if(key == 'S')
+	{
+		//m_force.y -= 65;
+		if(Virus->vel.y > -50.f)
+		{
+			Virus->vel.y -= 1.f  * MoveSpeedModifier;
+			Virus->dir = Virus->vel;
+		}
+	}
+	else if(!key == 'S' && !key == 'W')
+	{
+		if(Virus->vel.y < 0.f)
+			Virus->vel.y += 1.f  * MoveSpeedModifier;
+	}
+	if(key == 'D')
+	{
+		//m_force.x += 65;
+		if(Virus->vel.x < 50.f)
+		{
+			Virus->vel.x += 1.f  * MoveSpeedModifier;
+			Virus->dir = Virus->vel;
+		}
+	}
+	else if(!key == 'D' && !key == 'A')
+	{
+		if(Virus->vel.x > 0.f)
+			Virus->vel.x -= 1.f  * MoveSpeedModifier;
+	}
+	if(key == 'A')
+	{
+		//m_force.x -= 65;
+		if(Virus->vel.x > -50.f)
+		{
+			Virus->vel.x -= 1.f  * MoveSpeedModifier;
+			Virus->dir = Virus->vel;
+		}
+	}
+	else if(!key == 'A' && !key == 'D')
+	{
+		if(Virus->vel.x < 0.f)
+			Virus->vel.x += 1.f  * MoveSpeedModifier;
 	}
 }
 
@@ -1008,6 +1021,8 @@ void SceneStealth::RenderGO(GameObject *go)
 
 void SceneStealth::RenderGame(void)
 {
+	modelStack.PushMatrix();
+	modelStack.Rotate(-rotateScene, 1, 0, 0);
 	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
 	
 	//Render player
@@ -1101,6 +1116,7 @@ void SceneStealth::RenderGame(void)
 		if(go->active)
 			RenderGO(go);
 	}
+	modelStack.PopMatrix();
 }
 
 void SceneStealth::RenderMenu(void)
@@ -1322,6 +1338,23 @@ void SceneStealth::Exit()
 		GameObject *go = m_goList.back();
 		delete go;
 		m_goList.pop_back();
+	}
+
+	if(Virus)
+	{
+		delete Virus;
+		Virus = NULL;
+	}
+
+	//Clean up Level handler pointers
+	LvlHandler.Exit();
+
+	//Clean up Menu 
+	while(menu_main.m_menuList.size() > 0)
+	{
+		CMenuItem *go = menu_main.m_menuList.back();
+		delete go;
+		menu_main.m_menuList.pop_back();
 	}
 }
 

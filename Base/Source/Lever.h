@@ -2,7 +2,6 @@
 #define LEVER_H
 
 #include "Interactables.h"
-#include "Vector3.h"
 
 class CLever : public CInteractables
 {
