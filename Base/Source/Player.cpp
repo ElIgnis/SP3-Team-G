@@ -37,3 +37,4 @@ void CPlayer::setLives(unsigned int L)
 void CPlayer::add1Life(void)
 {
 	this->m_pLives += 1;
+}
