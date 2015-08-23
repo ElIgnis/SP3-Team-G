@@ -198,26 +198,6 @@ void Camera3::Update(double dt)
 		PerspView = false;
 	}
 
-	if(PerspView)
-	{
-		Dir = TargetPlayer->dir;
-		//if(Application::IsKeyPressed('W'))
-		//{
-		//	Walk(dt);
-		//}
-		//if(Application::IsKeyPressed('S'))
-		//{
-		//	Walk(-dt);
-		//}
-		//if(Application::IsKeyPressed('A'))
-		//{
-		//	Strafe(-dt);
-		//}
-		//if(Application::IsKeyPressed('D'))
-		//{
-		//	Strafe(dt);
-		//}
-	}
 	if(Application::IsKeyPressed('R'))
 	{
 		Reset();
@@ -228,11 +208,7 @@ void Camera3::Update(double dt)
 	{
 		Mtx44 rotX,rotY;
 
-		Vector3 view = (target - position).Normalized();
-		Vector3 right = view.Cross(up);
-		right.y = 0;
-		right.Normalize();
-		up = right.Cross(view).Normalized();
+		
 		
 		if(Application::IsKeyPressed(VK_LEFT))
 		{
@@ -244,28 +220,42 @@ void Camera3::Update(double dt)
 		}
 		if(Application::IsKeyPressed(VK_UP))
 		{
-			DistFromPlayer.z -= 50.f * dt;
-			//rotateAngle.x += 1.f * dt;
+			if(DistFromPlayer.y > 25.f)
+				DistFromPlayer.y -= 50.f * dt;
+			//rotateAngle.x += 100.f * dt;
 		}
-		else if(Application::IsKeyPressed(VK_DOWN))
+		if(Application::IsKeyPressed(VK_DOWN))
 		{
-			DistFromPlayer.z += 50.f * dt;
-			//rotateAngle.x -= 1.f * dt;
+			if(DistFromPlayer.y < 125.f)
+			DistFromPlayer.y += 50.f * dt;
+			//rotateAngle.x -= 100.f * dt;
 		}
-
+		if(!Application::IsKeyPressed(VK_UP) && !Application::IsKeyPressed(VK_DOWN))
+		{
+			rotateAngle.x = 0.f;
+		}
 
 		rotY.SetToRotation(rotateAngle.y, 0, 1, 0);
-		//rotX.SetToRotation(rotateAngle.x, 1, 0, 0);
-		//up = rotX * up;
+		rotX.SetToRotation(rotateAngle.x, 1, 0, 0);
+
+		Vector3 view = (target - position).Normalized();
+		Vector3 right = view.Cross(up);
+		right.y = 0;
+		right.Normalize();
+		up = right.Cross(view).Normalized();
+		up = rotX * up;
+		//up = Vector3(0,1,0);
 
 		target.x = TargetPlayer->pos.x;
 		target.y = 0;
 		target.z = -TargetPlayer->pos.y;
 
-		position.x = TargetPlayer->pos.x + (DistFromPlayer.z * cos(rotateAngle.y));
-		position.y = DistFromPlayer.z ;
-		position.z = -TargetPlayer->pos.y + (DistFromPlayer.z * sin(rotateAngle.y));
-
+		position.x = TargetPlayer->pos.x + (DistFromPlayer.z * sin(rotateAngle.y));
+		position.y = DistFromPlayer.y;
+		position.z = -TargetPlayer->pos.y + (DistFromPlayer.z * cos(rotateAngle.y));
+		//position = rotX * position;
+		// * sin(rotateAngle.x)
+		// * cos(rotateAngle.x)
 
 		//if(position.z <= 60.f && position.y >= 70.f)
 		//{

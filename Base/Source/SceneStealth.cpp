@@ -301,7 +301,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 	//Update player direction based on vel.
 	Virus->dir = Virus->vel;
-	std::cout << Virus->dir << std::endl;
+	
 	Virus->Update(dt);
 
 	
