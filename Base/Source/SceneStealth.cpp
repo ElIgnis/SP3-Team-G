@@ -74,7 +74,7 @@ void SceneStealth::InitGame(void)
 
 	//Initializing the player
 	Virus = new CPlayer;
-	Virus->pos.Set(1,0,0);
+	Virus->pos.Set(-75,35,0);
 	Virus->scale.Set(10,10,10);
 	Virus->mass = 1.f;
 }
@@ -123,24 +123,6 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	///////////STRUCTURE COLLISIONS//////////////////
 
 	case GameObject::GO_WALL:
-		{
-			//|(w0 - b1).N| < r + h / 2
-			Vector3 w0 = go2->pos;
-			Vector3 b1 = go1->pos + go1->vel;
-			Vector3 N = go2->normal;
-			float r = go1->scale.x;
-			float h = go2->scale.x;
-			//|(w0 - b1).NP| < r + l / 2
-			Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
-			float l = go2->scale.y;
-
-			if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.5f)
-			{
-				return true;
-			}
-			return false;
-		}
-		break;
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
 	case GameObject::GO_BOX:
@@ -159,7 +141,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 				return true;
 			return false;
 		}
-
+		break;
 	case GameObject::GO_HOLE:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
@@ -304,9 +286,9 @@ void SceneStealth::UpdatePlayer(const double dt)
 	Virus->vel.x = Virus->dir.x * acc.x;
 	Virus->vel.y =  Virus->dir.y * acc.y;
 
-	Virus->pos += Virus->vel * dt;
+	
 	Virus->Update(dt);
-
+	bool test = false;
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 	{
@@ -318,6 +300,9 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				switch(go->type)
 				{
+				case GameObject::GO_WALL:
+					test = true;
+					break;
 				case GameObject::GO_BOX:
 					CollisionResponse(Virus,go,dt);
 					break;
@@ -328,6 +313,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
+	if(!test)
+		Virus->pos += Virus->vel * dt;
 
 	//Check player collision with powerups
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
