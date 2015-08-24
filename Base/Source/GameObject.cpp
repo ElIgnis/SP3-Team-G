@@ -28,6 +28,8 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 		this->type = GO_POWERUP_FREEZE;
 	else if(newType == "GO_POWERUP_SPEED")
 		this->type = GO_POWERUP_SPEED;
+	else if(newType == "GO_POWERUP_HEALTH")
+		this->type = GO_POWERUP_HEALTH;
 
 
 	if(newType == "GO_HOLE")

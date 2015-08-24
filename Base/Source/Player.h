@@ -9,6 +9,7 @@ public:
 	{
 		POWERUP_FREEZE,
 		POWERUP_SPEED,
+		POWERUP_HEALTH,
 		NUM_POWERUPS
 	};
 private:

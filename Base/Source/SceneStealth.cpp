@@ -136,6 +136,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		break;
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
+	case GameObject::GO_POWERUP_HEALTH:
 	case GameObject::GO_BOX:
 		{
 			//|(w0 - b1).N| < r + h / 2
@@ -344,6 +345,10 @@ void SceneStealth::UpdatePlayer(const double dt)
 				case GameObject::GO_POWERUP_SPEED:
 					Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
 					Virus->m_pInv.AddItem(new CItem("Speedy powerup thingy", CItem::SPEED));
+					break;
+				case GameObject::GO_POWERUP_HEALTH:
+					Virus->ActivatePowerup(CPlayer::POWERUP_HEALTH, 3.f);
+					Virus->m_pInv.AddItem(new CItem("Health powerup thingy", CItem::HEALTH));
 					break;
 				}
 				go->active = false;
@@ -1006,7 +1011,14 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_POWERUP_FREEZE], bLightEnabled);
+		RenderMesh(meshList[GEO_POWERUP_SPEED], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_POWERUP_HEALTH:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_POWERUP_HEALTH], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_HOLE:

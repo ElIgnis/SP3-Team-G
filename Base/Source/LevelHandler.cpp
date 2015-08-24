@@ -63,7 +63,7 @@ void CLevelHandler::LoadMap(string mapLevel)
 			if(go->type == GameObject::GO_WALL)
 				go->normal.Normalize();
 
-			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED)
+			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED || go->type == GameObject::GO_POWERUP_HEALTH)
 				Powerup_List.push_back(go);
 			else
 				Structure_List.push_back(go);
