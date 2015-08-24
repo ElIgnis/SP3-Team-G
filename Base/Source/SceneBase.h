@@ -89,6 +89,7 @@ public:
 		GEO_BOX,
 		GEO_PLAYER_INDICATOR,
 		GEO_HOLE,
+		GEO_FLOOR_LEVEL4,
 		NUM_GEOMETRY,
 	};
 protected:
