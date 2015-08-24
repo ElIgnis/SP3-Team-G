@@ -54,6 +54,7 @@ void SceneStealth::Init()
 	HS_List.LoadHighScore();
 	LvlHandler.LoadMap("Level//Level 1.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
+	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
 	//Initialise key list
 	for(int i=0; i<NumberOfKeys; ++i)
@@ -127,6 +128,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	case GameObject::GO_WALL:
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
+	case GameObject::GO_POWERUP_HEALTH:
 	case GameObject::GO_BOX:
 		{
 			//|(w0 - b1).N| < r + h / 2
@@ -291,7 +293,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 	
 	Virus->Update(dt);
-	bool test = false;
+	bool b_ColCheck = false;
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 	{
@@ -304,7 +306,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				switch(go->type)
 				{
 				case GameObject::GO_WALL:
-					test = true;
+					b_ColCheck = true;
 					break;
 				case GameObject::GO_BOX:
 					CollisionResponse(Virus,go,dt);
@@ -316,7 +318,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
-	if(!test)
+	if(!b_ColCheck)
 		Virus->pos += Virus->vel * dt;
 
 	//Check player collision with powerups
@@ -336,6 +338,10 @@ void SceneStealth::UpdatePlayer(const double dt)
 				case GameObject::GO_POWERUP_SPEED:
 					Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
 					Virus->m_pInv.AddItem(new CItem("Speedy powerup thingy", CItem::SPEED));
+					break;
+				case GameObject::GO_POWERUP_HEALTH:
+					Virus->ActivatePowerup(CPlayer::POWERUP_HEALTH, 3.f);
+					Virus->m_pInv.AddItem(new CItem("Health powerup thingy", CItem::HEALTH));
 					break;
 				}
 				go->active = false;
@@ -965,7 +971,14 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_POWERUP_FREEZE], bLightEnabled);
+		RenderMesh(meshList[GEO_POWERUP_SPEED], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_POWERUP_HEALTH:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_POWERUP_HEALTH], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_HOLE:

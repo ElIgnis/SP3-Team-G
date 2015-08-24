@@ -54,9 +54,6 @@ public:
 		EPOSX,
 		EPOSY,
 		EPOSZ,
-		ESCALEX,
-		ESCALEY,
-		ESCALEZ,
 		ENORMALX,
 		ENORMALY,
 		ENUM_POINTS,
@@ -81,6 +78,7 @@ public:
 
 	void LoadMap(string newMap);
 	void LoadEnemies(string newMap);
+	void LoadInteractables(string newMap);
 	void Exit(void);
 };
 
