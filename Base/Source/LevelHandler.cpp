@@ -71,7 +71,7 @@ void CLevelHandler::LoadMap(string mapLevel)
 			if(go->type == GameObject::GO_WALL)
 				go->normal.Normalize();
 
-			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED)
+			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED || go->type == GameObject::GO_POWERUP_HEALTH)
 				Powerup_List.push_back(go);
 			else
 				Structure_List.push_back(go);
@@ -203,6 +203,11 @@ vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 vector<GameObject *> &CLevelHandler::GetPowerup_List(void)
 {
 	return Powerup_List;
+}
+
+vector<GameObject *> &CLevelHandler::GetCheckPoint_List(void)
+{
+	return CheckPoint_List;
 }
 
 vector<CEnemy *> &CLevelHandler::GetEnemy_List(void)

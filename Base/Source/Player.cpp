@@ -50,6 +50,11 @@ void CPlayer::add1Life(void)
 	this->m_pLives += 1;
 }
 
+void CPlayer::Minus1Life(void)
+{
+	this->m_pLives -= 1;
+}
+
 void CPlayer::ActivatePowerup(PowerupList p, float f_timeLimit)
 {
 	m_bPowerupStatus[p] = true;
@@ -59,4 +64,15 @@ void CPlayer::ActivatePowerup(PowerupList p, float f_timeLimit)
 bool CPlayer::GetPowerupStatus(PowerupList p)
 {
 	return m_bPowerupStatus[p];
+}
+
+GameObject *CPlayer::GetCurrentCP(void)
+{
+	return m_CurrentCP;
+}
+
+void CPlayer::SetCurrentCP(GameObject *CP)
+{
+	this->m_CurrentCP = CP;
+
 }

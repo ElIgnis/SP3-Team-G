@@ -208,13 +208,20 @@ void SceneBase::Init()
 	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
 
+	//CheckPoint for Respawn
+	meshList[GEO_CHECKPOINT] = MeshBuilder::GenerateOBJ("CheckPoint", "OBJ//CheckPoint.obj");
+	meshList[GEO_CHECKPOINT]->textureID = LoadTGA("Image//CheckPoint.tga");
+
 	//CPU/Movable box
 	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Floor quads
-	meshList[GEO_FLOOR_LEVEL4] = MeshBuilder::GenerateQuad("Floor_Level4", Color(1, 0, 0), 1.f);
-	meshList[GEO_FLOOR_LEVEL4]->textureID = LoadTGA("Image//Level4_Floor.tga");
+	/*meshList[GEO_FLOOR_LEVEL4] = MeshBuilder::GenerateQuad("Floor_Level4", Color(1, 0, 0), 1.f);
+	meshList[GEO_FLOOR_LEVEL4]->textureID = LoadTGA("Image//Level4_Floor.tga");*/
+
+	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
+	meshList[GEO_FLOOR_LEVEL1]->textureID = LoadTGA("Image//Level1_Floor.tga");
 
 	//Sound
 	engine = createIrrKlangDevice();
