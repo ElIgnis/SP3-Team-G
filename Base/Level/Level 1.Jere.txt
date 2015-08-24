@@ -1,0 +1,11 @@
+##Level Jeremiah##
+##Format: TYPE, POS_X, POS_Y,POS_Z, NORMAL_X, NORMAL_Y, SCALE_X, SCALE_Y, SCALE_Z
+##LEVEL LAYOUT##
+##TYPE ,POSX,POSY,POSZ ,NORX,NORY,SCLX,SCLY,SCLZ
+#TYPE## POS_X  POS_Y POS_Z NORMAL_X NORMAL_Y SCALE_X SCALE_Y SCALE_Z
+## The 4 bounds
+GO_WALL, 42.0 , 0.0 , 0.0 , 1.0 , 0.0 , 1.0 , 42.0 , 1.0
+GO_WALL, -42.0 , 0.0 , 0.0 , 1.0 , 0.0 , 1.0 , 42.0 , 1.0
+GO_WALL, 0.0 , 42.0 , 0.0 , 1.0 , 0.0 , 42.0 , 1.0 , 1.0
+GO_WALL, 0.0 , -42.0 , 0.0 , 1.0 , 0.0 , 42.0 , 1.0 , 1.0
+## The Inner Walls
