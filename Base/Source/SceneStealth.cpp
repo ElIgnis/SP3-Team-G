@@ -75,7 +75,7 @@ void SceneStealth::InitGame(void)
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->pos.Set(-95,40,0);
-	Virus->scale.Set(10,10,10);
+	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 }
 
