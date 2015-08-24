@@ -54,6 +54,13 @@ void SceneStealth::Init()
 	HS_List.LoadHighScore();
 	LvlHandler.LoadMap("Level//Level 1.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
+
+	//Initialise key list
+	for(int i=0; i<NumberOfKeys; ++i)
+	{
+		myKeys[i] = false;
+	}
+
 	InitGame();
 }
 
@@ -116,24 +123,6 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	///////////STRUCTURE COLLISIONS//////////////////
 
 	case GameObject::GO_WALL:
-		{
-			//|(w0 - b1).N| < r + h / 2
-			Vector3 w0 = go2->pos;
-			Vector3 b1 = go1->pos + go1->vel;
-			Vector3 N = go2->normal;
-			float r = go1->scale.x;
-			float h = go2->scale.x;
-			//|(w0 - b1).NP| < r + l / 2
-			Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
-			float l = go2->scale.y;
-
-			if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.5f)
-			{
-				return true;
-			}
-			return false;
-		}
-		break;
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
 	case GameObject::GO_POWERUP_HEALTH:
@@ -153,7 +142,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 				return true;
 			return false;
 		}
-
+		break;
 	case GameObject::GO_HOLE:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
@@ -266,11 +255,16 @@ void SceneStealth::Update(double dt)
 	switch(GameState)
 	{
 	case STATE_MENU:
+		camera.SetPersp(false);
+		camera.Reset();
 		UpdateMenu(dt);
+		UpdateMenuKeypress();
 		break;
 	case STATE_PLAYING:
 		//Set the camera to target this player
 		camera.SetTargetPlayer(Virus);
+		camera.SetPersp(true);
+		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
 		break;
@@ -282,30 +276,20 @@ void SceneStealth::Update(double dt)
 
 void SceneStealth::UpdatePlayer(const double dt)
 {
-	//Physics simulation for the player here.
-	Vector3 acc = m_force * ( 1 / Virus->mass);
-	Virus->vel += acc * dt;
-	
-	if(acc.IsZero())
-	{
-		Virus->vel *= 0.89f;
-	}
+	//Player moves according to camera angle
+	float orientation = 0;
+	orientation += Math::DegreeToRadian(Virus->dir.z);
 
-	Virus->vel.x = Math::Clamp(Virus->vel.x,-static_cast<float>(65),static_cast<float>(65));
-	Virus->vel.y = Math::Clamp(Virus->vel.y,-static_cast<float>(65),static_cast<float>(65));
-	
-	//Update player position based on velocity
-	if(Virus->GetPowerupStatus(CPlayer::POWERUP_SPEED) || Application::IsKeyPressed(VK_SHIFT))//for debug purposes
-		Virus->pos += Virus->vel * 5 *(float)dt;
-	else
-		Virus->pos += Virus->vel * (float)dt;
+	Virus->dir.x = cos(orientation);
+	Virus->dir.y = sin(orientation);
 
-	//Update player direction based on vel.
-	Virus->dir = Virus->vel;
+	Vector3 acc = m_force * (1.f / Virus->mass);
+	Virus->vel.x = Virus->dir.x * acc.x;
+	Virus->vel.y =  Virus->dir.y * acc.y;
+
 	
 	Virus->Update(dt);
-
-	
+	bool test = false;
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 	{
@@ -317,6 +301,9 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				switch(go->type)
 				{
+				case GameObject::GO_WALL:
+					test = true;
+					break;
 				case GameObject::GO_BOX:
 					CollisionResponse(Virus,go,dt);
 					break;
@@ -327,6 +314,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
+	if(!test)
+		Virus->pos += Virus->vel * dt;
 
 	//Check player collision with powerups
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
@@ -466,46 +455,27 @@ void SceneStealth::UpdateMenu(const double dt)
 	menu_main.Update(dt);
 }
 
-void SceneStealth::UpdateKeypress(const unsigned char key)
-{
-	switch(GameState)
-	{
-	case STATE_MENU:
-		{
-			UpdateMenuKeypress(key);
-		}
-		break;
-	case STATE_PLAYING:
-		{
-			UpdateGameKeypress(key);
-		}
-		break;
-	default:
-		break;
-	}
-}
-
-void SceneStealth::UpdateMenuKeypress(const unsigned char key)
+void SceneStealth::UpdateMenuKeypress(void)
 {
 	//Enable scrolling of menu if not selecting stages
 	if(!LvlHandler.GetStageSelection())
 	{
-		if(key == VK_UP)
+		if(GetKeyState(VK_UP) && !GetKeyState(VK_DOWN))
 			menu_main.UpdateSelection(true);
-		if(key == VK_DOWN)
+		if(GetKeyState(VK_DOWN) && !GetKeyState(VK_UP))
 			menu_main.UpdateSelection(false);
-		if(key == VK_RETURN && menu_main.GetSelection() == 0)//Play
+		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 0)//Play
 			GameState = STATE_PLAYING;
-		if(key == VK_RETURN && menu_main.GetSelection() == 5)//Exit
+		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 5)//Exit
 			b_ExitScene = true;
 	}
 	//Scrolling of stage selection
 	if(menu_main.GetSelection() == 1)
 	{
 		//Enable stage selection
-		if(key == VK_RIGHT)
+		if(GetKeyState(VK_RIGHT))
 			LvlHandler.SetStageSelection(true);
-		else if(key == VK_LEFT)
+		else if(GetKeyState(VK_LEFT))
 			LvlHandler.SetStageSelection(false);
 
 		//Starts selecting stage
@@ -513,89 +483,75 @@ void SceneStealth::UpdateMenuKeypress(const unsigned char key)
 		{
 			int i_TempLevelSelect = LvlHandler.GetCurrentStage();
 			//Up/Down keys to select level
-			if(key == VK_UP)
+			if(GetKeyState(VK_UP))
 				LvlHandler.SetCurrentStage(--i_TempLevelSelect);
-			else if(key == VK_DOWN)
+			else if(GetKeyState(VK_DOWN))
 				LvlHandler.SetCurrentStage(++i_TempLevelSelect);
 
 			//Allows for scrolling and re wrapping
 			if(LvlHandler.GetCurrentStage() > 4)
 				LvlHandler.SetCurrentStage(1);
-			if(LvlHandler.GetCurrentStage() < 0)
+			if(LvlHandler.GetCurrentStage() < 1)
 				LvlHandler.SetCurrentStage(4);
 		}
 	}
 }
 
-void SceneStealth::UpdateGameKeypress(const unsigned char key)
+void SceneStealth::UpdateGameKeypress(void)
 {
-	if(key == VK_BACK)//change game state
+	m_force = 0.f;
+	if(GetKeyState(VK_BACK))//change game state
 		GameState = STATE_MENU;
-	if(key == VK_RETURN)
+	if(GetKeyState(VK_RETURN))
 	{
 		//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
+	}
 
+	//Forward movement
+	if(GetKeyState('w'))
+	{
+		Virus->dir.z = camera.GetCameraAngle();
+		m_force.x = MoveSpeed * MoveSpeedModifier;
+		m_force.y = MoveSpeed * MoveSpeedModifier;
+	}
 
-	}
-	if(key == 'W')
+	//Reverse movement
+	else if(GetKeyState('s'))
 	{
-		//m_force.y += 65;
-		if(Virus->vel.y < 50.f)
-		{
-			Virus->vel.y += 1.f  * MoveSpeedModifier;
-			Virus->dir = Virus->vel;
-		}
+		Virus->dir.z = camera.GetCameraAngle() + 180.f;
+		m_force.x = MoveSpeed * MoveSpeedModifier;
+		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
-	else if(!key == 'W' && !key == 'S')
+
+	//Right movement
+	else if(GetKeyState('d'))
 	{
-		//m_force.y = 0;
-		if(Virus->vel.y > 0.f)
-		{
-			Virus->vel.y -= 1.f  * MoveSpeedModifier;
-		}
+		Virus->dir.z = camera.GetCameraAngle() - 90.f;
+		m_force.x = MoveSpeed * MoveSpeedModifier;
+		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
-	if(key == 'S')
+
+	//Left movement
+	else if(GetKeyState('a'))
 	{
-		//m_force.y -= 65;
-		if(Virus->vel.y > -50.f)
-		{
-			Virus->vel.y -= 1.f  * MoveSpeedModifier;
-			Virus->dir = Virus->vel;
-		}
+		Virus->dir.z = camera.GetCameraAngle() + 90.f;
+		m_force.x = MoveSpeed * MoveSpeedModifier;
+		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
-	else if(!key == 'S' && !key == 'W')
-	{
-		if(Virus->vel.y < 0.f)
-			Virus->vel.y += 1.f  * MoveSpeedModifier;
-	}
-	if(key == 'D')
-	{
-		//m_force.x += 65;
-		if(Virus->vel.x < 50.f)
-		{
-			Virus->vel.x += 1.f  * MoveSpeedModifier;
-			Virus->dir = Virus->vel;
-		}
-	}
-	else if(!key == 'D' && !key == 'A')
-	{
-		if(Virus->vel.x > 0.f)
-			Virus->vel.x -= 1.f  * MoveSpeedModifier;
-	}
-	if(key == 'A')
-	{
-		//m_force.x -= 65;
-		if(Virus->vel.x > -50.f)
-		{
-			Virus->vel.x -= 1.f  * MoveSpeedModifier;
-			Virus->dir = Virus->vel;
-		}
-	}
-	else if(!key == 'A' && !key == 'D')
-	{
-		if(Virus->vel.x < 0.f)
-			Virus->vel.x += 1.f  * MoveSpeedModifier;
-	}
+
+}
+
+void SceneStealth::UpdateKeyDown(const unsigned char key)
+{
+	this->myKeys[key] = true;
+}
+void SceneStealth::UpdateKeyUp(const unsigned char key)
+{
+	this->myKeys[key] = false;
+}
+bool SceneStealth::GetKeyState(const unsigned char key)
+{
+	return myKeys[key];
 }
 
 void SceneStealth::ProcessKeys(void)
@@ -990,7 +946,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		RenderMesh(meshList[GEO_WALL_GREEN], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BOX:

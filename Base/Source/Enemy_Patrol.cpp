@@ -50,6 +50,7 @@ void CEnemy_Patrol::Update(const double dt)
 				{
 					pos = m_patrolposList[m_iCurrentPatrolpoint];
 					state = STATE_WAIT;
+					vel.SetZero();
 					m_fWaitTime = Patrol_waitTime;
 					if((unsigned)m_iCurrentPatrolpoint >= m_patrolposList.size() - 1 || m_iCurrentPatrolpoint <= 0)//Change patrol direction if at end of patrol list
 						m_bPatrolDir = !m_bPatrolDir;

@@ -5,7 +5,10 @@
 #define ScreenUD 63.f
 
 #define ReboundFactor 2.f
-#define MoveSpeedModifier 5.f
+#define MoveSpeed 50.f
+#define MoveSpeedModifier 1.f
+
+#define NumberOfKeys 255
 
 #include <vector>
 #include <string>
@@ -66,14 +69,15 @@ public:
 	void UpdateEnemies(const double dt);
 
 	//Update keypress
-	void UpdateKeypress(const unsigned char key);
-	void UpdateMenuKeypress(const unsigned char key);
-	void UpdateGameKeypress(const unsigned char key);
+	void UpdateMenuKeypress(void);
+	void UpdateGameKeypress(void);
 
+	virtual void UpdateKeyDown(const unsigned char key);
+	virtual void UpdateKeyUp(const unsigned char key);
+	bool GetKeyState(const unsigned char key);
 
 	//Process key input
 	void ProcessKeys(void);
-
 
 	//Rendering section
 	////////////////////////////////////////
@@ -123,6 +127,9 @@ private:
 
 	//Level handler
 	CLevelHandler LvlHandler;
+
+	//Keypress handler
+	bool myKeys[255];
 };
 
 #endif
