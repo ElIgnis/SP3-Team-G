@@ -3,7 +3,7 @@
 ##ENEMIES##
 #   Sentry Enemy Format - Enemy type, posX, posY, posZ, scaleX, scaleY, scaleZ, normX, normY,  rotation1, rotation2, turnSpd
 #   Patrol Enemy Format - Enemy type, posX, posY, posZ, scaleX, scaleY, scaleZ, normX, normY,  (Insert patrol points here(x,y))
-#ENEMY_SENTRY,-90,-40,0,5,5,5,0,1,340,0,5
+ENEMY_SENTRY, -45, -55, 0, 12, 12, 12, 0, 1, 340, 0, 5
 ENEMY_SENTRY, 100, 50, 0, 12, 12, 12, 0, -1, 270, 180, 1
 ENEMY_PATROL_RAGE,10,-50,0,10,10,5,0,1,4,50,-50,50,45,10,45,10,-50
 ENEMY_PATROL, 0, 0, 0, 10, 10, 10, 0, 1, 4, 50, -50, 50, 45, 10, 45, 10, -50
