@@ -1086,6 +1086,14 @@ void SceneStealth::RenderGame(void)
 			RenderGO(go);
 	}
 	modelStack.PopMatrix();
+
+	//Render floor
+	modelStack.PushMatrix();
+	modelStack.Translate(0.f, -10.f, 0.f);
+	modelStack.Rotate(-90.f, 1, 0, 0);
+	modelStack.Scale(1000.f, 1000.f, 1.f);
+	RenderMesh(meshList[GEO_FLOOR_LEVEL4], false);
+	modelStack.PopMatrix();
 }
 
 void SceneStealth::RenderMenu(void)
