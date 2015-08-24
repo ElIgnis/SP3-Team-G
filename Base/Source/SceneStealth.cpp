@@ -305,6 +305,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 	Virus->vel.y =  Virus->dir.y * acc.y;
 
 	Virus->pos += Virus->vel * dt;
+	Virus->Update(dt);
 
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
