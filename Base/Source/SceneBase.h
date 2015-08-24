@@ -97,7 +97,6 @@ protected:
 
 	virtual void Init();
 	virtual void Update(double dt);
-	virtual void UpdateKeypress(const unsigned char key) = 0;
 	virtual void Render();
 	virtual void Exit();
 	virtual bool GetExit() = 0;

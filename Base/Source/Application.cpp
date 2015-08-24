@@ -99,59 +99,114 @@ bool Application::GetMouseUpdate()
 
 bool Application::GetKeyboardUpdate()
 {
-	if(IsKeyPressed(VK_RETURN))
-		scene->UpdateKeypress(VK_RETURN);
-	if(IsKeyPressed(VK_BACK))
-		scene->UpdateKeypress(VK_BACK);
+	//A key
+	if(IsKeyPressed('A'))
+	{
+		scene->UpdateKeyDown('a');
+	}
+	else if(IsKeyReleased('A'))
+	{
+		scene->UpdateKeyUp('a');
+	}
+	//D key
+	if(IsKeyPressed('D'))
+	{
+		scene->UpdateKeyDown('d');
+	}
+	else if(IsKeyReleased('D'))
+	{
+		scene->UpdateKeyUp('d');
+	}
+	//W key
+	if(IsKeyPressed('W'))
+	{
+		scene->UpdateKeyDown('w');
+	}
+	else if(IsKeyReleased('W'))
+	{
+		scene->UpdateKeyUp('w');
+	}
+	//S key
+	if(IsKeyPressed('S'))
+	{
+		scene->UpdateKeyDown('s');
+	}
+	else if(IsKeyReleased('S'))
+	{
+		scene->UpdateKeyUp('s');
+	}
 
 	//Up arrow key
 	static bool b_UpKey = false;
+	scene->UpdateKeyUp(VK_UP);
 	if(IsKeyPressed(VK_UP) && !b_UpKey)
 	{
-		scene->UpdateKeypress(VK_UP);
 		b_UpKey = true;
 	}
 	else if(!IsKeyPressed(VK_UP) && b_UpKey)
+	{
+		scene->UpdateKeyDown(VK_UP);
 		b_UpKey = false;
-
+	}
+	
 	//Down arrow key
 	static bool b_DownKey = false;
+	scene->UpdateKeyUp(VK_DOWN);
 	if(IsKeyPressed(VK_DOWN) && !b_DownKey)
 	{
-		scene->UpdateKeypress(VK_DOWN);
 		b_DownKey = true;
 	}
 	else if(!IsKeyPressed(VK_DOWN) && b_DownKey)
+	{
+		scene->UpdateKeyDown(VK_DOWN);
 		b_DownKey = false;
+	}
 
 	//Left arrow key
 	static bool b_LeftKey = false;
+	scene->UpdateKeyUp(VK_LEFT);
 	if(IsKeyPressed(VK_LEFT) && !b_LeftKey)
 	{
-		scene->UpdateKeypress(VK_LEFT);
 		b_LeftKey = true;
 	}
 	else if(!IsKeyPressed(VK_LEFT) && b_LeftKey)
+	{
+		scene->UpdateKeyDown(VK_LEFT);
 		b_LeftKey = false;
+	}
 
 	//Right arrow key
 	static bool b_RightKey = false;
+	scene->UpdateKeyUp(VK_RIGHT);
 	if(IsKeyPressed(VK_RIGHT) && !b_RightKey)
 	{
-		scene->UpdateKeypress(VK_RIGHT);
 		b_RightKey = true;
 	}
 	else if(!IsKeyPressed(VK_RIGHT) && b_RightKey)
+	{
+		scene->UpdateKeyDown(VK_RIGHT);
 		b_RightKey = false;
+	}
 
-	if(IsKeyPressed('W'))
-		scene->UpdateKeypress('W');
-	if(IsKeyPressed('A'))
-		scene->UpdateKeypress('A');
-	if(IsKeyPressed('S'))
-		scene->UpdateKeypress('S');
-	if(IsKeyPressed('D'))
-		scene->UpdateKeypress('D');
+	//Enter key
+	if(IsKeyPressed(VK_RETURN))
+	{
+		scene->UpdateKeyDown(VK_RETURN);
+	}
+	if(IsKeyReleased(VK_RETURN))
+	{
+		scene->UpdateKeyUp(VK_RETURN);
+	}
+	//Backspace
+	if(IsKeyPressed(VK_BACK))
+	{
+		scene->UpdateKeyDown(VK_BACK);
+	}
+	if(IsKeyReleased(VK_BACK))
+	{
+		scene->UpdateKeyUp(VK_BACK);
+	}
+
 
 	return false;
 }

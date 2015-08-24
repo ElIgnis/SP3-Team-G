@@ -9,6 +9,7 @@ Camera3::Camera3()
 	:ViewLimiter(1.f - Math::EPSILON)
 	,Cam_Rotate(Vector3())
 	,PerspView(false)
+	,CameraAngle(90.f)
 {
 }
 
@@ -188,16 +189,13 @@ void Camera3::SetTargetPlayer(CPlayer *newTargetPlayer)
 	this->TargetPlayer = newTargetPlayer;
 }
 
+float Camera3::GetCameraAngle(void)
+{
+	return CameraAngle;
+}
+
 void Camera3::Update(double dt)
 {
-	if(Application::IsKeyPressed('M'))
-		PerspView = true;
-	if(Application::IsKeyPressed('N'))
-	{
-		Reset();
-		PerspView = false;
-	}
-
 	if(Application::IsKeyPressed('R'))
 	{
 		Reset();
@@ -207,16 +205,15 @@ void Camera3::Update(double dt)
 	if(PerspView)
 	{
 		Mtx44 rotX,rotY;
-
-		
-		
 		if(Application::IsKeyPressed(VK_LEFT))
 		{
 			rotateAngle.y += 1.f * dt;
+			CameraAngle += 1.f;
 		}
 		else if(Application::IsKeyPressed(VK_RIGHT))
 		{
 			rotateAngle.y -= 1.f * dt;
+			CameraAngle -= 1.f;
 		}
 		if(Application::IsKeyPressed(VK_UP))
 		{
@@ -234,6 +231,11 @@ void Camera3::Update(double dt)
 		{
 			rotateAngle.x = 0.f;
 		}
+
+		if(CameraAngle > 360.f)
+			CameraAngle = 0.f;
+		if(CameraAngle < 0.f)
+			CameraAngle = 360.f;
 
 		rotY.SetToRotation(rotateAngle.y, 0, 1, 0);
 		rotX.SetToRotation(rotateAngle.x, 1, 0, 0);

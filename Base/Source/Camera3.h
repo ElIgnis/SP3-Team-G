@@ -50,10 +50,12 @@ public:
 	void SetPersp(bool PerspView);
 
 	void SetTargetPlayer(CPlayer *newTargetPlayer);
+	float GetCameraAngle(void);
+
 private:
 	Vector3 rotateAngle;
 	Vector3 DistFromPlayer;
-	Vector3 Dir;
+	float CameraAngle;
 
 	float ViewLimiter;
 	float pitch;
