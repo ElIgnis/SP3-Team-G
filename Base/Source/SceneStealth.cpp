@@ -54,6 +54,7 @@ void SceneStealth::Init()
 	HS_List.LoadHighScore();
 	LvlHandler.LoadMap("Level//Level 1.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
+	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
 	//Initialise key list
 	for(int i=0; i<NumberOfKeys; ++i)
@@ -75,7 +76,7 @@ void SceneStealth::InitGame(void)
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->pos.Set(-75,35,0);
-	Virus->scale.Set(10,10,10);
+	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 }
 
@@ -288,7 +289,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 	
 	Virus->Update(dt);
-	bool test = false;
+	bool b_ColCheck = false;
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 	{
@@ -301,7 +302,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				switch(go->type)
 				{
 				case GameObject::GO_WALL:
-					test = true;
+					b_ColCheck = true;
 					break;
 				case GameObject::GO_BOX:
 					CollisionResponse(Virus,go,dt);
@@ -313,7 +314,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
-	if(!test)
+	if(!b_ColCheck)
 		Virus->pos += Virus->vel * dt;
 
 	//Check player collision with powerups
