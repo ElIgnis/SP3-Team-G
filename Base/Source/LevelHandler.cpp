@@ -2,6 +2,12 @@
 
 #define Enemy_Sentry_Size 12.f
 #define Enemey_Patrol_Size 10.f
+#define Enemy_Sentry_Rot1 6
+#define Enemy_Sentry_Rot2 7
+#define Enemy_Sentry_RotSpd 8
+#define Int_posx 9
+#define Int_posy 10
+#define Int_posz 11
 
 CLevelHandler::CLevelHandler(void)
 	: m_cSplit_Char(',')
@@ -65,7 +71,7 @@ void CLevelHandler::LoadMap(string mapLevel)
 			if(go->type == GameObject::GO_WALL)
 				go->normal.Normalize();
 
-			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED || go->type == GameObject::GO_POWERUP_HEALTH)
+			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED)
 				Powerup_List.push_back(go);
 			else
 				Structure_List.push_back(go);
@@ -104,8 +110,8 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
 					Vector3(Enemy_Sentry_Size, Enemy_Sentry_Size, Enemy_Sentry_Size),
 					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0)
-					,stof(Level_Tokens2[6]), stof(Level_Tokens2[7])
-					, stof(Level_Tokens2[8]));
+					,stof(Level_Tokens2[Enemy_Sentry_Rot1]), stof(Level_Tokens2[Enemy_Sentry_Rot2])
+					, stof(Level_Tokens2[Enemy_Sentry_RotSpd]));
 				Enemy_List.push_back(en);
 			}
 			else if(Level_Tokens2.at(EGO_TYPE) == "ENEMY_PATROL")
@@ -129,25 +135,6 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[EPOINT1 + i * 2]), stof(Level_Tokens2[EPOINT2 + i * 2]), 0));
 				en->normal.Normalize();
 				Enemy_List.push_back(en);
-			}
-			else if(Level_Tokens2.at(GO_TYPE) == "GO_LEVER")
-			{
-				CInteractables *in = new CLever( 
-					Vector3(stof(Level_Tokens2.at(POSX))
-					, stof(Level_Tokens2.at(POSY))
-					, stof(Level_Tokens2.at(POSZ )))
-					//normal
-					, Vector3(stof(Level_Tokens2.at(NORMALX))
-					, stof(Level_Tokens2.at(NORMALY)))
-					//scale
-					, Vector3(stof(Level_Tokens2.at(SCALEX))
-					, stof(Level_Tokens2.at(SCALEY))
-					, stof(Level_Tokens2.at(SCALEZ)))
-					
-					,Vector3(stof(Level_Tokens2.at(9))
-					, stof(Level_Tokens2.at(10))
-					, stof(Level_Tokens2.at(11))));
-				Interactables_List.push_back(in);
 			}
 			while(Level_Tokens2.size() > 0)
 				Level_Tokens2.pop_back();
@@ -194,9 +181,9 @@ void CLevelHandler::LoadInteractables(string mapLevel)
 					, stof(Level_Tokens2.at(SCALEY))
 					, stof(Level_Tokens2.at(SCALEZ)))
 					
-					,Vector3(stof(Level_Tokens2.at(9))
-					, stof(Level_Tokens2.at(10))
-					, stof(Level_Tokens2.at(11))));
+					,Vector3(stof(Level_Tokens2.at(Int_posx))
+					, stof(Level_Tokens2.at(Int_posy))
+					, stof(Level_Tokens2.at(Int_posz))));
 				Interactables_List.push_back(in);
 			}
 			while(Level_Tokens2.size() > 0)
