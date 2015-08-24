@@ -54,6 +54,7 @@ void SceneStealth::Init()
 	HS_List.LoadHighScore();
 	LvlHandler.LoadMap("Level//Level 1.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
+	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
 	//Initialise key list
 	for(int i=0; i<NumberOfKeys; ++i)
@@ -62,6 +63,8 @@ void SceneStealth::Init()
 	}
 
 	InitGame();
+
+	bLightEnabled = false;
 }
 
 void SceneStealth::InitGame(void)
@@ -75,7 +78,7 @@ void SceneStealth::InitGame(void)
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->pos.Set(-75,35,0);
-	Virus->scale.Set(10,10,10);
+	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 }
 
@@ -125,6 +128,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	case GameObject::GO_WALL:
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
+	case GameObject::GO_POWERUP_HEALTH:
 	case GameObject::GO_BOX:
 		{
 			//|(w0 - b1).N| < r + h / 2
@@ -266,6 +270,7 @@ void SceneStealth::Update(double dt)
 		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
+		cout << Virus->pos << endl;
 		break;
 	default:
 		break;
@@ -288,7 +293,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 	
 	Virus->Update(dt);
-	bool test = false;
+	bool b_ColCheck = false;
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 	{
@@ -301,7 +306,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				switch(go->type)
 				{
 				case GameObject::GO_WALL:
-					test = true;
+					b_ColCheck = true;
 					break;
 				case GameObject::GO_BOX:
 					CollisionResponse(Virus,go,dt);
@@ -313,7 +318,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
-	if(!test)
+	if(!b_ColCheck)
 		Virus->pos += Virus->vel * dt;
 
 	//Check player collision with powerups
@@ -333,6 +338,10 @@ void SceneStealth::UpdatePlayer(const double dt)
 				case GameObject::GO_POWERUP_SPEED:
 					Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
 					Virus->m_pInv.AddItem(new CItem("Speedy powerup thingy", CItem::SPEED));
+					break;
+				case GameObject::GO_POWERUP_HEALTH:
+					Virus->ActivatePowerup(CPlayer::POWERUP_HEALTH, 3.f);
+					Virus->m_pInv.AddItem(new CItem("Health powerup thingy", CItem::HEALTH));
 					break;
 				}
 				go->active = false;
@@ -409,7 +418,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					}
 				}
 				if(b_ColCheck2)
-					go->pos += go->vel * 0.4;
+					go->pos += go->vel * 0.4; 
 				else
 					go->pos += go->vel;
 			}
@@ -962,7 +971,14 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_POWERUP_FREEZE], bLightEnabled);
+		RenderMesh(meshList[GEO_POWERUP_SPEED], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_POWERUP_HEALTH:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_POWERUP_HEALTH], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_HOLE:
@@ -1079,7 +1095,7 @@ void SceneStealth::RenderGame(void)
 	modelStack.Translate(0.f, -10.f, 0.f);
 	modelStack.Rotate(-90.f, 1, 0, 0);
 	modelStack.Scale(1000.f, 1000.f, 1.f);
-	RenderMesh(meshList[GEO_FLOOR_LEVEL4], false);
+	RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
 	modelStack.PopMatrix();
 }
 

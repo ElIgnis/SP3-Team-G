@@ -191,8 +191,14 @@ void SceneBase::Init()
 	meshList[GEO_ANTIVIRUS_INVERTED]->textureID = LoadTGA("Image//Antivirus_inverted.tga");
 
 	//Powerups
-	meshList[GEO_POWERUP_FREEZE] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//TimeFreeze.obj");
+	meshList[GEO_POWERUP_FREEZE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//TimeFreeze.obj");
 	meshList[GEO_POWERUP_FREEZE]->textureID = LoadTGA("Image//GameObjects/Powerups/TimeFreeze.tga");
+
+	meshList[GEO_POWERUP_SPEED] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Speed.obj");
+	meshList[GEO_POWERUP_SPEED]->textureID = LoadTGA("Image//GameObjects/Powerups/Speed.tga");
+
+	meshList[GEO_POWERUP_HEALTH] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Health.obj");
+	meshList[GEO_POWERUP_HEALTH]->textureID = LoadTGA("Image//GameObjects/Powerups/Health.tga");
 
 	//Player indicator
 	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
@@ -207,8 +213,13 @@ void SceneBase::Init()
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Floor quads
+	meshList[GEO_FLOOR_LEVEL3] = MeshBuilder::GenerateQuad("Floor_Level3", Color(1, 0, 0), 1.f);
+	meshList[GEO_FLOOR_LEVEL3]->textureID = LoadTGA("Image//Level3_Floor.tga");
+
+	//Floor quads
 	meshList[GEO_FLOOR_LEVEL4] = MeshBuilder::GenerateQuad("Floor_Level4", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL4]->textureID = LoadTGA("Image//Level4_Floor.tga");
+
 
 	//Sound
 	engine = createIrrKlangDevice();
