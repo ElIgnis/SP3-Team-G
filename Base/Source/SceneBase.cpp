@@ -182,6 +182,12 @@ void SceneBase::Init()
 	meshList[GEO_PLAYER] = MeshBuilder::GenerateOBJ("Player", "OBJ//Player.obj");
 	meshList[GEO_PLAYER]->textureID = LoadTGA("Image//PlayerTexture.tga");
 
+	//Enemy alert
+	meshList[GEO_ALERT] = MeshBuilder::GenerateSphere("ball", Color(1, 0, 0), 10, 10, 3.f); 
+
+	//Enemy tracking
+	meshList[GEO_TRACK] = MeshBuilder::GenerateSphere("ball", Color(1, 0, 1), 10, 10, 3.f); 
+
 	//Firewall - Patrolling Enemy
 	meshList[GEO_FIREWALL] = MeshBuilder::GenerateOBJ("Melee", "OBJ//Firewall.obj");
 	meshList[GEO_FIREWALL]->textureID = LoadTGA("Image//Firewall.tga");
@@ -201,6 +207,9 @@ void SceneBase::Init()
 
 	meshList[GEO_POWERUP_HEALTH] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Health.obj");
 	meshList[GEO_POWERUP_HEALTH]->textureID = LoadTGA("Image//GameObjects/Powerups/Health.tga");
+
+	meshList[GEO_POWERUP_NOISE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//cube.obj");
+	meshList[GEO_POWERUP_NOISE]->textureID = LoadTGA("Image//GameObjects/Powerups/Noise.tga");
 
 	//Player indicator
 	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);

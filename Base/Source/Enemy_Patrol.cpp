@@ -6,6 +6,7 @@
 #define Patrol_waitTime 1.f
 #define AggroTime 1.f
 
+
 CEnemy_Patrol::CEnemy_Patrol() 
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(0)
@@ -35,6 +36,7 @@ CEnemy_Patrol::~CEnemy_Patrol()
 
 void CEnemy_Patrol::Update(const double dt)
 {
+	CEnemy::Update(dt);
 	switch(state)
 	{
 	case STATE_PATROL:
@@ -66,33 +68,41 @@ void CEnemy_Patrol::Update(const double dt)
 		{
 			m_fWaitTime -= (float)dt;
 			if(m_fWaitTime < 0)//Continue patroling once wait time is over
+			{
 				state = STATE_PATROL;
+				m_bTracking = false;
+			}
 		}
 		break;
 	case STATE_ATTACK:
 		{
+			player_prevPos = player_position;
 			normal = (player_position - pos).Normalized();
 			//Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
 			//dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
 			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			vel = normal * Chase_moveSpd * (float)dt;
 			if(!m_bIsDetected)
-				m_fAggroTime -= 1.f * dt;
-			else
-				m_fAggroTime = AggroTime;
-			if(m_fAggroTime < 0.f)
-				state = STATE_PATROL;
+				state = STATE_TRACK;
+		}
+		break;
+	case STATE_TRACK:
+		{
+			m_bTracking = true;
+			normal = (player_prevPos - pos).Normalized();
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			vel = normal * Chase_moveSpd * (float)dt;
+			if((pos - player_prevPos).Length() < 1.f)
+			{
+				state = STATE_WAIT;
+				vel.SetZero();
+				m_fWaitTime = Patrol_waitTime;
+			}
 		}
 		break;
 	default:
 		break;
 	}
-}
-
-void CEnemy_Patrol::SetState(ENEMY_STATE newState)
-{
-	this->state = newState;
-	m_fAggroTime = AggroTime;
 }
 
 void CEnemy_Patrol::AddPatrolPoint(Vector3 p)

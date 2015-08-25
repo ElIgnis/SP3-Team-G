@@ -33,6 +33,7 @@ CEnemy_Sentry::~CEnemy_Sentry()
 
 void CEnemy_Sentry::Update(const double dt)
 {
+	CEnemy::Update(dt);
 	switch(state)
 	{
 	case STATE_SCAN:

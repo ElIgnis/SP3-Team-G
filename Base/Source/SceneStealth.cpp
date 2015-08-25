@@ -108,9 +108,21 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	switch(go2->type)
 	{
 	//Ball to ball
-	case GameObject::GO_CHECKPOINT:
-	case GameObject::GO_BALL:
+	case GameObject::GO_PLAYER:
 		{
+			float distSquared = (go2->pos - go1->pos).LengthSquared();
+			float combinedRadius = go1->scale.x + go2->scale.x;
+
+			if(distSquared <= combinedRadius)
+			{
+				return true;
+			}
+			return false;
+		}
+		break;
+
+	case GameObject::GO_CHECKPOINT:
+	{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
 			Vector3 c = go1->vel - go2->vel;	//Relative velocity
@@ -121,8 +133,8 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 				return true;
 			}
 			return false;
-		}
-		break;
+	}
+	break;
 	
 	///////////STRUCTURE COLLISIONS//////////////////
 
@@ -163,7 +175,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	return false;
 }
 
-bool SceneStealth::CheckDetection(CEnemy *go1, GameObject *go2)
+bool SceneStealth::CheckDetectionRange(CEnemy *go1, GameObject *go2)
 {
 	float distSquared = (go2->pos - go1->pos).LengthSquared();
 	float combinedRadius =  go1->GetDetectionRange().x + go2->scale.x;
@@ -271,7 +283,6 @@ void SceneStealth::Update(double dt)
 		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
-		//cout << Virus->pos << endl;
 		break;
 	default:
 		break;
@@ -281,55 +292,66 @@ void SceneStealth::Update(double dt)
 
 void SceneStealth::UpdatePlayer(const double dt)
 {
-	//Player moves according to camera angle
-	float orientation = 0;
-	orientation += Math::DegreeToRadian(Virus->dir.z);
-
-	Virus->dir.x = cos(orientation);
-	Virus->dir.y = sin(orientation);
-
-	Vector3 acc = m_force * (1.f / Virus->mass);
-	Virus->vel.x = Virus->dir.x * acc.x;
-	Virus->vel.y =  Virus->dir.y * acc.y;
-
-	
-	Virus->Update(dt);
-	bool b_ColCheck = false;
-	//Check player collision with structure
-	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	//Only update player when player is not dead
+	if(Virus->GetPlayerState() != CPlayer::DEAD)
 	{
-		GameObject *go = (GameObject *)*it;
-		//Only check for active game objects
-		if(go->active)
+		//Player moves according to camera angle
+		float orientation = 0;
+		orientation += Math::DegreeToRadian(Virus->dir.z);
+
+		Virus->dir.x = cos(orientation);
+		Virus->dir.y = sin(orientation);
+
+		Vector3 acc = m_force * (1.f / Virus->mass);
+		Virus->vel.x = Virus->dir.x * acc.x;
+		Virus->vel.y =  Virus->dir.y * acc.y;
+
+
+		Virus->Update(dt);
+		bool b_ColCheck = false;
+
+		//Check player collision with structure
+		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
-			if(CheckCollision(Virus,go,dt))
+			GameObject *go = (GameObject *)*it;
+			//Only check for active game objects
+			if(go->active)
 			{
-				switch(go->type)
+				if(go->type == GameObject::GO_WALL)
+					go->phasing = false;
+				if(CheckCollision(Virus,go,dt))
 				{
-				case GameObject::GO_WALL:
-					b_ColCheck = true;
-					break;
-				case GameObject::GO_BOX:
-					CollisionResponse(Virus,go,dt);
-					break;
-				case GameObject::GO_HOLE:
-					Virus->m_bIsHiding = true;
-					break;
+					switch(go->type)
+					{
+					case GameObject::GO_WALL:
+						b_ColCheck = true;
+						break;
+					case GameObject::GO_BOX:
+						CollisionResponse(Virus,go,dt);
+						break;
+					case GameObject::GO_HOLE:
+						Virus->m_bIsHiding = true;
+						break;
+					}
 				}
 			}
 		}
-	}
 	if(!b_ColCheck)
-		Virus->pos += Virus->vel * dt;
-
-	//Check player collision with powerups
-	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
 	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active)
+		if(Virus->GetPowerupStatus(CPlayer::POWERUP_SPEED))
+			Virus->pos += Virus->vel * 2 * dt;
+		else
+			Virus->pos += Virus->vel * dt;
+	}
+
+		//Check player collision with powerups
+		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
 		{
-			if(CheckCollision(Virus,go,dt))
+			GameObject *go = (GameObject *)*it;
+			if(go->active)
 			{
+				if(CheckCollision(Virus,go,dt))
+				{
 				switch(go->type)
 				{
 				case GameObject::GO_POWERUP_FREEZE:
@@ -344,23 +366,33 @@ void SceneStealth::UpdatePlayer(const double dt)
 					Virus->add1Life();
 					Virus->m_pInv.AddItem(new CItem("Health powerup thingy", CItem::HEALTH));
 					break;
+				case GameObject::GO_POWERUP_NOISE:
+					Virus->m_pInv.AddItem(new CItem("Noise thing", CItem::NOISE));
+					break;
 				}
 				go->active = false;
+				}
 			}
 		}
-	}
 
-	//Check player collision with interactables
-	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
-	{
-		CInteractables *go = (CInteractables *)* it;
-		if(go->active)
+		//Check player collision with interactables
+		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
-			if(Application::IsKeyPressed(VK_RETURN))
-				go->CheckBonusInteraction(Virus->pos);
+			CInteractables *go = (CInteractables *)* it;
+			if(go->active)
+			{
+				if(Application::IsKeyPressed(VK_RETURN))
+					go->CheckBonusInteraction(Virus->pos);
+			}
 		}
+		Virus->m_bIsHiding = false;
 	}
-	Virus->m_bIsHiding = false;
+	//Respawning of player
+	else
+	{
+		//Check for last CP.
+		//If lives > 0, respawn there
+	}
 
 
 	if (unsigned int m_pLives = 0)
@@ -391,13 +423,21 @@ void SceneStealth::UpdateEnemies(const double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)
 		{
-			if(!Virus->GetPowerupStatus(CPlayer::POWERUP_FREEZE))//Check for freeze powerup
+			//Check if player use freeze powerup
+			if(!Virus->GetPowerupStatus(CPlayer::POWERUP_FREEZE))
 			{
+				//Player collide with enemy
+				if(CheckCollision(go, Virus, dt))
+				{
+					Virus->SetPlayerState(CPlayer::DEAD);
+				}
+
 				go->PlayerCurrentPosition(Virus->pos);
 
-				if((Virus->pos - go->pos).Length() < 100)//Check distance between player and enemy
+				//Cone detection by distance
+				if((Virus->pos - go->pos).LengthSquared() < 10000)
 				{
-					if(CheckDetection(go, Virus))
+					if(CheckDetectionRange(go, Virus))
 					{
 						Vector3 direction = Virus->pos - go->pos;
 						float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
@@ -405,7 +445,12 @@ void SceneStealth::UpdateEnemies(const double dt)
 						{
 							if(!Virus->m_bIsHiding)
 							{
-								go->SetState(CEnemy::STATE_ATTACK);
+								if(!go->GetSpottedStatus())
+								{
+									go->SetState(CEnemy::STATE_ALERT);
+									
+									go->vel.SetZero();
+								}
 								go->SetIsDetected(true);
 								//std::cout << "in cone range" << std::endl;
 							}
@@ -418,7 +463,10 @@ void SceneStealth::UpdateEnemies(const double dt)
 						go->SetIsDetected(false);
 					}
 				}
+
+				//Updates enemies
 				go->Update(dt);
+
 				//Check enemy collision with structures
 				bool b_ColCheck2 = false;
 				for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
@@ -426,7 +474,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					GameObject *go2 = (GameObject  *)*it3;
 					if(go2->active)
 					{
-						go2->phasing = false;
+						//go2->phasing = false;
 						if(CheckCollision(go, go2, (float)dt))
 						{
 							if(go2->type == GameObject::GO_WALL)
@@ -443,37 +491,44 @@ void SceneStealth::UpdateEnemies(const double dt)
 				else
 					go->pos += go->vel;
 			}
-			//Update enemy bullets
-			for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
+
+
+
+			//Update bullets of sentry enemies
+			if(go->type == CEnemy::ENEMY_SENTRY)
 			{
+				//Update enemy bullets
+				for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
+				{
 				bool b_ColCheck1 = false;
 				GameObject *bul = (GameObject  *)*it2;
 				if(bul->active)
 				{
-					bul->mass -= 1.f * dt;
+					bul->mass -= 1.f * (float)dt;
 					if(bul->mass < 0.f)
 						bul->active = false;
-					if(CheckCollision (Virus, bul, (float)dt))
-					{
-						Virus->Minus1Life();
-						bul->active = false;
-					}
-					//Check bullet - structure collision
-					for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
-					{
-						GameObject *go3 = (GameObject  *)*it3;
-						if(go3->active)
+						if(CheckCollision (Virus, bul, (float)dt))
 						{
-							if(CheckCollision(bul, go3, (float)dt))
+							Virus->Minus1Life();
+							bul->active = false;
+						}
+						//Check bullet - structure collision
+						for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
+						{
+							GameObject *go3 = (GameObject  *)*it3;
+							if(go3->active)
 							{
-								bul->active = false;
-								b_ColCheck1 = true;
-								break;
+								if(CheckCollision(bul, go3, (float)dt))
+								{
+									bul->active = false;
+									b_ColCheck1 = true;
+									break;
+								}
 							}
 						}
+						if(!b_ColCheck1)
+							bul->pos += bul->vel;//If no collision, update bullet pos
 					}
-					if(!b_ColCheck1)
-						bul->pos += bul->vel;//If no collision, update bullet pos
 				}
 			}
 		}
@@ -1007,7 +1062,14 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_POWERUP_HEALTH], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
-	case GameObject::GO_CHECKPOINT:
+	case GameObject::GO_POWERUP_NOISE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_POWERUP_NOISE], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
+case GameObject::GO_CHECKPOINT:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
@@ -1026,10 +1088,17 @@ void SceneStealth::RenderGO(GameObject *go)
 
 void SceneStealth::RenderGame(void)
 {
+	//Render floor
+	modelStack.PushMatrix();
+	modelStack.Translate(0.f, -10.f, 0.f);
+	modelStack.Rotate(-90.f, 1, 0, 0);
+	modelStack.Scale(1000.f, 1000.f, 1.f);
+	RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
+	modelStack.PopMatrix();
+	
 	modelStack.PushMatrix();
 	modelStack.Rotate(-rotateScene, 1, 0, 0);
-	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
-	
+
 	//Render player
 	float theta;
 	theta = Math::RadianToDegree(atan2(Virus->dir.y, Virus->dir.x));
@@ -1068,6 +1137,23 @@ void SceneStealth::RenderGame(void)
 		modelStack.PopMatrix();
 	}
 
+	//Render any GameObject here eg wall, box, door.
+	for(std::vector<GameObject *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+		{
+			RenderGO(go);
+		}
+	}
+	//Render powerups
+	for(std::vector<GameObject *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+			RenderGO(go);
+	}
+
 	//Render enemies here
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
@@ -1092,7 +1178,21 @@ void SceneStealth::RenderGame(void)
 				break;
 			}
 			modelStack.PopMatrix();
-
+			//Enemy alert indicator
+			if(go->GetDetectedStatus())
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				RenderMesh(meshList[GEO_ALERT], bLightEnabled);
+				modelStack.PopMatrix();
+			}
+			else if(go->GetTrackingStatus())
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
+				modelStack.PopMatrix();
+			}
 			/*modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
@@ -1112,36 +1212,7 @@ void SceneStealth::RenderGame(void)
 			}
 		}
 	}
-	//Render any GameObject here eg wall, box, door.
-	for(std::vector<GameObject *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active)
-		{
-			RenderGO(go);
-		}
-	}
-	//Render powerups
-	for(std::vector<GameObject *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active)
-			RenderGO(go);
-	}
-	modelStack.PopMatrix();
 
-	//Render floor
-	/*modelStack.PushMatrix();
-	modelStack.Translate(0.f, -10.f, 0.f);
-	modelStack.Rotate(-90.f, 1, 0, 0);
-	modelStack.Scale(1000.f, 1000.f, 1.f);
-	RenderMesh(meshList[GEO_FLOOR_LEVEL4], false);
-	modelStack.PopMatrix();*/
-	modelStack.PushMatrix();
-	modelStack.Translate(0.f, -10.f, 0.f);
-	modelStack.Rotate(-90.f, 1, 0, 0);
-	modelStack.Scale(1000.f, 1000.f, 1.f);
-	RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
 	modelStack.PopMatrix();
 }
 
@@ -1253,6 +1324,8 @@ void SceneStealth::RenderUI(void)
 	std::stringstream ssFPS;
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
+
+	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
 }
 
 void SceneStealth::RenderBackground()
