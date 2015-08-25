@@ -298,6 +298,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 		//Only check for active game objects
 		if(go->active)
 		{
+			if(go->type == GameObject::GO_WALL)
+				go->phasing = false;
 			if(CheckCollision(Virus,go,dt))
 			{
 				switch(go->type)
@@ -316,7 +318,12 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 	}
 	if(!b_ColCheck)
-		Virus->pos += Virus->vel * dt;
+	{
+		if(Virus->GetPowerupStatus(CPlayer::POWERUP_SPEED))
+			Virus->pos += Virus->vel * 2 * dt;
+		else
+			Virus->pos += Virus->vel * dt;
+	}
 
 	//Check player collision with powerups
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
@@ -402,7 +409,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					GameObject *go2 = (GameObject  *)*it3;
 					if(go2->active)
 					{
-						go2->phasing = false;
+						//go2->phasing = false;
 						if(CheckCollision(go, go2, (float)dt))
 						{
 							if(go2->type == GameObject::GO_WALL)
@@ -429,6 +436,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					bul->mass -= 1.f * dt;
 					if(bul->mass < 0.f)
 						bul->active = false;
+						
 					//Check bullet - structure collision
 					for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
 					{
