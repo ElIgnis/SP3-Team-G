@@ -392,16 +392,16 @@ void SceneStealth::UpdatePlayer(const double dt)
 				switch(go->type)
 				{
 				case GameObject::GO_POWERUP_FREEZE:
-					Virus->ActivatePowerup(CPlayer::POWERUP_FREEZE, 3.f);
-					Virus->m_pInv.AddItem(new CItem("Frozen powerup thing", CItem::FREEZE));
+					//Virus->ActivatePowerup(CPlayer::POWERUP_FREEZE, 3.f);
+					Virus->m_pInv.AddItem(new CItem(0, CItem::FREEZE));
 					break;
 				case GameObject::GO_POWERUP_SPEED:
-					Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
-					Virus->m_pInv.AddItem(new CItem("Speedy powerup thingy", CItem::SPEED));
+					//Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
+					Virus->m_pInv.AddItem(new CItem(0, CItem::SPEED));
 					break;
 				case GameObject::GO_POWERUP_HEALTH:
-					Virus->add1Life();
-					Virus->m_pInv.AddItem(new CItem("Health powerup thingy", CItem::HEALTH));
+					//Virus->add1Life();
+					Virus->m_pInv.AddItem(new CItem(0, CItem::HEALTH));
 					break;
 				}
 				go->active = false;
@@ -1307,7 +1307,17 @@ void SceneStealth::RenderUI(void)
 {
 	std::stringstream ssFPS;
 	ssFPS << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
+	//RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
+
+	if(Virus->m_pInv.getHold() != 0)
+	{
+		for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
+		{
+			std::stringstream ssInv;
+			ssInv << "Item type:" << Virus->m_pInv.Inventory[i]->itemType << ' ' <<  Virus->m_pInv.Inventory[i]->getItemStack();
+			RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 2, 3);//Inventory holding
+		}
+	}
 }
 
 void SceneStealth::RenderBackground()

@@ -168,6 +168,11 @@ void SceneBase::Init()
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
+	//GameUI portion
+	
+	//Player Inventory Hotbar
+	meshList[GEO_QUAD] = MeshBuilder::GenerateQuad("Inventory hot bar",Color(1,1,1),15.f);
+
 	//Game Objects
 	//Wall
 	meshList[GEO_WALL_GREEN] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
