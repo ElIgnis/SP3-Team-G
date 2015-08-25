@@ -175,6 +175,8 @@ void SceneBase::Init()
 	//meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
 	meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
 	meshList[GEO_WALL_BLUE]->textureID = LoadTGA("Image//GameObjects/Walls/wall_blue.tga");
+	meshList[GEO_BINARYWALL] = MeshBuilder::GenerateOBJ("GEO_BinaryWall", "OBJ//cube.obj");
+	meshList[GEO_BINARYWALL]->textureID = LoadTGA("Image//GameObjects/Walls/BinaryWall.tga");
 
 	//Player
 	meshList[GEO_PLAYER] = MeshBuilder::GenerateOBJ("Player", "OBJ//Player.obj");
@@ -208,10 +210,18 @@ void SceneBase::Init()
 	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
 
+	//CheckPoint for Respawn
+	meshList[GEO_CHECKPOINT] = MeshBuilder::GenerateOBJ("CheckPoint", "OBJ//CheckPoint.obj");
+	meshList[GEO_CHECKPOINT]->textureID = LoadTGA("Image//CheckPoint.tga");
+
 	//CPU/Movable box
 	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
+	//Floor quads
+	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
+	meshList[GEO_FLOOR_LEVEL1]->textureID = LoadTGA("Image//Level1_Floor.tga");
+	
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL3] = MeshBuilder::GenerateQuad("Floor_Level3", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL3]->textureID = LoadTGA("Image//Level3_Floor.tga");
