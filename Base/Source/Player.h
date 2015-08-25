@@ -16,7 +16,7 @@ private:
 	unsigned int m_pLives;
 	bool m_bPowerupStatus[NUM_POWERUPS];
 	float m_fPowerupTime[NUM_POWERUPS];
-	GameObject *m_CurrentCP;
+	Vector3 m_CurrentCP;
 
 public:
 	CPlayer(void);
@@ -33,8 +33,8 @@ public:
 	void ActivatePowerup(PowerupList p, float f_timeLimit = 1.f);
 	bool GetPowerupStatus(PowerupList);
 
-	GameObject *GetCurrentCP(void);
-	void SetCurrentCP(GameObject *CP);
+	Vector3 GetCurrentCP(void);
+	void SetCurrentCP(Vector3 CP);
 	
 	virtual void Update(const double dt);
 

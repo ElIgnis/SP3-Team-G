@@ -271,7 +271,7 @@ void SceneStealth::Update(double dt)
 		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
-		cout << Virus->pos << endl;
+		//cout << Virus->pos << endl;
 		break;
 	default:
 		break;
@@ -362,6 +362,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 	}
 	Virus->m_bIsHiding = false;
 
+
+	if (unsigned int m_pLives = 0)
+	{
+		Virus->pos = Virus->GetCurrentCP();
+	}
 	//Check Player Collision with CheckPoints
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
 	{
@@ -371,7 +376,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		{
 			if(CheckCollision(Virus,go,dt))
 			{
-				Virus->SetCurrentCP(go);
+				Virus->SetCurrentCP(go->pos);
 				break;
 			}
 		}
@@ -1047,8 +1052,7 @@ void SceneStealth::RenderGame(void)
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
 	{
 		GameObject *go = (GameObject  *)*it;
-		if(go->active)
-			RenderGO(go);
+		RenderGO(go);
 	}
 
 	//Render interactables here
