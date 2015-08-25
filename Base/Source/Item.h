@@ -16,6 +16,7 @@ public:
 		HEALTH,
 		FREEZE,
 		SPEED,
+		NOISE,
 		ITEM_TOTAL,
 	};
 	ITEM_TYPE itemType;

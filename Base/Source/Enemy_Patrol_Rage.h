@@ -12,12 +12,11 @@ class CEnemy_Patrol_Rage : public CEnemy
 {
 public:
 	CEnemy_Patrol_Rage();
-	CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm);
+	CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle);
 	~CEnemy_Patrol_Rage();
 
 	void Update(const double dt);
 	virtual void AddPatrolPoint(Vector3);
-	virtual void SetState(ENEMY_STATE newState);
 
 	std::vector<Vector3> m_patrolposList;//List of positions to patrol to
 

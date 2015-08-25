@@ -15,7 +15,7 @@ CEnemy_Patrol_Rage::CEnemy_Patrol_Rage()
 	this->state = STATE_PATROL;
 }
 
-CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm)
+CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle)
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(1)
 	, m_fWaitTime(0.f)
@@ -29,6 +29,8 @@ CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm)
 	this->normal = norm;
 	this->active = true;
 	this->normal.Normalize();
+	this->detection_range.Set(f_detection_range, f_detection_range, 1);
+	this->f_detection_angle = f_detection_angle;
 	m_patrolposList.push_back(pos);
 }
 
@@ -38,6 +40,7 @@ CEnemy_Patrol_Rage::~CEnemy_Patrol_Rage()
 
 void CEnemy_Patrol_Rage::Update(const double dt)
 {
+	CEnemy::Update(dt);
 	switch(state)
 	{
 	case STATE_PATROL:
@@ -69,11 +72,15 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 		{
 			m_fWaitTime -= (float)dt;
 			if(m_fWaitTime < 0)//Continue patroling once wait time is over
+			{
+				m_bTracking = false;
 				state = STATE_PATROL;
+			}
 		}
 		break;
 	case STATE_ATTACK:
 		{
+			player_prevPos = player_position;
 			m_fChargeTime -= dt;
 			if(m_bCharge)
 			{
@@ -90,22 +97,26 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 				m_fChargeTime = ChargeTime;
 			}
 			if(!m_bIsDetected)
-				m_fAggroTime -= 1.f * dt;
-			else
-				m_fAggroTime = AggroTime;
-			if(m_fAggroTime < 0.f)
-				state = STATE_PATROL;
+				state = STATE_TRACK;	
+		}
+		break;
+	case STATE_TRACK:
+		{
+			m_bTracking = true;
+			normal = (player_prevPos - pos).Normalized();
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			vel = normal * Chase_moveSpd * (float)dt;
+			if((pos - player_prevPos).Length() < 1.f)
+			{
+				state = STATE_WAIT;
+				vel.SetZero();
+				m_fWaitTime = Patrol_waitTime;
+			}
 		}
 		break;
 	default:
 		break;
 	}
-}
-
-void CEnemy_Patrol_Rage::SetState(ENEMY_STATE newState)
-{
-	this->state = newState;
-	m_fAggroTime = AggroTime;
 }
 
 void CEnemy_Patrol_Rage::AddPatrolPoint(Vector3 p)
