@@ -458,14 +458,13 @@ void SceneStealth::UpdateEnemies(const double dt)
 						{
 							if(!Virus->m_bIsHiding)
 							{
-								if(!go->GetSpottedStatus())
+								if(Virus->GetPlayerState() == CPlayer::DISGUISE && !Virus->vel.IsZero() && !go->GetSpottedStatus())
 								{
 									go->SetState(CEnemy::STATE_ALERT);
-									
 									go->vel.SetZero();
 								}
+															
 								go->SetIsDetected(true);
-								//std::cout << "in cone range" << std::endl;
 							}
 							else
 								go->SetIsDetected(false);

@@ -7,8 +7,6 @@ using std::string;
 
 class CItem
 {
-private:
-	string m_itemName;
 public:
 	enum ITEM_TYPE
 	{
@@ -17,12 +15,26 @@ public:
 		FREEZE,
 		SPEED,
 		NOISE,
+		INVISIBILITY,
+		DISGUISE,
 		ITEM_TOTAL,
 	};
-	ITEM_TYPE itemType;
 
 	CItem(void);
-	CItem(string item_name, ITEM_TYPE t,Vector3 pos = Vector3(0,0,0));
+	CItem(int stack, ITEM_TYPE typeValue = HEALTH);
 	~CItem(void);
+
+	void itemAddStack(void);
+	void itemDelStack(void);
+	unsigned int getItemStack(void);
+
+	ITEM_TYPE GetItemType(void);
+	void SetItemType(ITEM_TYPE newItemType);
+
+private:
+	unsigned int m_uiStack;
+	ITEM_TYPE itemType;
+
+
 };
 

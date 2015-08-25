@@ -7,7 +7,6 @@ CInventory::CInventory(void)
 {
 }
 
-
 CInventory::~CInventory(void)
 {
 	while(Inventory.size() > 0)
@@ -38,21 +37,52 @@ unsigned int CInventory::getHold(void)
 	return m_iHolding;
 }
 
+//Add item into the inventory
 bool CInventory::AddItem(CItem *item)
 {
+	//If the inventory is full.
 	if(m_iHolding == m_iSize)
 	{
 		return false;
 	}
 	else
 	{
-		Inventory.push_back(item);
-		m_iHolding +=1 ;
-		return true;
+		//If the inventory is empty. 
+		if(m_iHolding == 0)
+		{
+			Inventory.push_back(item);
+			m_iHolding +=1;
+			item->itemAddStack();
+			return true;
+		}
+		//If the inventory s not and full and not empty
+		else
+		{
+			for(int i = 0; i < m_iHolding; i+=1)
+			{
+				//Checks for an existing item in the inventory
+				if(Inventory[i]->GetItemType() == item->GetItemType())
+				{
+					item->itemAddStack();
+					Inventory[i]->itemAddStack();
+					return true;
+				}
+				//If no exisiting, push new.
+				else
+				{
+					Inventory.push_back(item);
+					m_iHolding +=1;
+					item->itemAddStack();
+					return true;
+				}
+			}
+		}
 	}
+	return false;
 }
 
-bool CInventory::DelItem(CItem *item)
+//Del item from the inventory
+bool CInventory::UseItem(CItem *item)
 {
 	if(m_iHolding == 0)
 	{
@@ -62,12 +92,14 @@ bool CInventory::DelItem(CItem *item)
 	{
 		for(unsigned int i = 0; i < m_iHolding; ++i)
 		{
-			if(Inventory[i]->itemType == item->itemType)
+			if(Inventory[i]->GetItemType() == item->GetItemType())
 			{
 				Inventory.pop_back();
 				m_iHolding-=1;
+				Inventory[i]->itemDelStack();
 				return true;
 			}
 		}
 	}
+	return false;
 }

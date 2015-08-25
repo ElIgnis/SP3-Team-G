@@ -2,9 +2,9 @@
 
 #define Enemy_Sentry_Size 12.f
 #define Enemey_Patrol_Size 10.f
-#define Enemy_Sentry_Rot1 6
-#define Enemy_Sentry_Rot2 7
-#define Enemy_Sentry_RotSpd 8
+#define Enemy_Sentry_Rot1 8
+#define Enemy_Sentry_Rot2 9
+#define Enemy_Sentry_RotSpd 10
 #define Int_posx 9
 #define Int_posy 10
 #define Int_posz 11
@@ -114,6 +114,7 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
 					Vector3(Enemy_Sentry_Size, Enemy_Sentry_Size, Enemy_Sentry_Size),
 					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0)
+					,stof(Level_Tokens2[EDETECTIONRANGE]), stof(Level_Tokens2[EDETECTIONANGLE])
 					,stof(Level_Tokens2[Enemy_Sentry_Rot1]), stof(Level_Tokens2[Enemy_Sentry_Rot2])
 					, stof(Level_Tokens2[Enemy_Sentry_RotSpd]));
 				Enemy_List.push_back(en);
@@ -122,7 +123,8 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 			{
 				CEnemy *en = new CEnemy_Patrol(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
 					Vector3(Enemey_Patrol_Size, Enemey_Patrol_Size, Enemey_Patrol_Size), 
-					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0));
+					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0),
+					stof(Level_Tokens2[EDETECTIONRANGE]), stof(Level_Tokens2[EDETECTIONANGLE]));
 				int i_tempNum = stoi(Level_Tokens2[ENUM_POINTS]);//Number of patrol points
 				for(int i = 0; i < i_tempNum; ++i)
 					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[EPOINT1 + i * 2]), stof(Level_Tokens2[EPOINT2 + i * 2]), 0));
@@ -133,7 +135,8 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 			{
 				CEnemy *en = new CEnemy_Patrol_Rage(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
 					Vector3(Enemey_Patrol_Size, Enemey_Patrol_Size, Enemey_Patrol_Size),
-					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0));
+					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0),
+					stof(Level_Tokens2[EDETECTIONRANGE]), stof(Level_Tokens2[EDETECTIONANGLE]));
 				int i_tempNum = stoi(Level_Tokens2[ENUM_POINTS]);//Number of patrol points
 				for(int i = 0; i < i_tempNum; ++i)
 					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[EPOINT1 + i * 2]), stof(Level_Tokens2[EPOINT2 + i * 2]), 0));
@@ -206,7 +209,7 @@ vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 
 vector<GameObject *> &CLevelHandler::GetPowerup_List(void)
 {
-	return Powerup_List;
+	return Item_List;
 }
 
 vector<GameObject *> &CLevelHandler::GetCheckPoint_List(void)
@@ -251,11 +254,11 @@ void CLevelHandler::Exit(void)
 		Structure_List.pop_back();
 	}
 
-	while(Powerup_List.size() > 0)
+	while(Item_List.size() > 0)
 	{
-		GameObject *go = Powerup_List.back();
+		GameObject *go = Item_List.back();
 		delete go;
-		Powerup_List.pop_back();
+		Item_List.pop_back();
 	}
 
 	while(Enemy_List.size() > 0)

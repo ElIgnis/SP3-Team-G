@@ -8,10 +8,11 @@ using std::vector;
 class CInventory
 {
 private:
-	vector<CItem *>Inventory;
 	unsigned int m_iSize;
 	unsigned int m_iHolding;
 public:
+	vector<CItem *>Inventory;
+
 	CInventory(void);
 	~CInventory(void);
 
@@ -21,6 +22,7 @@ public:
 	unsigned int getHold(void);
 
 	bool AddItem(CItem *item);
-	bool DelItem(CItem *item);
+	bool UseItem(CItem *item);
+
 };
 

@@ -239,6 +239,10 @@ void SceneBase::Init()
 	meshList[GEO_FLOOR_LEVEL4] = MeshBuilder::GenerateQuad("Floor_Level4", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL4]->textureID = LoadTGA("Image//Level4_Floor.tga");
 
+	//Game UI here
+	//Inventory hot bar
+	meshList[GEO_HOTBAR] = MeshBuilder::GenerateQuad("InventoryHotbar", Color(1, 1, 1), 1.f);
+	meshList[GEO_HOTBAR]->textureID = LoadTGA("Image//hotbar.tga");
 
 	//Sound
 	engine = createIrrKlangDevice();
@@ -428,10 +432,10 @@ void SceneBase::RenderMeshIn2D(Mesh *mesh, float size, float x, float y)
 	viewStack.PopMatrix();
 }
 
-void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, float y, bool rotate, bool flip)
+void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float sizeX, float sizeY, float x, float y, bool rotate, bool flip)
 {
 	Mtx44 ortho;
-	ortho.SetToOrtho(0, 800, 0, 600, -10, 10);
+	ortho.SetToOrtho(0, Application::GetWindowWidth(), 0, Application::GetWindowHeight(), -10, 10);
 	projectionStack.PushMatrix();
 		projectionStack.LoadMatrix(ortho);
 		viewStack.PushMatrix();
@@ -439,7 +443,7 @@ void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float size, float x, 
 			modelStack.PushMatrix();
 				modelStack.LoadIdentity();
 				modelStack.Translate(x, y, 0);
-				modelStack.Scale(size, size, size);
+				modelStack.Scale(sizeX, sizeY, 1);
 				if (rotate)
 					modelStack.Rotate(rotateAngle, 0, 0, 1);
        

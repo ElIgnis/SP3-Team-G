@@ -98,6 +98,7 @@ public:
 		GEO_FLOOR_LEVEL3,
 		GEO_FLOOR_LEVEL4,
 		GEO_FLOOR_LEVEL1,
+		GEO_HOTBAR,
 		NUM_GEOMETRY,
 	};
 protected:
@@ -114,7 +115,7 @@ protected:
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderMeshIn2D(Mesh *mesh, float size, float x, float y);
-	void Render2DMesh(Mesh *mesh, const bool enableLight, const float size=1.0f, const float x=0.0f, const float y=0.0f, const bool rotate=false, const bool flip=false);
+	void Render2DMesh(Mesh *mesh, const bool enableLight, const float sizeX = 1.0f, const float sizeY = 1.0f, const float x=0.0f, const float y=0.0f, const bool rotate=false, const bool flip=false);
 	void SetHUD(const bool m_bHUDmode);
 	void RenderGO(GameObject *go);
 

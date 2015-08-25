@@ -7,6 +7,7 @@
 #include "Enemy_Patrol.h"
 #include "Enemy_Patrol_Rage.h"
 #include "Enemy_Sentry.h"
+#include "Item.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -21,7 +22,7 @@ class CLevelHandler
 private:
 	//Data storage
 	vector<GameObject *> Structure_List;
-	vector<GameObject *> Powerup_List;
+	vector<GameObject *> Item_List;
 	vector<GameObject *> CheckPoint_List;
 	vector<CEnemy *> Enemy_List;
 	vector<CInteractables *> Interactables_List;
@@ -57,6 +58,8 @@ public:
 		EPOSZ,
 		ENORMALX,
 		ENORMALY,
+		EDETECTIONRANGE,
+		EDETECTIONANGLE,
 		ENUM_POINTS,
 		EPOINT1,
 		EPOINT2,

@@ -41,6 +41,7 @@ public:
 
 	virtual void PlayerCurrentPosition(Vector3 player_position);
 	virtual Vector3 GetDetectionRange(void);
+	virtual float GetDetectionAngle(void);
 	virtual bool GetDetectedStatus(void);
 	virtual bool GetSpottedStatus(void);
 	virtual bool GetTrackingStatus(void);
@@ -58,6 +59,7 @@ protected:
 	bool m_bTracking;
 	std::vector<GameObject *> m_BulletList;
 	float f_alertTime;
+	float f_detection_angle;
 };
 
 #endif
