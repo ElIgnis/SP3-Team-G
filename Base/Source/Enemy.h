@@ -47,9 +47,9 @@ public:
 	virtual void SetIsDetected(bool b_IsDetected);
 
 	virtual vector<GameObject *> &GetBullet_List(void);
-	ENEMY_STATE state;
-protected:
 	
+protected:
+	ENEMY_STATE state;
 	Vector3 player_position;
 	Vector3 player_prevPos;
 	Vector3 detection_range;
