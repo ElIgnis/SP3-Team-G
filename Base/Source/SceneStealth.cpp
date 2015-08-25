@@ -1381,7 +1381,7 @@ void SceneStealth::RenderUI(void)
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
 
-	//Render2DMesh(meshList[GEO_HOTBAR],false,1000.0f,1000.0f,Application::GetWindowWidth() * 0.5,Application::GetWindowHeight() * 0.25,false,false);
+	Render2DMesh(meshList[GEO_HOTBAR],false,400.f,400.f,Application::GetWindowWidth() * 0.75,Application::GetWindowHeight() * 0.5,false,false);
 
 	if(Virus->m_pInv.getHold() != 0)
 	{
