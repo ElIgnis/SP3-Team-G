@@ -126,6 +126,38 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	///////////STRUCTURE COLLISIONS//////////////////
 
 	case GameObject::GO_WALL:
+		{
+			if(go1->type == GameObject::GO_BOX && go2->type == GameObject::GO_WALL)
+			{
+				float combinedDistX = (go2->pos.x - (go1->pos.x + go1->vel.x * dt)) * (go2->pos.x - (go1->pos.x + go1->vel.x * dt));
+				float combinedWidthX = (go1->scale.x * 0.5 + go2->scale.x * 0.5) * (go1->scale.x * 0.5 + go2->scale.x * 0.5);
+
+				float combinedDistY = (go2->pos.y - (go1->pos.y + go1->vel.y * dt)) * (go2->pos.y - (go1->pos.y + go1->vel.y * dt));
+				float combinedWidthY = (go1->scale.y * 0.5 + go2->scale.y * 0.5) * (go1->scale.y * 0.5 + go2->scale.y * 0.5);
+
+				if(combinedDistX < combinedWidthX && combinedDistY < combinedWidthY)
+				{
+					return true;
+				}
+				return false;
+			}
+			else
+			{
+				//|(w0 - b1).N| < r + h / 2
+				Vector3 w0 = go2->pos;
+				Vector3 b1 = go1->pos + go1->vel * dt;
+				Vector3 N = go2->normal;
+				float r = go1->scale.x;
+				float h = go2->scale.x;
+				//|(w0 - b1).NP| < r + l / 2
+				Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
+				float l = go2->scale.y;
+				if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.5f)
+					return true;
+				return false;
+			}
+		}
+		break;
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
 	case GameObject::GO_POWERUP_HEALTH:
@@ -236,6 +268,7 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 			go2->dir = go1->vel;
 			go2->vel = go1->vel;
 			go2->pos += Virus->vel * (float)dt;
+			go2->vel.SetZero();
 		}
 		break;
 	}
@@ -270,7 +303,6 @@ void SceneStealth::Update(double dt)
 		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
-		cout << Virus->pos << endl;
 		break;
 	default:
 		break;
@@ -293,6 +325,30 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 	
 	Virus->Update(dt);
+	
+	bool b_boxColCheck = false;
+	//Check BOX collision with the walls
+	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		//Only check for active game objects
+		if(go->active && go->type == GameObject::GO_BOX)
+		{
+			for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetStructure_List().begin(); it2 != LvlHandler.GetStructure_List().end(); ++it2)
+			{
+				GameObject *go2 = (GameObject *)*it2;
+				if(go2->active && go2->type == GameObject::GO_WALL)
+				{
+					go->vel = Virus->vel;
+					if(CheckCollision(go,go2,dt))
+					{
+						b_boxColCheck = true;
+					}
+				}
+			}
+		}
+	}
+
 	bool b_ColCheck = false;
 	//Check player collision with structure
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
@@ -309,7 +365,10 @@ void SceneStealth::UpdatePlayer(const double dt)
 					b_ColCheck = true;
 					break;
 				case GameObject::GO_BOX:
-					CollisionResponse(Virus,go,dt);
+					if(!b_boxColCheck)
+						CollisionResponse(Virus,go,dt);
+					else
+						b_ColCheck = true;
 					break;
 				case GameObject::GO_HOLE:
 					Virus->m_bIsHiding = true;
@@ -360,6 +419,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 	}
 	Virus->m_bIsHiding = false;
+
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
