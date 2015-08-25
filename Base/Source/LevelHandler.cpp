@@ -72,7 +72,7 @@ void CLevelHandler::LoadMap(string mapLevel)
 				go->normal.Normalize();
 
 			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED || go->type == GameObject::GO_POWERUP_HEALTH)
-				Powerup_List.push_back(go);
+				Item_List.push_back(go);
 			else
 				Structure_List.push_back(go);
 			++m_iObjLine;
@@ -205,7 +205,7 @@ vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 
 vector<GameObject *> &CLevelHandler::GetPowerup_List(void)
 {
-	return Powerup_List;
+	return Item_List;
 }
 
 vector<GameObject *> &CLevelHandler::GetCheckPoint_List(void)
@@ -250,11 +250,11 @@ void CLevelHandler::Exit(void)
 		Structure_List.pop_back();
 	}
 
-	while(Powerup_List.size() > 0)
+	while(Item_List.size() > 0)
 	{
-		GameObject *go = Powerup_List.back();
+		GameObject *go = Item_List.back();
 		delete go;
-		Powerup_List.pop_back();
+		Item_List.pop_back();
 	}
 
 	while(Enemy_List.size() > 0)

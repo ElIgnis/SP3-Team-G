@@ -239,9 +239,10 @@ void SceneBase::Init()
 	meshList[GEO_FLOOR_LEVEL4] = MeshBuilder::GenerateQuad("Floor_Level4", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL4]->textureID = LoadTGA("Image//Level4_Floor.tga");
 
-	//Gaem UI here
+	//Game UI here
 	//Inventory hot bar
 	meshList[GEO_HOTBAR] = MeshBuilder::GenerateQuad("InventoryHotbar", Color(1, 1, 1), 1.f);
+	meshList[GEO_HOTBAR]->textureID = LoadTGA("Image//hotbar.tga");
 
 	//Sound
 	engine = createIrrKlangDevice();
