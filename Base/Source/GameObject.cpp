@@ -32,7 +32,11 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 		this->type = GO_POWERUP_HEALTH;
 	else if(newType == "GO_POWERUP_NOISE")
 		this->type = GO_POWERUP_NOISE;
-
+	else if(newType == "GO_CHECKPOINT")
+	{
+		this->type = GO_CHECKPOINT;
+		active = false;
+	}
 
 	if(newType == "GO_HOLE")
 		this->type = GO_HOLE;

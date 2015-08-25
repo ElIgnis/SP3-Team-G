@@ -54,7 +54,7 @@ public:
 	GameObject* FetchGO();
 
 	bool CheckCollision(GameObject *go1, GameObject *go2, float dt);
-	bool CheckDetection(CEnemy *go1, GameObject *go2);
+	bool CheckDetectionRange(CEnemy *go1, GameObject *go2);
 	void CollisionResponse(GameObject *go1, GameObject *go2, float dt);
 
 	//Initialise game variables

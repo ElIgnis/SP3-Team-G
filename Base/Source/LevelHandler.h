@@ -22,6 +22,7 @@ private:
 	//Data storage
 	vector<GameObject *> Structure_List;
 	vector<GameObject *> Powerup_List;
+	vector<GameObject *> CheckPoint_List;
 	vector<CEnemy *> Enemy_List;
 	vector<CInteractables *> Interactables_List;
 	vector<string>Level_Tokens;
@@ -73,6 +74,7 @@ public:
 
 	vector<GameObject *> &GetStructure_List(void);
 	vector<GameObject *> &GetPowerup_List(void);
+	vector<GameObject *> &GetCheckPoint_List(void);
 	vector<CEnemy *> &GetEnemy_List(void);
 	vector<CInteractables *> &GetInteractables_List(void);
 
