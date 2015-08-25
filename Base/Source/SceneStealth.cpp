@@ -63,6 +63,8 @@ void SceneStealth::Init()
 	}
 
 	InitGame();
+
+	bLightEnabled = false;
 }
 
 void SceneStealth::InitGame(void)
@@ -75,7 +77,7 @@ void SceneStealth::InitGame(void)
 
 	//Initializing the player
 	Virus = new CPlayer;
-	Virus->pos.Set(-95,40,0);
+	Virus->pos.Set(-75,35,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 }
@@ -268,6 +270,7 @@ void SceneStealth::Update(double dt)
 		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
+		cout << Virus->pos << endl;
 		break;
 	default:
 		break;
@@ -422,7 +425,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					}
 				}
 				if(b_ColCheck2)
-					go->pos += go->vel * 0.4;
+					go->pos += go->vel * 0.4; 
 				else
 					go->pos += go->vel;
 			}
@@ -1100,7 +1103,7 @@ void SceneStealth::RenderGame(void)
 	modelStack.Translate(0.f, -10.f, 0.f);
 	modelStack.Rotate(-90.f, 1, 0, 0);
 	modelStack.Scale(1000.f, 1000.f, 1.f);
-	RenderMesh(meshList[GEO_FLOOR_LEVEL4], false);
+	RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
 	modelStack.PopMatrix();
 }
 
