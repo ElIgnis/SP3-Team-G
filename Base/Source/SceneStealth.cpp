@@ -1381,14 +1381,17 @@ void SceneStealth::RenderUI(void)
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
 
+	//Render2DMesh(meshList[GEO_HOTBAR],false,1000.0f,1000.0f,Application::GetWindowWidth() * 0.5,Application::GetWindowHeight() * 0.25,false,false);
+
 	if(Virus->m_pInv.getHold() != 0)
 	{
-		for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
-		{
-			std::stringstream ssInv;
-			ssInv << "Item type:" << Virus->m_pInv.Inventory[i]->itemType << ' ' <<  Virus->m_pInv.Inventory[i]->getItemStack();
-			RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 2, 3);//Inventory holding
-		}
+		//Testing inventory
+		//for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
+		//{
+		//	std::stringstream ssInv;
+		//	ssInv << "Item type:" << Virus->m_pInv.Inventory[i]->itemType << ' ' <<  Virus->m_pInv.Inventory[i]->getItemStack();
+		//	RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 2, 3);//Inventory holding
+		//}
 	}
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
