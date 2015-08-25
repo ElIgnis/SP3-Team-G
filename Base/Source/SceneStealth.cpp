@@ -350,6 +350,9 @@ void SceneStealth::UpdatePlayer(const double dt)
 					Virus->ActivatePowerup(CPlayer::POWERUP_HEALTH, 3.f);
 					Virus->m_pInv.AddItem(new CItem("Health powerup thingy", CItem::HEALTH));
 					break;
+				case GameObject::GO_POWERUP_NOISE:
+					Virus->m_pInv.AddItem(new CItem("Noise thing", CItem::NOISE));
+					break;
 				}
 				go->active = false;
 			}
@@ -391,7 +394,12 @@ void SceneStealth::UpdateEnemies(const double dt)
 						{
 							if(!Virus->m_bIsHiding)
 							{
-								go->SetState(CEnemy::STATE_ATTACK);
+								if(!go->GetSpottedStatus())
+								{
+									go->SetState(CEnemy::STATE_ALERT);
+									
+									go->vel.SetZero();
+								}
 								go->SetIsDetected(true);
 								//std::cout << "in cone range" << std::endl;
 							}
@@ -436,7 +444,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				GameObject *bul = (GameObject  *)*it2;
 				if(bul->active)
 				{
-					bul->mass -= 1.f * dt;
+					bul->mass -= 1.f * (float)dt;
 					if(bul->mass < 0.f)
 						bul->active = false;
 						
@@ -989,6 +997,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_POWERUP_HEALTH], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_POWERUP_NOISE:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_POWERUP_NOISE], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
 	case GameObject::GO_HOLE:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1001,10 +1016,17 @@ void SceneStealth::RenderGO(GameObject *go)
 
 void SceneStealth::RenderGame(void)
 {
+	//Render floor
+	modelStack.PushMatrix();
+	modelStack.Translate(0.f, -10.f, 0.f);
+	modelStack.Rotate(-90.f, 1, 0, 0);
+	modelStack.Scale(1000.f, 1000.f, 1.f);
+	RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
+	modelStack.PopMatrix();
+	
 	modelStack.PushMatrix();
 	modelStack.Rotate(-rotateScene, 1, 0, 0);
-	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
-	
+
 	//Render player
 	float theta;
 	theta = Math::RadianToDegree(atan2(Virus->dir.y, Virus->dir.x));
@@ -1036,6 +1058,23 @@ void SceneStealth::RenderGame(void)
 		modelStack.PopMatrix();
 	}
 
+	//Render any GameObject here eg wall, box, door.
+	for(std::vector<GameObject *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+		{
+			RenderGO(go);
+		}
+	}
+	//Render powerups
+	for(std::vector<GameObject *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
+	{
+		GameObject *go = (GameObject *)*it;
+		if(go->active)
+			RenderGO(go);
+	}
+
 	//Render enemies here
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
 	{
@@ -1060,7 +1099,21 @@ void SceneStealth::RenderGame(void)
 				break;
 			}
 			modelStack.PopMatrix();
-
+			//Enemy alert indicator
+			if(go->GetDetectedStatus())
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				RenderMesh(meshList[GEO_ALERT], bLightEnabled);
+				modelStack.PopMatrix();
+			}
+			else if(go->GetTrackingStatus())
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
+				modelStack.PopMatrix();
+			}
 			/*modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
@@ -1080,30 +1133,7 @@ void SceneStealth::RenderGame(void)
 			}
 		}
 	}
-	//Render any GameObject here eg wall, box, door.
-	for(std::vector<GameObject *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active)
-		{
-			RenderGO(go);
-		}
-	}
-	//Render powerups
-	for(std::vector<GameObject *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(go->active)
-			RenderGO(go);
-	}
-	modelStack.PopMatrix();
 
-	//Render floor
-	modelStack.PushMatrix();
-	modelStack.Translate(0.f, -10.f, 0.f);
-	modelStack.Rotate(-90.f, 1, 0, 0);
-	modelStack.Scale(1000.f, 1000.f, 1.f);
-	RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
 	modelStack.PopMatrix();
 }
 
@@ -1215,6 +1245,8 @@ void SceneStealth::RenderUI(void)
 	std::stringstream ssFPS;
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
+
+	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
 }
 
 void SceneStealth::RenderBackground()
