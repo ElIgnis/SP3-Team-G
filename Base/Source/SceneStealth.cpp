@@ -971,7 +971,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_WALL_GREEN], bLightEnabled);
+		RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BOX:

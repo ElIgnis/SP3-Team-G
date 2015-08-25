@@ -175,6 +175,8 @@ void SceneBase::Init()
 	//meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
 	meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
 	meshList[GEO_WALL_BLUE]->textureID = LoadTGA("Image//GameObjects/Walls/wall_blue.tga");
+	meshList[GEO_BINARYWALL] = MeshBuilder::GenerateOBJ("GEO_BinaryWall", "OBJ//cube.obj");
+	meshList[GEO_BINARYWALL]->textureID = LoadTGA("Image//GameObjects/Walls/BinaryWall.tga");
 
 	//Player
 	meshList[GEO_PLAYER] = MeshBuilder::GenerateOBJ("Player", "OBJ//Player.obj");
