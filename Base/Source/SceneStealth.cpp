@@ -508,13 +508,19 @@ void SceneStealth::UpdateEnemies(const double dt)
 						{
 							if(!Virus->m_bIsHiding || Virus->GetPlayerState() == CPlayer::DISGUISE)
 							{
-								if(Virus->GetPlayerState() == CPlayer::DISGUISE && !Virus->vel.IsZero() && !go->GetSpottedStatus())
+								if(!go->GetSpottedStatus())
 								{
-									go->SetState(CEnemy::STATE_ALERT);
-									go->vel.SetZero();
+									if((Virus->GetPlayerState() == CPlayer::DISGUISE && !Virus->vel.IsZero()) || Virus->GetPlayerState() == CPlayer::ALIVE)
+									{
+										go->SetState(CEnemy::STATE_ALERT);
+										go->vel.SetZero();
+										go->SetIsDetected(true);
+									}
+									else
+										go->SetIsDetected(false);
 								}
 															
-								go->SetIsDetected(true);
+								//go->SetIsDetected(true);
 							}
 							else
 								go->SetIsDetected(false);
