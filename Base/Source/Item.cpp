@@ -10,9 +10,8 @@ CItem::~CItem(void)
 {
 }
 
-CItem::CItem(string item_name,int stack, ITEM_TYPE type)
-	: m_itemName(item_name)
-	, m_uiStack(stack)
+CItem::CItem(int stack, ITEM_TYPE type)
+	: m_uiStack(stack)
 	, itemType(type)
 {
 	//This constructor needs to be worked on if needed.
