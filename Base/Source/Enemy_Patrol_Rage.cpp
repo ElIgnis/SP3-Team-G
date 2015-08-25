@@ -15,7 +15,7 @@ CEnemy_Patrol_Rage::CEnemy_Patrol_Rage()
 	this->state = STATE_PATROL;
 }
 
-CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm)
+CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle)
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(1)
 	, m_fWaitTime(0.f)
@@ -29,6 +29,8 @@ CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm)
 	this->normal = norm;
 	this->active = true;
 	this->normal.Normalize();
+	this->detection_range.Set(f_detection_range, f_detection_range, 1);
+	this->f_detection_angle = f_detection_angle;
 	m_patrolposList.push_back(pos);
 }
 

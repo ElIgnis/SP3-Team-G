@@ -12,7 +12,7 @@ class CEnemy_Patrol : public CEnemy
 {
 public:
 	CEnemy_Patrol();
-	CEnemy_Patrol(Vector3 pos, Vector3 scale, Vector3 norm);
+	CEnemy_Patrol(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle);
 	~CEnemy_Patrol();
 
 	void Update(const double dt);

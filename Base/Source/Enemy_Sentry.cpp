@@ -10,7 +10,7 @@ CEnemy_Sentry::CEnemy_Sentry()
 {
 }
 
-CEnemy_Sentry::CEnemy_Sentry(Vector3 pos, Vector3 scale, Vector3 norm, float m_fScanRot1, float m_fScanRot2, float m_fTurnSpd)
+CEnemy_Sentry::CEnemy_Sentry(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle, float m_fScanRot1, float m_fScanRot2, float m_fTurnSpd)
 	: m_bLookDir(true)
 	, m_fCurrentRot(5)
 	, m_fShootCD(0.f)
@@ -23,6 +23,8 @@ CEnemy_Sentry::CEnemy_Sentry(Vector3 pos, Vector3 scale, Vector3 norm, float m_f
 	this->m_fScanRot1 = m_fScanRot1;
 	this->m_fScanRot2 = m_fScanRot2;
 	this->m_fTurnSpd = m_fTurnSpd;
+	this->detection_range.Set(f_detection_range, f_detection_range, 1);
+	this->f_detection_angle = f_detection_angle;
 	state = STATE_SCAN;
 	e_type = ENEMY_SENTRY;
 }

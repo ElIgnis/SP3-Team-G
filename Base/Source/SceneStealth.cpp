@@ -436,7 +436,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					{
 						Vector3 direction = Virus->pos - go->pos;
 						float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
-						if(f_DirToPlayer < go->dir.z + 30.f && f_DirToPlayer > go->dir.z - 30.f)
+						if(f_DirToPlayer < go->dir.z + go->GetDetectionAngle() && f_DirToPlayer > go->dir.z - go->GetDetectionAngle())
 						{
 							if(!Virus->m_bIsHiding)
 							{

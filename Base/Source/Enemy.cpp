@@ -9,6 +9,7 @@ CEnemy::CEnemy()
 	, m_bAlerted(false)
 	, f_alertTime(0.f)
 	, m_bTracking(false)
+	, f_detection_angle(30.f)
 {
 }
 
@@ -63,6 +64,11 @@ void CEnemy::PlayerCurrentPosition(Vector3 player_position)
 Vector3 CEnemy::GetDetectionRange(void)
 {
 	return detection_range;
+}
+
+float CEnemy::GetDetectionAngle(void)
+{	
+	return f_detection_angle;
 }
 
 bool CEnemy::GetDetectedStatus(void)
