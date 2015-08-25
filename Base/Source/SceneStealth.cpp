@@ -80,6 +80,7 @@ void SceneStealth::InitGame(void)
 	Virus->pos.Set(-75,35,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
+	Virus->setLives(3);
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -364,6 +365,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					break;
 				case GameObject::GO_POWERUP_HEALTH:
 					Virus->add1Life();
+					cout << "Health : " << Virus->getLives() << endl;
 					Virus->m_pInv.AddItem(new CItem("Health powerup thingy", CItem::HEALTH));
 					break;
 				case GameObject::GO_POWERUP_NOISE:
@@ -374,7 +376,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
-
+	}
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -386,19 +388,30 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 		Virus->m_bIsHiding = false;
-	}
-	//Respawning of player
-	else
-	{
-		//Check for last CP.
-		//If lives > 0, respawn there
-	}
+	//}
+	////Respawning of player
+	//else
+	//{
+	//	//Check for last CP.
+	//	//If lives > 0, respawn there
+	//}
 
-
-	if (unsigned int m_pLives = 0)
+	if (Virus->getLives() <= 0)
+	{	
+		Virus->SetPlayerState(CPlayer::DEAD);
+	}
+		
+	if(Virus->GetPlayerState() == CPlayer::DEAD)
 	{
 		Virus->pos = Virus->GetCurrentCP();
 	}
+
+	if (Virus->pos == Virus->GetCurrentCP())
+	{
+		Virus->SetPlayerState(CPlayer::ALIVE);
+		Virus->getLives() == 3;
+	}
+
 	//Check Player Collision with CheckPoints
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
 	{
@@ -429,7 +442,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				//Player collide with enemy
 				if(CheckCollision(go, Virus, dt))
 				{
-					Virus->SetPlayerState(CPlayer::DEAD);
+					Virus->Minus1Life();
 				}
 
 				go->PlayerCurrentPosition(Virus->pos);
@@ -1088,12 +1101,19 @@ case GameObject::GO_CHECKPOINT:
 
 void SceneStealth::RenderGame(void)
 {
-	//Render floor
+	////Render floor
+	//modelStack.PushMatrix();
+	//modelStack.Translate(0.f, -10.f, 0.f);
+	//modelStack.Rotate(-90.f, 1, 0, 0);
+	//modelStack.Scale(1000.f, 1000.f, 1.f);
+	//RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
+	//modelStack.PopMatrix();
+
 	modelStack.PushMatrix();
 	modelStack.Translate(0.f, -10.f, 0.f);
 	modelStack.Rotate(-90.f, 1, 0, 0);
 	modelStack.Scale(1000.f, 1000.f, 1.f);
-	RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
+	RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
 	modelStack.PopMatrix();
 	
 	modelStack.PushMatrix();
