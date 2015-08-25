@@ -217,11 +217,17 @@ void SceneBase::Init()
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Floor quads
-	/*meshList[GEO_FLOOR_LEVEL4] = MeshBuilder::GenerateQuad("Floor_Level4", Color(1, 0, 0), 1.f);
-	meshList[GEO_FLOOR_LEVEL4]->textureID = LoadTGA("Image//Level4_Floor.tga");*/
-
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL1]->textureID = LoadTGA("Image//Level1_Floor.tga");
+	
+	//Floor quads
+	meshList[GEO_FLOOR_LEVEL3] = MeshBuilder::GenerateQuad("Floor_Level3", Color(1, 0, 0), 1.f);
+	meshList[GEO_FLOOR_LEVEL3]->textureID = LoadTGA("Image//Level3_Floor.tga");
+
+	//Floor quads
+	meshList[GEO_FLOOR_LEVEL4] = MeshBuilder::GenerateQuad("Floor_Level4", Color(1, 0, 0), 1.f);
+	meshList[GEO_FLOOR_LEVEL4]->textureID = LoadTGA("Image//Level4_Floor.tga");
+
 
 	//Sound
 	engine = createIrrKlangDevice();

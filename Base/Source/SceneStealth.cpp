@@ -63,6 +63,8 @@ void SceneStealth::Init()
 	}
 
 	InitGame();
+
+	bLightEnabled = false;
 }
 
 void SceneStealth::InitGame(void)
@@ -75,7 +77,7 @@ void SceneStealth::InitGame(void)
 
 	//Initializing the player
 	Virus = new CPlayer;
-	Virus->pos.Set(-95,40,0);
+	Virus->pos.Set(-75,35,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 }
@@ -269,6 +271,7 @@ void SceneStealth::Update(double dt)
 		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
+		cout << Virus->pos << endl;
 		break;
 	default:
 		break;
@@ -431,7 +434,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					}
 				}
 				if(b_ColCheck2)
-					go->pos += go->vel * 0.4;
+					go->pos += go->vel * 0.4; 
 				else
 					go->pos += go->vel;
 			}
