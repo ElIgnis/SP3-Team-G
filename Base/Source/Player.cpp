@@ -1,6 +1,5 @@
 #include "Player.h"
 
-
 CPlayer::CPlayer(void)
 	: m_pLives(3)
 {
@@ -75,4 +74,14 @@ void CPlayer::SetCurrentCP(GameObject *CP)
 {
 	this->m_CurrentCP = CP;
 
+}
+
+void CPlayer::SetPlayerState(PlayerState newPlayerState)
+{
+	this->CurrentState = newPlayerState;
+}
+
+CPlayer::PlayerState CPlayer::GetPlayerState(void)
+{
+	return CurrentState;
 }
