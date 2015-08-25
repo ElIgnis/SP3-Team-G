@@ -129,6 +129,8 @@ private:
 
 	//Keypress handler
 	bool myKeys[255];
+
+	CItem *test;
 };
 
 #endif

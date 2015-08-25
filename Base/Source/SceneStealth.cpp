@@ -12,6 +12,7 @@ SceneStealth::SceneStealth()
 
 SceneStealth::~SceneStealth()
 {
+	delete test;
 }
 
 void SceneStealth::Init()
@@ -80,6 +81,9 @@ void SceneStealth::InitGame(void)
 	Virus->pos.Set(-75,35,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
+
+	test = new CItem;
+	test->SetItemType(CItem::DISGUISE);
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -339,6 +343,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.x = Virus->dir.x * acc.x;
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
+		if(Application::IsKeyPressed('V'))
+			Virus->TriggerItemEffect(test);
 
 		Virus->Update(dt);
 
@@ -398,7 +404,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 		if(!b_ColCheck)
 		{
-			if(Virus->GetPowerupStatus(CPlayer::POWERUP_SPEED))
+			if(Virus->GetPowerupStatus(CItem::SPEED))
 				Virus->pos += Virus->vel * 2 * dt;
 			else
 				Virus->pos += Virus->vel * dt;
@@ -412,6 +418,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				if(CheckCollision(Virus,go,dt))
 				{
+					//Conversion of GOs into items to inventory
 					switch(go->type)
 					{
 					case GameObject::GO_POWERUP_FREEZE:
@@ -479,18 +486,19 @@ void SceneStealth::UpdateEnemies(const double dt)
 		if(go->active)
 		{
 			//Check if player use freeze powerup
-			if(!Virus->GetPowerupStatus(CPlayer::POWERUP_FREEZE))
+			if(!Virus->GetPowerupStatus(CItem::FREEZE))
 			{
-				//Player collide with enemy
+				//Set player state to dead on collision with any enemy
 				if(CheckCollision(go, Virus, dt))
 				{
 					Virus->SetPlayerState(CPlayer::DEAD);
 				}
 
+				//For enemy to track player last position for patrol algorithm
 				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
-				if((Virus->pos - go->pos).LengthSquared() < 10000)
+				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD)
 				{
 					if(CheckDetectionRange(go, Virus))
 					{
@@ -498,16 +506,15 @@ void SceneStealth::UpdateEnemies(const double dt)
 						float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
 						if(f_DirToPlayer < go->dir.z + go->GetDetectionAngle() && f_DirToPlayer > go->dir.z - go->GetDetectionAngle())
 						{
-							if(!Virus->m_bIsHiding)
+							if(!Virus->m_bIsHiding || Virus->GetPlayerState() == CPlayer::DISGUISE)
 							{
-								if(!go->GetSpottedStatus())
+								if(Virus->GetPlayerState() == CPlayer::DISGUISE && !Virus->vel.IsZero() && !go->GetSpottedStatus())
 								{
 									go->SetState(CEnemy::STATE_ALERT);
-
 									go->vel.SetZero();
 								}
+															
 								go->SetIsDetected(true);
-								//std::cout << "in cone range" << std::endl;
 							}
 							else
 								go->SetIsDetected(false);
@@ -518,7 +525,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 						go->SetIsDetected(false);
 					}
 				}
-
+				
 				//Updates enemies
 				go->Update(dt);
 
@@ -1161,7 +1168,10 @@ void SceneStealth::RenderGame(void)
 	modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 	modelStack.Scale(Virus->scale.x, Virus->scale.y, Virus->scale.z);
 	modelStack.Rotate(theta, 0, 0, 1);
-	RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+	if(Virus->GetPlayerState() != CPlayer::DISGUISE)
+		RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+	else
+		RenderMesh(meshList[GEO_BOX], bLightEnabled);
 	modelStack.PopMatrix();
 
 	//Render structures here

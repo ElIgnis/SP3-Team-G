@@ -31,3 +31,12 @@ unsigned int CItem::getItemStack(void)
 {
 	return m_uiStack;
 }
+
+CItem::ITEM_TYPE CItem::GetItemType(void)
+{
+	return itemType;
+}
+void CItem::SetItemType(CItem::ITEM_TYPE newItemType)
+{
+	this->itemType = newItemType;
+}
