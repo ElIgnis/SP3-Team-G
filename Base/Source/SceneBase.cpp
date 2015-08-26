@@ -211,6 +211,9 @@ void SceneBase::Init()
 	meshList[GEO_POWERUP_NOISE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//cube.obj");
 	meshList[GEO_POWERUP_NOISE]->textureID = LoadTGA("Image//GameObjects/Powerups/Noise.tga");
 
+	meshList[GEO_POWERUP_INVISIBLE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Invisibility.obj");
+	meshList[GEO_POWERUP_INVISIBLE]->textureID = LoadTGA("Image//GameObjects/Powerups/Invisibility.tga");
+
 	//Player indicator
 	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
 	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//Indicator_Blue2.tga");

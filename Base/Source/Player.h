@@ -1,6 +1,7 @@
 #pragma once
 #include "Inventory.h"
 #include "GameObject.h"
+#include "NoiseObject.h"
 
 #define DisguiseChangeTimer 1.f
 
@@ -22,6 +23,7 @@ private:
 	Vector3 m_CurrentCP;
 
 	PlayerState CurrentState;
+	vector<CNoiseObject *>NoiseObject_List;
 
 	bool m_bChangeDisguise;
 	float m_fDisguiseCDTimer;
@@ -51,6 +53,8 @@ public:
 	bool FinishedDisguise(const double dt);
 
 	virtual void Update(const double dt);
+
+	vector<CNoiseObject *> &GetNoiseObject_List(void);
 
 	bool m_bIsHiding;
 };

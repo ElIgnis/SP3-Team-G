@@ -10,7 +10,6 @@
 CEnemy_Patrol::CEnemy_Patrol() 
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(0)
-	, m_fWaitTime(0.f)
 {
 	this->state = STATE_PATROL;
 }
@@ -18,7 +17,6 @@ CEnemy_Patrol::CEnemy_Patrol()
 CEnemy_Patrol::CEnemy_Patrol(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle)
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(1)
-	, m_fWaitTime(0.f)
 {
 	e_type = ENEMY_PATROL;
 	this->state = STATE_PATROL;
@@ -78,7 +76,7 @@ void CEnemy_Patrol::Update(const double dt)
 		break;
 	case STATE_ATTACK:
 		{
-			player_prevPos = player_position;
+			trackingPos = player_position;
 			normal = (player_position - pos).Normalized();
 			//Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
 			//dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
@@ -91,10 +89,10 @@ void CEnemy_Patrol::Update(const double dt)
 	case STATE_TRACK:
 		{
 			m_bTracking = true;
-			normal = (player_prevPos - pos).Normalized();
+			normal = (trackingPos - pos).Normalized();
 			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			vel = normal * Chase_moveSpd * (float)dt;
-			if((pos - player_prevPos).Length() < 1.f)
+			if((pos - trackingPos).Length() < 1.f)
 			{
 				state = STATE_WAIT;
 				vel.SetZero();

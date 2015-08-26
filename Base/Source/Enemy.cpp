@@ -10,6 +10,7 @@ CEnemy::CEnemy()
 	, f_alertTime(0.f)
 	, m_bTracking(false)
 	, f_detection_angle(30.f)
+	, m_fWaitTime(0.f)
 {
 }
 
@@ -56,6 +57,11 @@ void CEnemy::SetState(ENEMY_STATE state)
 		f_alertTime = Alert_time;
 }
 
+CEnemy::ENEMY_STATE CEnemy::GetState(void)
+{
+	return this->state;
+}
+
 void CEnemy::PlayerCurrentPosition(Vector3 player_position)
 {
 	this->player_position = player_position;
@@ -96,4 +102,9 @@ void CEnemy::SetIsDetected(bool b_IsDetected)
 vector<GameObject *> &CEnemy::GetBullet_List(void)
 {
 	return m_BulletList;
+}
+
+void CEnemy::SetTrackingPos(Vector3 tracking_pos)
+{
+	this->trackingPos = tracking_pos;
 }

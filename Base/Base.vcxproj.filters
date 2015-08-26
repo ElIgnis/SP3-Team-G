@@ -126,6 +126,9 @@
     <ClCompile Include="Source\Enemy_Patrol_Rage.cpp">
       <Filter>Source Files\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\NoiseObject.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -226,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="Source\Enemy_Patrol_Rage.h">
       <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\NoiseObject.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

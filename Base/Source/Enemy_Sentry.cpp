@@ -3,6 +3,7 @@
 #define Scan_turnSpd 1.f
 #define Bullet_Size 2.f
 #define Bullet_Spd 60.f
+#define Sentry_waitTime 1.f
 
 CEnemy_Sentry::CEnemy_Sentry() 
 	: m_bLookDir(true)
@@ -59,6 +60,7 @@ void CEnemy_Sentry::Update(const double dt)
 		break;
 	case STATE_ATTACK:
 		{
+			trackingPos = player_position;
 			normal = (player_position - pos).Normalized();
 			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			if(m_fShootCD < 0.f)
@@ -72,7 +74,26 @@ void CEnemy_Sentry::Update(const double dt)
 			}
 			m_fShootCD -= 1.f * dt;
 			if(!m_bIsDetected)
+				state = STATE_TRACK;
+		}
+		break;
+	case STATE_TRACK:
+		{
+			m_bTracking = true;
+			normal = (trackingPos - pos).Normalized();
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			state = STATE_WAIT;
+			m_fWaitTime = Sentry_waitTime;
+		}
+		break;
+	case STATE_WAIT:
+		{
+			m_fWaitTime -= (float)dt;
+			if(m_fWaitTime < 0)//Continue patroling once wait time is over
+			{
 				state = STATE_SCAN;
+				m_bTracking = false;
+			}
 		}
 		break;
 	default:

@@ -10,7 +10,6 @@
 CEnemy_Patrol_Rage::CEnemy_Patrol_Rage() 
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(0)
-	, m_fWaitTime(0.f)
 {
 	this->state = STATE_PATROL;
 }
@@ -18,7 +17,6 @@ CEnemy_Patrol_Rage::CEnemy_Patrol_Rage()
 CEnemy_Patrol_Rage::CEnemy_Patrol_Rage(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle)
 	: m_bPatrolDir(true)
 	, m_iCurrentPatrolpoint(1)
-	, m_fWaitTime(0.f)
 	, m_bCharge(true)
 	, m_fChargeTime(0.5f)
 {
@@ -80,7 +78,7 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 		break;
 	case STATE_ATTACK:
 		{
-			player_prevPos = player_position;
+			trackingPos = player_position;
 			m_fChargeTime -= dt;
 			if(m_bCharge)
 			{
@@ -103,10 +101,10 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 	case STATE_TRACK:
 		{
 			m_bTracking = true;
-			normal = (player_prevPos - pos).Normalized();
+			normal = (trackingPos - pos).Normalized();
 			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			vel = normal * Chase_moveSpd * (float)dt;
-			if((pos - player_prevPos).Length() < 1.f)
+			if((pos - trackingPos).Length() < 1.f)
 			{
 				state = STATE_WAIT;
 				vel.SetZero();

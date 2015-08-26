@@ -15,18 +15,21 @@ public:
 		FREEZE,
 		SPEED,
 		NOISE,
-		INVISIBILITY,
+		INVIS,
 		DISGUISE,
 		ITEM_TOTAL,
 	};
 
 	CItem(void);
-	CItem(int stack, ITEM_TYPE typeValue = HEALTH);
+	CItem(ITEM_TYPE typeValue = HEALTH);
+	CItem(unsigned int stack, unsigned int index, ITEM_TYPE typeValue = HEALTH);
 	~CItem(void);
 
 	void itemAddStack(void);
 	void itemDelStack(void);
 	unsigned int getItemStack(void);
+	void setIndex(unsigned int);
+	unsigned int getIndex(void);
 
 	ITEM_TYPE GetItemType(void);
 	void SetItemType(ITEM_TYPE newItemType);
@@ -34,6 +37,7 @@ public:
 private:
 	unsigned int m_uiStack;
 	ITEM_TYPE itemType;
+	unsigned int m_uiIndex;
 
 
 };

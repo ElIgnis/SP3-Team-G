@@ -2,6 +2,10 @@
 
 
 CItem::CItem(void)
+	: m_uiStack(0)
+	, m_uiIndex(0)
+	, itemType(KEY)
+
 {
 }
 
@@ -10,11 +14,18 @@ CItem::~CItem(void)
 {
 }
 
-CItem::CItem(int stack, ITEM_TYPE type)
-	: m_uiStack(stack)
+CItem::CItem(ITEM_TYPE type)
+	: m_uiStack(0)
+	, m_uiIndex(0)
 	, itemType(type)
 {
-	//This constructor needs to be worked on if needed.
+}
+
+CItem::CItem(unsigned int stack, unsigned int index, ITEM_TYPE type)
+	: m_uiStack(stack)
+	, m_uiIndex(index)
+	, itemType(type)
+{
 }
 
 void CItem::itemAddStack(void)
@@ -36,6 +47,17 @@ CItem::ITEM_TYPE CItem::GetItemType(void)
 {
 	return itemType;
 }
+
+void CItem::setIndex(unsigned int index)
+{
+	this->m_uiIndex = index;
+}
+
+unsigned int CItem::getIndex(void)
+{
+	return m_uiIndex;
+}
+
 void CItem::SetItemType(CItem::ITEM_TYPE newItemType)
 {
 	this->itemType = newItemType;

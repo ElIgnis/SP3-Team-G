@@ -3,6 +3,9 @@
 
 #define ScreenLR 112.f
 #define ScreenUD 63.f
+#define IventoryUp 0.16875f
+#define InventoryScale 0.04375f
+#define InventoryOffset 0.08125f
 
 #define ReboundFactor 2.f
 #define MoveSpeed 50.f
@@ -19,7 +22,7 @@
 #include "Menu.h"
 #include "Enemy.h"
 #include "Interactables.h"
-//#include "FactoryEnemy.h"
+//#include "NoiseObject.h"
 #include "Player.h"
 
 using std::vector;
@@ -132,6 +135,7 @@ private:
 	bool myKeys[255];
 
 	CItem *test;
+	CItem *testes;
 };
 
 #endif
