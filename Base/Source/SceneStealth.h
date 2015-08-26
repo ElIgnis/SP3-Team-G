@@ -19,6 +19,7 @@
 #include "Menu.h"
 #include "Enemy.h"
 #include "Interactables.h"
+//#include "NoiseObject.h"
 #include "Player.h"
 
 using std::vector;
@@ -131,6 +132,7 @@ private:
 	bool myKeys[255];
 
 	CItem *test;
+	CItem *testes;
 };
 
 #endif
