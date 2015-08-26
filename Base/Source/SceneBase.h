@@ -105,6 +105,7 @@ public:
 		GEO_HOLE,
 		//UI
 		GEO_HOTBAR,
+		GEO_HOTSEL,
 		NUM_GEOMETRY,
 	};
 protected:
