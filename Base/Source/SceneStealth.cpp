@@ -83,10 +83,8 @@ void SceneStealth::InitGame(void)
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 
-	test = new CItem;
-	test->SetItemType(CItem::DISGUISE);
-	testes = new CItem;
-	testes->SetItemType(CItem::NOISE);
+	test = new CItem(CItem::DISGUISE);
+	testes = new CItem(CItem::NOISE);
 }
 
 GameObject* SceneStealth::FetchGO()
