@@ -1440,12 +1440,36 @@ void SceneStealth::RenderUI(void)
 	if(Virus->m_pInv.getHold() != 0)
 	{
 		//Testing inventory
-		//for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
-		//{
-		//	std::stringstream ssInv;
-		//	ssInv << "Item type:" << Virus->m_pInv.Inventory[i]->itemType << ' ' <<  Virus->m_pInv.Inventory[i]->getItemStack();
-		//	RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 2, 3);//Inventory holding
-		//}
+		for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
+		{
+			//std::stringstream ssInv;
+			//ssInv << "Item type:" << Virus->m_pInv.Inventory[i]->GetItemType() << ' ' <<  Virus->m_pInv.Inventory[i]->getItemStack();
+			//RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 2, 3);//Inventory holding
+			switch(Virus->m_pInv.Inventory[i]->GetItemType())
+			{
+				//Render the Key
+			case 0:
+				break;
+				//Render Freeze
+			case 2:
+				break;
+				//Render SPEED
+			case 3:
+				break;
+				//Render NOISE
+			case 4:
+				break;
+				//Render Invisibility
+			case 5:
+				break;
+				//Render Disguise
+			case 6:
+				break;
+			default:
+				break;
+
+			}
+		}
 	}
 
 	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
