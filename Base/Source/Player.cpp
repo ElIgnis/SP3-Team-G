@@ -126,7 +126,7 @@ void CPlayer::TriggerItemEffect(CItem *item)
 		break;
 	case CItem::FREEZE:
 	case CItem::SPEED:
-	case CItem::INVISIBILITY:
+	case CItem::INVIS:
 		ActivatePowerup(item->GetItemType(), 3.f);
 		break;
 	case CItem::DISGUISE:

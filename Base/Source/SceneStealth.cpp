@@ -82,8 +82,7 @@ void SceneStealth::InitGame(void)
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 
-	test = new CItem;
-	test->SetItemType(CItem::DISGUISE);
+	test = new CItem(CItem::DISGUISE);
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -175,6 +174,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			}
 		}
 		break;
+	case GameObject::GO_POWERUP_INVIS:
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
 	case GameObject::GO_POWERUP_HEALTH:
@@ -422,19 +422,19 @@ void SceneStealth::UpdatePlayer(const double dt)
 					switch(go->type)
 					{
 					case GameObject::GO_POWERUP_FREEZE:
-						//Virus->ActivatePowerup(CPlayer::POWERUP_FREEZE, 3.f);
-						Virus->m_pInv.AddItem(new CItem(0, CItem::FREEZE));
+						Virus->m_pInv.AddItem(new CItem(CItem::FREEZE));
 						break;
 					case GameObject::GO_POWERUP_SPEED:
-						//Virus->ActivatePowerup(CPlayer::POWERUP_SPEED, 3.f);
-						Virus->m_pInv.AddItem(new CItem(0, CItem::SPEED));
+						Virus->m_pInv.AddItem(new CItem(CItem::SPEED));
 						break;
 					case GameObject::GO_POWERUP_HEALTH:
-						//Virus->add1Life();
-						Virus->m_pInv.AddItem(new CItem(0, CItem::HEALTH));
+						Virus->m_pInv.AddItem(new CItem(CItem::HEALTH));
+						break;
+					case GameObject::GO_POWERUP_INVIS:
+						Virus->m_pInv.AddItem(new CItem(CItem::INVIS));
 						break;
 					case GameObject::GO_POWERUP_NOISE:
-						Virus->m_pInv.AddItem(new CItem(0, CItem::NOISE));
+						Virus->m_pInv.AddItem(new CItem(CItem::NOISE));
 						break;
 					}
 					go->active = false;
@@ -1130,6 +1130,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_POWERUP_HEALTH], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
+	case GameObject::GO_POWERUP_INVIS:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_POWERUP_INVISIBLE], bLightEnabled);
+		modelStack.PopMatrix();
+		break;
 	case GameObject::GO_POWERUP_NOISE:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1397,32 +1404,58 @@ void SceneStealth::RenderUI(void)
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
 
-	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.05, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
+	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
 
 	if(Virus->m_pInv.getHold() != 0)
 	{
 		//Testing inventory
 		for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
 		{
-			//std::stringstream ssInv;
-			//ssInv << "Item type:" << Virus->m_pInv.Inventory[i]->GetItemType() << ' ' <<  Virus->m_pInv.Inventory[i]->getItemStack();
-			//RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 2, 3);//Inventory holding
 			switch(Virus->m_pInv.Inventory[i]->GetItemType())
 			{
-				//Render the Key
-			case 0:
+			case 1:
+				{
+					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					std::stringstream ssInv;
+					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+				}
 				break;
 				//Render Freeze
 			case 2:
+				{
+					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					std::stringstream ssInv;
+					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+				}
 				break;
 				//Render SPEED
 			case 3:
+				{
+					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					std::stringstream ssInv;
+					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+				}
 				break;
 				//Render NOISE
 			case 4:
+				{
+					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					std::stringstream ssInv;
+					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+				}
 				break;
 				//Render Invisibility
 			case 5:
+				{
+					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					std::stringstream ssInv;
+					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+				}
 				break;
 				//Render Disguise
 			case 6:
