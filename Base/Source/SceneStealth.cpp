@@ -465,22 +465,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 	//	//If lives > 0, respawn there
 	//}
 
-		//Check Player Collision with CheckPoints
-		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
-		{
-			GameObject *go = (GameObject *)*it;
-			//Only check for active game objects
-			if(!go->active)
-			{
-				if(CheckCollision(Virus,go,dt))
-				{
-					Virus->SetCurrentCP(go->pos);
-					go->active = true;
-					break;
-				}
-			}
-		}
-
 		if (Virus->getLives() <= 0)
 		{	
 			Virus->SetPlayerState(CPlayer::DEAD);
@@ -496,6 +480,22 @@ void SceneStealth::UpdatePlayer(const double dt)
 			else 
 				Virus->SetPlayerState(CPlayer::ALIVE);
 		}
+
+		//Check Player Collision with CheckPoints
+		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
+		{
+			GameObject *go = (GameObject *)*it;
+			//Only check for active game objects
+			if(!go->active)
+			{
+				if(CheckCollision(Virus,go,dt))
+				{
+					Virus->SetCurrentCP(go->pos);
+					go->active = true;
+					break;
+				}
+			}
+		}
 	}
 }
 void SceneStealth::UpdateEnemies(const double dt)
@@ -509,8 +509,9 @@ void SceneStealth::UpdateEnemies(const double dt)
 			//Player collide with enemy
 			if(CheckCollision(go, Virus, dt))
 			{
-				Virus->Minus1Life();
-				Virus->pos = Virus->GetCurrentCP();
+				//Virus->Minus1Life();
+				Virus->pos.x = Virus->GetCurrentCP().x;
+				Virus->pos.y = Virus->GetCurrentCP().y;
 			}
 
 			//Check if player use freeze powerup
