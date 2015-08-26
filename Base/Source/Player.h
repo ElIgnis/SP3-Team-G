@@ -17,14 +17,9 @@ public:
 	};
 private:
 	unsigned int m_pLives;
-
-	bool m_bPowerupStatus[NUM_POWERUPS];
-	float m_fPowerupTime[NUM_POWERUPS];
-	Vector3 m_CurrentCP;
-
 	bool m_bPowerupStatus[CItem::ITEM_TOTAL];
 	float m_fPowerupTime[CItem::ITEM_TOTAL];
-	GameObject *m_CurrentCP;
+	Vector3 m_CurrentCP;
 
 	PlayerState CurrentState;
 
