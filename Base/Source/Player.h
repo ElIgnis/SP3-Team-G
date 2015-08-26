@@ -17,15 +17,14 @@ public:
 	};
 private:
 	unsigned int m_pLives;
-<<<<<<< HEAD
+
 	bool m_bPowerupStatus[NUM_POWERUPS];
 	float m_fPowerupTime[NUM_POWERUPS];
 	Vector3 m_CurrentCP;
-=======
+
 	bool m_bPowerupStatus[CItem::ITEM_TOTAL];
 	float m_fPowerupTime[CItem::ITEM_TOTAL];
 	GameObject *m_CurrentCP;
->>>>>>> origin/master
 
 	PlayerState CurrentState;
 
@@ -50,18 +49,12 @@ public:
 	void SetPlayerState(PlayerState newPlayerState);
 	PlayerState GetPlayerState(void);
 
-<<<<<<< HEAD
 	Vector3 GetCurrentCP(void);
 	void SetCurrentCP(Vector3 CP);
-	
-=======
-	GameObject *GetCurrentCP(void);
-	void SetCurrentCP(GameObject *CP);
 
 	void TriggerItemEffect(CItem *item);
 	bool FinishedDisguise(const double dt);
 
->>>>>>> origin/master
 	virtual void Update(const double dt);
 
 	bool m_bIsHiding;
