@@ -106,6 +106,7 @@ public:
 		GEO_LASER,
 		//UI
 		GEO_HOTBAR,
+		GEO_HOTSEL,
 		NUM_GEOMETRY,
 	};
 protected:

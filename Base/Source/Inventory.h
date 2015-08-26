@@ -22,7 +22,7 @@ public:
 	unsigned int getHold(void);
 
 	bool AddItem(CItem *item);
-	bool UseItem(CItem *item);
+	bool UseItem(int index);
 
 };
 

@@ -746,6 +746,71 @@ void SceneStealth::UpdateGameKeypress(void)
 		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
 
+	if(GetKeyState('1'))
+	{
+		cout << "hit 1" << endl;
+		if(Virus->m_pInv.UseItem(1))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1]);
+		}
+	}
+	if(GetKeyState('2'))
+	{
+		if(Virus->m_pInv.UseItem(2))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2]);
+		}
+	}
+	if(GetKeyState('3'))
+	{
+		if(Virus->m_pInv.UseItem(3))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3]);
+		}
+	}
+	if(GetKeyState('4'))
+	{
+		if(Virus->m_pInv.UseItem(4))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4]);
+		}
+	}
+	if(GetKeyState('5'))
+	{
+		if(Virus->m_pInv.UseItem(5))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5]);
+		}
+	}
+	if(GetKeyState('6'))
+	{
+		if(Virus->m_pInv.UseItem(6))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6]);
+		}
+	}
+	if(GetKeyState('7'))
+	{
+		if(Virus->m_pInv.UseItem(7))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7]);
+		}
+	}
+	if(GetKeyState('8'))
+	{
+		if(Virus->m_pInv.UseItem(8))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8]);
+		}
+	}
+	if(GetKeyState('9'))
+	{
+		if(Virus->m_pInv.UseItem(9))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9]);
+		}
+	}
+
 }
 
 void SceneStealth::UpdateKeyDown(const unsigned char key)
@@ -1490,6 +1555,7 @@ void SceneStealth::RenderUI(void)
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
 
 	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
+	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
 
 	if(Virus->m_pInv.getHold() != 0)
 	{
@@ -1502,8 +1568,8 @@ void SceneStealth::RenderUI(void)
 				{
 					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
-					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+					ssInv << 'x' <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
 				}
 				break;
 				//Render Freeze
@@ -1511,8 +1577,8 @@ void SceneStealth::RenderUI(void)
 				{
 					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
-					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
 				}
 				break;
 				//Render SPEED
@@ -1520,8 +1586,8 @@ void SceneStealth::RenderUI(void)
 				{
 					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
-					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
 				}
 				break;
 				//Render NOISE
@@ -1529,8 +1595,8 @@ void SceneStealth::RenderUI(void)
 				{
 					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
-					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
 				}
 				break;
 				//Render Invisibility
@@ -1538,8 +1604,8 @@ void SceneStealth::RenderUI(void)
 				{
 					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
-					ssInv <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(0, 1, 0), 3, 75, 8.75 + (i * 5.25));//Inventory holding
+					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
 				}
 				break;
 				//Render Disguise
