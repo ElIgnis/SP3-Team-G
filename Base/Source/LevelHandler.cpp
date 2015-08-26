@@ -73,15 +73,18 @@ void CLevelHandler::LoadMap(string mapLevel)
 
 			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED || go->type == GameObject::GO_POWERUP_HEALTH || go->type == GameObject::GO_POWERUP_INVIS)
 				Item_List.push_back(go);
+			else if (go->type == GameObject::GO_CHECKPOINT)
+				CheckPoint_List.push_back(go);
 			else
 				Structure_List.push_back(go);
 			++m_iObjLine;
-		}
+			}
 		inGameLevel.close();
 	}
 	else
 		std::cout << "Load level file failed" << std::endl;
 }
+			
 
 void CLevelHandler::LoadEnemies(string mapLevel)
 {

@@ -108,12 +108,12 @@ bool CPlayer::GetPowerupStatus(CItem::ITEM_TYPE PowerUpType)
 	return m_bPowerupStatus[PowerUpType];
 }
 
-GameObject *CPlayer::GetCurrentCP(void)
+Vector3 CPlayer::GetCurrentCP(void)
 {
 	return m_CurrentCP;
 }
 
-void CPlayer::SetCurrentCP(GameObject *CP)
+void CPlayer::SetCurrentCP(Vector3 CP)
 {
 	this->m_CurrentCP = CP;
 

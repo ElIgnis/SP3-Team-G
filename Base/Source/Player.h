@@ -20,7 +20,7 @@ private:
 	unsigned int m_pLives;
 	bool m_bPowerupStatus[CItem::ITEM_TOTAL];
 	float m_fPowerupTime[CItem::ITEM_TOTAL];
-	GameObject *m_CurrentCP;
+	Vector3 m_CurrentCP;
 
 	PlayerState CurrentState;
 	vector<CNoiseObject *>NoiseObject_List;
@@ -46,8 +46,8 @@ public:
 	void SetPlayerState(PlayerState newPlayerState);
 	PlayerState GetPlayerState(void);
 
-	GameObject *GetCurrentCP(void);
-	void SetCurrentCP(GameObject *CP);
+	Vector3 GetCurrentCP(void);
+	void SetCurrentCP(Vector3 CP);
 
 	void TriggerItemEffect(CItem *item);
 	bool FinishedDisguise(const double dt);
