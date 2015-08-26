@@ -35,7 +35,7 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 	else if(newType == "GO_CHECKPOINT")
 	{
 		this->type = GO_CHECKPOINT;
-		active = false;
+		this->active = false;
 	}
 
 	if(newType == "GO_HOLE")

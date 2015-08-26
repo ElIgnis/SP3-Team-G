@@ -73,6 +73,8 @@ void CLevelHandler::LoadMap(string mapLevel)
 
 			if(go->type == GameObject::GO_POWERUP_FREEZE || go->type == GameObject::GO_POWERUP_SPEED || go->type == GameObject::GO_POWERUP_HEALTH)
 				Item_List.push_back(go);
+			else if (go->type == GameObject::GO_CHECKPOINT)
+				CheckPoint_List.push_back(go);
 			else
 				Structure_List.push_back(go);
 			++m_iObjLine;

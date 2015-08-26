@@ -325,6 +325,7 @@ void SceneStealth::Update(double dt)
 	default:
 		break;
 	}
+	cout << LvlHandler.GetCheckPoint_List().size() << endl;
 	ProcessKeys();
 }
 
@@ -346,6 +347,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 		if (Application::IsKeyPressed('V'))
 			Virus->TriggerItemEffect(test);
+
+		cout << "Health : " << Virus->getLives() << endl;
 
 		Virus->Update(dt);
 
@@ -432,7 +435,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					break;
 				case GameObject::GO_POWERUP_HEALTH:
 					Virus->add1Life();
-					cout << "Health : " << Virus->getLives() << endl;
+					//cout << "Health : " << Virus->getLives() << endl;
 					Virus->m_pInv.AddItem(new CItem(0, CItem::HEALTH));
 					break;
 				case GameObject::GO_POWERUP_NOISE:
@@ -462,37 +465,38 @@ void SceneStealth::UpdatePlayer(const double dt)
 	//	//If lives > 0, respawn there
 	//}
 
-	if (Virus->getLives() <= 0)
-	{	
-		Virus->SetPlayerState(CPlayer::DEAD);
-	}
-		
-	if(Virus->GetPlayerState() == CPlayer::DEAD)
-	{
-		Virus->pos = Virus->GetCurrentCP();
-	}
-
-	if (Virus->pos == Virus->GetCurrentCP())
-	{
-		Virus->SetPlayerState(CPlayer::ALIVE);
-		Virus->getLives() == 3;
-	}
-
-	//Check Player Collision with CheckPoints
-	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		//Only check for active game objects
-		if(!go->active)
+		//Check Player Collision with CheckPoints
+		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
 		{
-			if(CheckCollision(Virus,go,dt))
+			GameObject *go = (GameObject *)*it;
+			//Only check for active game objects
+			if(!go->active)
 			{
-				Virus->SetCurrentCP(go->pos);
-				break;
+				if(CheckCollision(Virus,go,dt))
+				{
+					Virus->SetCurrentCP(go->pos);
+					go->active = true;
+					break;
+				}
 			}
 		}
+
+		if (Virus->getLives() <= 0)
+		{	
+			Virus->SetPlayerState(CPlayer::DEAD);
+		}
+
+		if (Virus->pos == Virus->GetCurrentCP())
+		{
+			if (Virus->GetPlayerState() == CPlayer::DEAD)
+			{
+				Virus->SetPlayerState(CPlayer::ALIVE);
+				//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
+			}
+			else 
+				Virus->SetPlayerState(CPlayer::ALIVE);
+		}
 	}
-}
 }
 void SceneStealth::UpdateEnemies(const double dt)
 {
@@ -506,6 +510,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 			if(CheckCollision(go, Virus, dt))
 			{
 				Virus->Minus1Life();
+				Virus->pos = Virus->GetCurrentCP();
 			}
 
 			//Check if player use freeze powerup
