@@ -38,6 +38,7 @@ public:
 	virtual void Update(const double dt);
 	virtual void AddPatrolPoint(Vector3);
 	virtual void SetState(ENEMY_STATE);
+	virtual ENEMY_STATE GetState(void);
 
 	virtual void PlayerCurrentPosition(Vector3 player_position);
 	virtual Vector3 GetDetectionRange(void);
@@ -46,18 +47,20 @@ public:
 	virtual bool GetSpottedStatus(void);
 	virtual bool GetTrackingStatus(void);
 	virtual void SetIsDetected(bool b_IsDetected);
+	virtual void SetTrackingPos(Vector3 tracking_pos);
 
 	virtual vector<GameObject *> &GetBullet_List(void);
 	
 protected:
 	ENEMY_STATE state;
 	Vector3 player_position;
-	Vector3 player_prevPos;
+	Vector3 trackingPos;
 	Vector3 detection_range;
 	bool m_bIsDetected;
 	bool m_bAlerted;
 	bool m_bTracking;
 	std::vector<GameObject *> m_BulletList;
+	float m_fWaitTime; //Time to wait before continueing
 	float f_alertTime;
 	float f_detection_angle;
 };

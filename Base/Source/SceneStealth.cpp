@@ -13,6 +13,7 @@ SceneStealth::SceneStealth()
 SceneStealth::~SceneStealth()
 {
 	delete test;
+	delete testes;
 }
 
 void SceneStealth::Init()
@@ -82,7 +83,10 @@ void SceneStealth::InitGame(void)
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 
-	test = new CItem(CItem::DISGUISE);
+	test = new CItem;
+	test->SetItemType(CItem::DISGUISE);
+	testes = new CItem;
+	testes->SetItemType(CItem::NOISE);
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -174,6 +178,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			}
 		}
 		break;
+	case GameObject::GO_LEVER:
 	case GameObject::GO_POWERUP_INVIS:
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
@@ -346,6 +351,15 @@ void SceneStealth::UpdatePlayer(const double dt)
 		if(Application::IsKeyPressed('V'))
 			Virus->TriggerItemEffect(test);
 
+		static bool btest = false;
+		if(Application::IsKeyPressed('B') && btest == false)
+		{
+			Virus->TriggerItemEffect(testes);
+			btest = true;
+		}
+		else if(!Application::IsKeyPressed('B') && btest == true)
+			btest = false;
+
 		Virus->Update(dt);
 
 		bool b_boxColCheck = false;
@@ -402,6 +416,18 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
+		//Check player collision with interactables
+		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
+		{
+			CInteractables *go = (CInteractables *)* it;
+			if(go->active)
+			{
+				if(CheckCollision(Virus,go,dt))
+					b_ColCheck = true;
+				if(Application::IsKeyPressed(VK_RETURN))
+					go->CheckBonusInteraction(Virus->pos);
+			}
+		}
 		if(!b_ColCheck)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
@@ -442,16 +468,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 
-		//Check player collision with interactables
-		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
-		{
-			CInteractables *go = (CInteractables *)* it;
-			if(go->active)
-			{
-				if(Application::IsKeyPressed(VK_RETURN))
-					go->CheckBonusInteraction(Virus->pos);
-			}
-		}
 		Virus->m_bIsHiding = false;
 	}
 	//Respawning of player
@@ -493,7 +509,17 @@ void SceneStealth::UpdateEnemies(const double dt)
 				{
 					Virus->SetPlayerState(CPlayer::DEAD);
 				}
-
+				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
+				{
+					CNoiseObject *nobj = (CNoiseObject *)*it;
+					if((nobj->GetPosition() - go->pos).LengthSquared() < 10000 //dist
+						&& go->GetState() != CEnemy::STATE_TRACK && !go->GetSpottedStatus()
+						&& nobj->GetActive())
+					{
+						go->SetState(CEnemy::STATE_TRACK);
+						go->SetTrackingPos(nobj->GetPosition());
+					}
+				}
 				//For enemy to track player last position for patrol algorithm
 				go->PlayerCurrentPosition(Virus->pos);
 
@@ -1096,11 +1122,15 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_LEVER:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
-		modelStack.PopMatrix();
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
+			modelStack.Rotate(angle, 0, 0 ,1);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
+			modelStack.PopMatrix();
+		}
 		break;
 	case GameObject::GO_BOX:
 		modelStack.PushMatrix();
@@ -1186,6 +1216,15 @@ void SceneStealth::RenderGame(void)
 	else
 		RenderMesh(meshList[GEO_BOX], bLightEnabled);
 	modelStack.PopMatrix();
+
+	for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
+	{
+		CNoiseObject *nobj = (CNoiseObject *)*it;
+		modelStack.PushMatrix();
+		modelStack.Translate(nobj->GetPosition().x, nobj->GetPosition().y, nobj->GetPosition().z);
+		RenderMesh(meshList[GEO_ALERT], bLightEnabled);
+		modelStack.PopMatrix();
+	}
 
 	//Render structures here
 	for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)

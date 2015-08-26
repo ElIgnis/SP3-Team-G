@@ -22,6 +22,12 @@ CPlayer::CPlayer(Vector3 pos)
 
 CPlayer::~CPlayer(void)
 {
+	while(NoiseObject_List.size() > 0)
+	{
+		CNoiseObject *Item = NoiseObject_List.back();
+		delete Item;
+		NoiseObject_List.pop_back();
+	}
 }
 
 void CPlayer::Update(const double dt)
@@ -49,6 +55,24 @@ void CPlayer::Update(const double dt)
 				SetPlayerState(ALIVE);
 
 			m_bChangeDisguise = false;
+		}
+	}
+
+	for(unsigned i = 0; i < NoiseObject_List.size(); ++i)
+	{
+		if(!NoiseObject_List[i]->GetActive())
+		{
+			NoiseObject_List[i]->SetCountdownTime(NoiseObject_List[i]->GetCountdownTime() - (float)dt);
+			if(NoiseObject_List[i]->GetCountdownTime() < 0.f)
+				NoiseObject_List[i]->SetActive();
+		}
+		else
+		{
+			NoiseObject_List[i]->SetRemainingTime(NoiseObject_List[i]->GetRemainingTime() - (float)dt);
+			if(NoiseObject_List[i]->GetRemainingTime() < 0.f)
+			{
+				NoiseObject_List.erase(NoiseObject_List.begin() + i);
+			}
 		}
 	}
 }
@@ -131,9 +155,17 @@ void CPlayer::TriggerItemEffect(CItem *item)
 		break;
 	case CItem::DISGUISE:
 		m_bChangeDisguise = true;
+		break;
 	case CItem::NOISE:
-		//Add noise effect
+		//Create new noise object and store inside NoiseObject_List
+		CNoiseObject *nobj = new CNoiseObject(this->pos, 1.f, 1.f);
+		NoiseObject_List.push_back(nobj);
 		break;
 
 	}
+}
+
+vector<CNoiseObject *> &CPlayer::GetNoiseObject_List(void)
+{
+	return NoiseObject_List;
 }

@@ -1,2 +1,3 @@
 ##LEVERS##
-GO_LEVER, -28.6, -164.9, 0.0, 0.0, 2.0, 75.0, 5.0, 7.5, -95.0, -205.0, 0.0
+#Format - PosX, PosY, PosZ, NormX, NormY, ScaleX, ScaleY, ScaleZ
+GO_LEVER, -28.6, -164.9, 0.0, 0.0, 1.0, 75.0, 5.0, 7.5, -95.0, -205.0, 0.0
