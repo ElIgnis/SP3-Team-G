@@ -435,7 +435,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 					break;
 				case GameObject::GO_POWERUP_HEALTH:
 					Virus->add1Life();
-					//cout << "Health : " << Virus->getLives() << endl;
 					Virus->m_pInv.AddItem(new CItem(0, CItem::HEALTH));
 					break;
 				case GameObject::GO_POWERUP_NOISE:
@@ -509,7 +508,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 			//Player collide with enemy
 			if(CheckCollision(go, Virus, dt))
 			{
-				//Virus->Minus1Life();
+				Virus->Minus1Life();
 				Virus->pos.x = Virus->GetCurrentCP().x;
 				Virus->pos.y = Virus->GetCurrentCP().y;
 			}
