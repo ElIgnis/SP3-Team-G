@@ -574,15 +574,14 @@ void SceneStealth::UpdateEnemies(const double dt)
 								}
 							}
 							else
-							{
 								go->SetIsDetected(false);
-							}
-						}
-						else
-						{
-							go->SetIsDetected(false);
 						}
 					}
+					else
+					{
+						go->SetIsDetected(false);
+					}
+				}
 
 				//Updates enemies
 				go->Update(dt);
@@ -653,7 +652,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 			}
 		}
 	}
-}
 }
 
 
