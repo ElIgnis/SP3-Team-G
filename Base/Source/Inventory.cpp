@@ -82,7 +82,7 @@ bool CInventory::AddItem(CItem *item)
 }
 
 //Del item from the inventory
-bool CInventory::UseItem(CItem *item)
+bool CInventory::UseItem(int i)
 {
 	if(m_iHolding == 0)
 	{
@@ -90,16 +90,19 @@ bool CInventory::UseItem(CItem *item)
 	}
 	else
 	{
-		for(unsigned int i = 0; i < m_iHolding; ++i)
+		i -= 1;
+		if(Inventory[i]->getItemStack() == 1)
 		{
-			if(Inventory[i]->GetItemType() == item->GetItemType())
-			{
-				Inventory.pop_back();
-				m_iHolding-=1;
-				Inventory[i]->itemDelStack();
-				return true;
-			}
+			Inventory.erase(Inventory.begin() + i);
+			m_iHolding-=1;
+			return true;
 		}
+		else
+		{
+			Inventory[i]->itemDelStack();
+			return true;
+		}
+
 	}
 	return false;
 }

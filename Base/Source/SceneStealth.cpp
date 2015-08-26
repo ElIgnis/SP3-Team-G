@@ -744,6 +744,71 @@ void SceneStealth::UpdateGameKeypress(void)
 		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
 
+	if(GetKeyState('1'))
+	{
+		cout << "hit 1" << endl;
+		if(Virus->m_pInv.UseItem(1))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1]);
+		}
+	}
+	if(GetKeyState('2'))
+	{
+		if(Virus->m_pInv.UseItem(2))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2]);
+		}
+	}
+	if(GetKeyState('3'))
+	{
+		if(Virus->m_pInv.UseItem(3))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3]);
+		}
+	}
+	if(GetKeyState('4'))
+	{
+		if(Virus->m_pInv.UseItem(4))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4]);
+		}
+	}
+	if(GetKeyState('5'))
+	{
+		if(Virus->m_pInv.UseItem(5))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5]);
+		}
+	}
+	if(GetKeyState('6'))
+	{
+		if(Virus->m_pInv.UseItem(6))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6]);
+		}
+	}
+	if(GetKeyState('7'))
+	{
+		if(Virus->m_pInv.UseItem(7))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7]);
+		}
+	}
+	if(GetKeyState('8'))
+	{
+		if(Virus->m_pInv.UseItem(8))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8]);
+		}
+	}
+	if(GetKeyState('9'))
+	{
+		if(Virus->m_pInv.UseItem(9))
+		{
+			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9]);
+		}
+	}
+
 }
 
 void SceneStealth::UpdateKeyDown(const unsigned char key)
