@@ -54,7 +54,7 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
-	LvlHandler.LoadMap("Level//Level 1.txt");
+	LvlHandler.LoadMap("Level//Level 4.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
@@ -183,6 +183,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		case GameObject::GO_POWERUP_SPEED:
 		case GameObject::GO_POWERUP_HEALTH:
 		case GameObject::GO_BOX:
+		case GameObject::GO_LASER_MACHINE:
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
@@ -373,7 +374,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetStructure_List().begin(); it2 != LvlHandler.GetStructure_List().end(); ++it2)
 				{
 					GameObject *go2 = (GameObject *)*it2;
-					if(go2->active && go2->type == GameObject::GO_WALL)
+					if(go2->active && go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_LASER_MACHINE)
 					{
 						go->vel = Virus->vel;
 						if(CheckCollision(go,go2,dt))
@@ -400,7 +401,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				{
 					switch(go->type)
 					{
-					case GameObject::GO_LASER:
+					case GameObject::GO_LASER_MACHINE:
 						b_ColCheck = true;
 						break;
 					case GameObject::GO_WALL:
@@ -431,7 +432,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					go->CheckBonusInteraction(Virus->pos);
 			}
 		}
-		//if(!b_ColCheck)
+		if(!b_ColCheck)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
 				Virus->pos += Virus->vel * 2 * dt;
@@ -1290,14 +1291,14 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_HOLE], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
-	case GameObject::GO_LASER:
+	case GameObject::GO_LASER_MACHINE:
 		{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
 			modelStack.Rotate(angle, 0, 0 ,1);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_LASER], bLightEnabled);
+		RenderMesh(meshList[GEO_LASER_MACHINE], bLightEnabled);
 		modelStack.PopMatrix();
 		}
 		break;
