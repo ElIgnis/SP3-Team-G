@@ -278,6 +278,16 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyUp(VK_RETURN);
 	}
+
+	//Spacebar key
+	if(IsKeyPressed(VK_SPACE))
+	{
+		scene->UpdateKeyDown(VK_SPACE);
+	}
+	if(IsKeyReleased(VK_SPACE))
+	{
+		scene->UpdateKeyUp(VK_SPACE);
+	}
 	//Backspace
 	if(IsKeyPressed(VK_BACK))
 	{

@@ -95,6 +95,16 @@ void CEnemy_Sentry::Update(const double dt)
 				m_bTracking = false;
 			}
 		}
+	case STATE_STUNNED:
+		{
+			//Countdown timer until enemy is unstunned
+			m_fStunRecover += (float)dt;
+			if(m_fStunRecover > StunDuration)
+			{
+				m_fStunRecover = 0.f;
+				state = STATE_TRACK;
+			}
+		}
 		break;
 	default:
 		break;

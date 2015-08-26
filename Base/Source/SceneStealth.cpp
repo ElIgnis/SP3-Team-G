@@ -54,7 +54,7 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
-	LvlHandler.LoadMap("Level//Level 4.txt");
+	LvlHandler.LoadMap("Level//Level 1.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
@@ -431,7 +431,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					go->CheckBonusInteraction(Virus->pos);
 			}
 		}
-		if(!b_ColCheck)
+		//if(!b_ColCheck)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
 				Virus->pos += Virus->vel * 2 * dt;
@@ -514,6 +514,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 	}
 }
+
 void SceneStealth::UpdateEnemies(const double dt)
 {
 	//Update enemies
@@ -529,14 +530,23 @@ void SceneStealth::UpdateEnemies(const double dt)
 				Virus->pos.x = Virus->GetCurrentCP().x;
 				Virus->pos.y = Virus->GetCurrentCP().y;
 			}
-
+			//Stunning enemies within range
+			if((go->pos - Virus->pos).LengthSquared() < 1000)
+			{
+				//TODO::Set delay
+				if(GetKeyState(VK_SPACE))
+				{
+					go->SetState(CEnemy::STATE_STUNNED);
+				}
+			}
+		
 			//Check if player use freeze powerup
-			if(!Virus->GetPowerupStatus(CItem::FREEZE))
+			if(!Virus->GetPowerupStatus(CItem::FREEZE) && go->GetState() != CEnemy::STATE_STUNNED)
 			{
 				//Set player state to dead on collision with any enemy
 				if(CheckCollision(go, Virus, dt))
 				{
-					Virus->SetPlayerState(CPlayer::DEAD);
+					//Virus->SetPlayerState(CPlayer::DEAD);
 				}
 				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 				{
@@ -585,8 +595,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					}
 				}
 
-				//Updates enemies
-				go->Update(dt);
+				
 
 				//Check enemy collision with structures
 				bool b_ColCheck2 = false;
@@ -613,7 +622,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 					go->pos += go->vel;
 			}
 
-
+			//Updates enemies
+			go->Update(dt);
 
 			//Update bullets of sentry enemies
 			if(go->type == CEnemy::ENEMY_SENTRY)
@@ -655,7 +665,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 		}
 	}
 }
-
 
 void SceneStealth::UpdateMenu(const double dt)
 {

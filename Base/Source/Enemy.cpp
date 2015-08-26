@@ -11,6 +11,7 @@ CEnemy::CEnemy()
 	, m_bTracking(false)
 	, f_detection_angle(30.f)
 	, m_fWaitTime(0.f)
+	, m_fStunRecover(0.f)
 {
 }
 

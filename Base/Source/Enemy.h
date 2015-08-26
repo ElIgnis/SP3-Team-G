@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#define StunDuration 2.f
+
 using std::string;
 using std::vector;
 
@@ -21,6 +23,7 @@ public:
 		STATE_SCAN,		//Sentry enemy rotate vide
 		STATE_ALERT,	//Enemy first spots player
 		STATE_TRACK,	//Move to previous player position after losing line of sight
+		STATE_STUNNED,	//Unable to move for awhile
 		NUM_STATES,
 	};
 	enum ENEMY_TYPE
@@ -63,6 +66,7 @@ protected:
 	float m_fWaitTime; //Time to wait before continueing
 	float f_alertTime;
 	float f_detection_angle;
+	float m_fStunRecover;
 };
 
 #endif
