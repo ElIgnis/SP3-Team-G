@@ -38,7 +38,5 @@ private:
 	unsigned int m_uiStack;
 	ITEM_TYPE itemType;
 	unsigned int m_uiIndex;
-
-
 };
 

@@ -40,8 +40,10 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 		this->active = false;
 	}
 
-	if(newType == "GO_HOLE")
+	else if(newType == "GO_HOLE")
 		this->type = GO_HOLE;
+	else if(newType == "GO_LASER_MACHINE")
+		this->type = GO_LASER_MACHINE;
 
 	this->pos = newPos;
 	this->normal = newNormal;
