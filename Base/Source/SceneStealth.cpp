@@ -561,7 +561,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
-				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD)
+				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD && !Virus->GetPowerupStatus(CItem::SPEED))
 				{
 					if(CheckDetectionRange(go, Virus))
 					{
