@@ -233,8 +233,8 @@ void SceneBase::Init()
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Laser
-	meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
-	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
+	meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser_Machine.obj");
+	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);

@@ -207,12 +207,12 @@ void Camera3::Update(double dt)
 		Mtx44 rotX,rotY;
 		if(Application::IsKeyPressed(VK_LEFT))
 		{
-			rotateAngle.y += 1.f * dt;
+			rotateAngle.y += 1.f;
 			CameraAngle += 1.f;
 		}
 		else if(Application::IsKeyPressed(VK_RIGHT))
 		{
-			rotateAngle.y -= 1.f * dt;
+			rotateAngle.y -= 1.f;
 			CameraAngle -= 1.f;
 		}
 		if(Application::IsKeyPressed(VK_UP))
@@ -232,10 +232,15 @@ void Camera3::Update(double dt)
 			rotateAngle.x = 0.f;
 		}
 
-		if(CameraAngle > 360.f)
+		if(CameraAngle >= 360.f)
 			CameraAngle = 0.f;
 		if(CameraAngle < 0.f)
 			CameraAngle = 360.f;
+
+		if(rotateAngle.y >= 360.f)
+			rotateAngle.y = 0.f;
+		if(rotateAngle.y < 0.f)
+			rotateAngle.y = 360.f;
 
 		rotY.SetToRotation(rotateAngle.y, 0, 1, 0);
 		rotX.SetToRotation(rotateAngle.x, 1, 0, 0);
@@ -252,13 +257,15 @@ void Camera3::Update(double dt)
 		target.y = 0;
 		target.z = -TargetPlayer->pos.y;
 
-		position.x = TargetPlayer->pos.x + (DistFromPlayer.z * sin(rotateAngle.y));
+		position.x = TargetPlayer->pos.x + (DistFromPlayer.z * sin(Math::DegreeToRadian(rotateAngle.y)));
 		position.y = DistFromPlayer.y;
-		position.z = -TargetPlayer->pos.y + (DistFromPlayer.z * cos(rotateAngle.y));
+		position.z = -TargetPlayer->pos.y + (DistFromPlayer.z * cos(Math::DegreeToRadian(rotateAngle.y)));
 		//position = rotX * position;
 		// * sin(rotateAngle.x)
 		// * cos(rotateAngle.x)
 
+		std::cout << rotateAngle.y << "   " << sin(rotateAngle.y) << "   " << CameraAngle << "   " << position << "    " << TargetPlayer->pos << std::endl;
+		
 		//if(position.z <= 60.f && position.y >= 70.f)
 		//{
 		//	if ( Application::GetCam_Yaw() != 0)
