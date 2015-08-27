@@ -107,6 +107,7 @@ public:
 		//UI
 		GEO_HOTBAR,
 		GEO_HOTSEL,
+		GEO_DIALOGUE_BOX,
 		NUM_GEOMETRY,
 	};
 protected:

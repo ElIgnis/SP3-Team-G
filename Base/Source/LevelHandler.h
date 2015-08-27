@@ -28,6 +28,7 @@ private:
 	vector<CInteractables *> Interactables_List;
 	vector<string>Level_Tokens;
 	vector<string>Level_Tokens2;
+	vector<CEnemy * > Dialogue_List[4];
 	char m_cSplit_Char;
 	string m_sLevelData;
 	string m_sLevelData2;

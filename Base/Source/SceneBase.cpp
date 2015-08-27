@@ -254,6 +254,8 @@ void SceneBase::Init()
 	meshList[GEO_HOTBAR]->textureID = LoadTGA("Image//hotbar.tga");
 	meshList[GEO_HOTSEL] = MeshBuilder::GenerateQuad("InventoryHotbar2", Color(1, 1, 1), 1.f);
 	meshList[GEO_HOTSEL]->textureID = LoadTGA("Image//hotbar_select.tga");
+	meshList[GEO_DIALOGUE_BOX] = MeshBuilder::GenerateQuad("DialogueBox", Color(1, 1, 1), 1.f);
+	meshList[GEO_DIALOGUE_BOX]->textureID = LoadTGA("Image//dialogue_box.tga");
 
 	//Sound
 	engine = createIrrKlangDevice();
@@ -266,7 +268,7 @@ void SceneBase::Init()
 void SceneBase::Update(double dt)
 {
 	//Keyboard Section
-	/*if(Application::IsKeyPressed('1'))
+	if(Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
 	if(Application::IsKeyPressed('2'))
 		glDisable(GL_CULL_FACE);
@@ -281,7 +283,7 @@ void SceneBase::Update(double dt)
 	if(Application::IsKeyPressed('6'))
 	{
 		bLightEnabled = false;
-	}*/
+	}
 
 	fps = (float)(1.f / dt);
 	camera.Update(dt);
