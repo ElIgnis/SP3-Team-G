@@ -650,7 +650,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 			go->Update(dt);
 
 			//Update bullets of sentry enemies
-			if(go->type == CEnemy::ENEMY_SENTRY)
+			if(go->e_type == CEnemy::ENEMY_SENTRY)
 			{
 				//Update enemy bullets
 				for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
