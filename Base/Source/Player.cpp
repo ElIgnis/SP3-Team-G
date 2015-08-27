@@ -11,6 +11,7 @@ CPlayer::CPlayer(void)
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
 	this->m_bIsHiding = false;
+	this->m_CurrentCP = pos;
 	for(int i = 0; i < CItem::ITEM_TOTAL; ++i)
 		m_bPowerupStatus[i] = false;
 }
