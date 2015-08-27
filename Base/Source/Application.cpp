@@ -135,6 +135,87 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyUp('s');
 	}
+	//1 key
+	if(IsKeyPressed('1'))
+	{
+		scene->UpdateKeyDown('1');
+	}
+	else if(IsKeyReleased('1'))
+	{
+		scene->UpdateKeyUp('1');
+	}
+	//2 key
+	if(IsKeyPressed('2'))
+	{
+		scene->UpdateKeyDown('2');
+	}
+	else if(IsKeyReleased('2'))
+	{
+		scene->UpdateKeyUp('2');
+	}
+	//3 key
+	if(IsKeyPressed('3'))
+	{
+		scene->UpdateKeyDown('3');
+	}
+	else if(IsKeyReleased('3'))
+	{
+		scene->UpdateKeyUp('3');
+	}
+	//4 key
+	if(IsKeyPressed('4'))
+	{
+		scene->UpdateKeyDown('4');
+	}
+	else if(IsKeyReleased('4'))
+	{
+		scene->UpdateKeyUp('4');
+	}
+	//5 key
+	if(IsKeyPressed('5'))
+	{
+		scene->UpdateKeyDown('5');
+	}
+	else if(IsKeyReleased('5'))
+	{
+		scene->UpdateKeyUp('5');
+	}
+	//6 key
+	if(IsKeyPressed('6'))
+	{
+		scene->UpdateKeyDown('6');
+	}
+	else if(IsKeyReleased('6'))
+	{
+		scene->UpdateKeyUp('6');
+	}
+	//7 key
+	if(IsKeyPressed('7'))
+	{
+		scene->UpdateKeyDown('7');
+	}
+	else if(IsKeyReleased('7'))
+	{
+		scene->UpdateKeyUp('7');
+	}
+	//8 key
+	if(IsKeyPressed('8'))
+	{
+		scene->UpdateKeyDown('8');
+	}
+	else if(IsKeyReleased('8'))
+	{
+		scene->UpdateKeyUp('8');
+	}
+	//9 key
+	if(IsKeyPressed('9'))
+	{
+		scene->UpdateKeyDown('9');
+	}
+	else if(IsKeyReleased('9'))
+	{
+		scene->UpdateKeyUp('9');
+	}
 
 	//Up arrow key
 	static bool b_UpKey = false;
@@ -196,6 +277,16 @@ bool Application::GetKeyboardUpdate()
 	if(IsKeyReleased(VK_RETURN))
 	{
 		scene->UpdateKeyUp(VK_RETURN);
+	}
+
+	//Spacebar key
+	if(IsKeyPressed(VK_SPACE))
+	{
+		scene->UpdateKeyDown(VK_SPACE);
+	}
+	if(IsKeyReleased(VK_SPACE))
+	{
+		scene->UpdateKeyUp(VK_SPACE);
 	}
 	//Backspace
 	if(IsKeyPressed(VK_BACK))

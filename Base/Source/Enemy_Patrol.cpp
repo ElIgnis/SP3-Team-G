@@ -100,6 +100,16 @@ void CEnemy_Patrol::Update(const double dt)
 			}
 		}
 		break;
+	case STATE_STUNNED:
+		{
+			//Countdown timer until enemy is unstunned
+			m_fStunRecover += (float)dt;
+			if(m_fStunRecover > StunDuration)
+			{
+				m_fStunRecover = 0.f;
+				state = STATE_TRACK;
+			}
+		}
 	default:
 		break;
 	}
