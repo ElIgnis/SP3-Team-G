@@ -6,7 +6,8 @@ CPlayer::CPlayer(void)
 	, m_bChangeDisguise(false)
 	, CurrentState(ALIVE)
 	, m_bUsedStun(false)
-	, m_fStunReuseTimer(2.f)
+	, m_fStunReuseTimer(0.f)
+	, m_fRespawnTimer(2.f)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
@@ -33,7 +34,7 @@ CPlayer::~CPlayer(void)
 	}
 }
 
-void CPlayer::Update(const double dt)
+void CPlayer::UpdateTimers(const double dt)
 {
 	//Countdown timer for powerups
 	for(int i = 0; i < CItem::ITEM_TOTAL; ++i)
@@ -65,8 +66,17 @@ void CPlayer::Update(const double dt)
 	if(m_bUsedStun)
 	{
 		m_fStunReuseTimer -= dt;
+		if(m_fStunReuseTimer <= 0.f)
+			m_bUsedStun = false;
 	}
 
+	//Update respawn timer
+	if(CurrentState == DEAD)
+	{
+		m_fRespawnTimer -= dt;
+	}
+
+	//Update usage of noise object
 	for(unsigned i = 0; i < NoiseObject_List.size(); ++i)
 	{
 		if(!NoiseObject_List[i]->GetActive())
@@ -184,12 +194,22 @@ vector<CNoiseObject *> &CPlayer::GetNoiseObject_List(void)
 void CPlayer::SetStunReuseTimer(const float newReuseTimer)
 {
 	//Starts triggering stun cooldown
-	m_bUsedStun = true;
+	this->m_bUsedStun = true;
 	this->m_fStunReuseTimer = newReuseTimer;
 }
+
 float CPlayer::GetStunReuseTimer(void)
 {
 	return m_fStunReuseTimer;
+}
+
+void CPlayer::SetRespawnTimer(const float newRespawnTimer)
+{
+	this->m_fRespawnTimer = newRespawnTimer;
+}
+float CPlayer::GetRespawnTimer(void)
+{
+	return m_fRespawnTimer;
 }
 
 void CPlayer::PlayerReset(void)
@@ -202,6 +222,7 @@ void CPlayer::PlayerReset(void)
 	 m_fStunReuseTimer = 0.f;
 	 this->m_CurrentCP = pos;
 	 this->m_bIsHiding = false;
+
 	 for (int i = 0; i < CItem::ITEM_TOTAL; ++i)
 	 {
 		m_fPowerupTime[i] = 0;

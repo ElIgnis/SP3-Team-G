@@ -7,6 +7,9 @@ SceneStealth::SceneStealth()
 	: GameState(STATE_MENU)
 	, b_ExitScene (false)
 	, Virus(NULL)
+	, b_ReInitGameVars(true)
+	, timeElapsed(0.f)
+	, b_NewHighScore(false)
 {
 }
 
@@ -54,9 +57,7 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
-	LvlHandler.LoadMap("Level//Level 4.txt");
-	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
-	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
+	
 
 	//Initialise key list
 	for(int i=0; i<NumberOfKeys; ++i)
@@ -64,18 +65,20 @@ void SceneStealth::Init()
 		myKeys[i] = false;
 	}
 
-	InitGame();
-
 	bLightEnabled = false;
 }
 
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
+
+	//Loads level
+	LvlHandler.LoadMap("Level//Level 1.txt");
+	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
+	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 	
 	//Initializing m_force for the player
 	m_force = 0.f;
-	m_speed = 1.f;
 	rotateAngle = 90;
 	//Initializing the player
 	Virus = new CPlayer;
@@ -86,6 +89,35 @@ void SceneStealth::InitGame(void)
 
 	test = new CItem(CItem::DISGUISE);
 	testes = new CItem(CItem::NOISE);
+}
+
+void SceneStealth::CompareScore(int CurrentLevel)
+{
+	GameState = STATE_MENU;
+	LvlHandler.SetStageCompleted(false);
+	
+	//Overwrite score if lower
+	if(tempHighScore < HS_List.GetScoreList().at(CurrentLevel -1))
+	{
+		b_NewHighScore = true;
+	}
+}
+
+void SceneStealth::UpdateNewHighScore(void)
+{
+	if(b_NewHighScore)
+		ProcessNameInput();
+}
+
+void SceneStealth::UpdatePlayerScore(const double dt)
+{
+	timeElapsed += (float)dt;
+	if(timeElapsed >= 1.0f)
+	{
+		timeElapsed = 0.f;
+		tempHighScore.AddSeconds();
+		tempHighScore.ConvertToMinutes(tempHighScore);
+	}
 }
 
 GameObject* SceneStealth::FetchGO()
@@ -185,6 +217,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	case GameObject::GO_BOX:
 	case GameObject::GO_LASER_MACHINE:
 	case GameObject::GO_LASER:
+	case GameObject::GO_ENDPOINT:
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
@@ -326,10 +359,13 @@ void SceneStealth::Update(double dt)
 	switch(GameState)
 	{
 	case STATE_MENU:
-			camera.SetPersp(false);
-			camera.Reset();
-			UpdateMenu(dt);
+		camera.SetPersp(false);
+		camera.Reset();
+		UpdateMenu(dt);
+		//Prevent updating of menu scrolling while entering high score
+		if(!b_NewHighScore)
 			UpdateMenuKeypress();
+		UpdateNewHighScore();
 		break;
 	case STATE_PLAYING:
 		//Set the camera to target this player
@@ -338,17 +374,22 @@ void SceneStealth::Update(double dt)
 		UpdateGameKeypress();
 		UpdatePlayer(dt);
 		UpdateEnemies(dt);
+		UpdatePlayerScore(dt);
+		//Compare scores when level is completed
+		if(LvlHandler.GetStageCompleted())
+		{
+			CompareScore(LvlHandler.GetCurrentStage());
+		}
 		break;
 	default:
 		break;
 	}
-	if(Application::IsKeyPressed('P'))
-		std::cout<<Virus->pos<<std::endl;
-	ProcessKeys();
 }
 
 void SceneStealth::UpdatePlayer(const double dt)
 {
+	Virus->UpdateTimers(dt);
+
 	//Only update player when player is not dead
 	if(Virus->GetPlayerState() != CPlayer::DEAD)
 	{
@@ -374,10 +415,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 		else if(!Application::IsKeyPressed('B') && btest == true)
 			btest = false;
-
-		cout << "Health : " << Virus->getLives() << endl;
-
-		Virus->Update(dt);
 
 		bool b_boxColCheck = false;
 		//Check BOX collision with the walls
@@ -433,6 +470,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 					case GameObject::GO_HOLE:
 						Virus->m_bIsHiding = true;
 						break;
+					case GameObject::GO_ENDPOINT:
+						LvlHandler.SetStageCompleted(true);
 					}
 				}
 			}
@@ -517,14 +556,14 @@ void SceneStealth::UpdatePlayer(const double dt)
 	//Out of lives
 	if (Virus->getLives() <= 0)
 	{	
-		//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
-		Virus->PlayerReset();
-		LvlHandler.Exit();
+		Restart();
 	}
 
-	//Restart when Lives = 0
-	if (Virus->GetPlayerState() == CPlayer::DEAD)
+	//Respawn with 2s delay
+	if (Virus->GetPlayerState() == CPlayer::DEAD && Virus->GetRespawnTimer() < 0.f)
 	{
+		Virus->Minus1Life();
+		Virus->SetRespawnTimer(RespawnCooldown);
 		Virus->pos.x = Virus->GetCurrentCP().x;
 		Virus->pos.y = Virus->GetCurrentCP().y;
 		Virus->SetPlayerState(CPlayer::ALIVE);
@@ -539,12 +578,10 @@ void SceneStealth::UpdateEnemies(const double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)
 		{
-			//Player collide with enemy
-			if(CheckCollision(go, Virus, dt))
+			//Set player state to dead on collision with any enemy
+			if(CheckCollision(go, Virus, dt) && Virus->GetPlayerState() == CPlayer::ALIVE)
 			{
-				Virus->Minus1Life();
-				Virus->pos.x = Virus->GetCurrentCP().x;
-				Virus->pos.y = Virus->GetCurrentCP().y;
+				Virus->SetPlayerState(CPlayer::DEAD);
 			}
 			//Enemy to enemy collision
 			for(std::vector<CEnemy *>::iterator it2 = it + 1; it2 !=LvlHandler.GetEnemy_List().end(); ++it2)
@@ -558,28 +595,24 @@ void SceneStealth::UpdateEnemies(const double dt)
 					go2->vel = go->vel;*/
 				}
 			}
-			//Stunning enemies within range
-			if((go->pos - Virus->pos).LengthSquared() < 1000 && GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
+			//Stunning enemies
+			if(GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
+				//Set Delay
+				Virus->SetStunReuseTimer(StunCooldown);
 
 				//Enemies must not be in alerted or attacking state
 				if(go->GetState() != CEnemy::STATE_ALERT || go->GetState() != CEnemy::STATE_ATTACK)
 				{
-					go->SetState(CEnemy::STATE_STUNNED);
+					//Stunning enemies within range
+					if((go->pos - Virus->pos).LengthSquared() < 1000)
+						go->SetState(CEnemy::STATE_STUNNED);
 				}
-
-				//Set Delay
-				Virus->SetStunReuseTimer(StunCooldown);
 			}
 		
 			//Check if player use freeze powerup
 			if(!Virus->GetPowerupStatus(CItem::FREEZE) && go->GetState() != CEnemy::STATE_STUNNED)
 			{
-				//Set player state to dead on collision with any enemy
-				if(CheckCollision(go, Virus, dt))
-				{
-					//Virus->SetPlayerState(CPlayer::DEAD);
-				}
 				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 				{
 					CNoiseObject *nobj = (CNoiseObject *)*it;
@@ -660,23 +693,28 @@ void SceneStealth::UpdateEnemies(const double dt)
 			go->Update(dt);
 
 			//Update bullets of sentry enemies
-			if(go->type == CEnemy::ENEMY_SENTRY)
+			if(go->e_type == CEnemy::ENEMY_SENTRY)
 			{
 				//Update enemy bullets
 				for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
 				{
 					bool b_ColCheck1 = false;
 					GameObject *bul = (GameObject  *)*it2;
+					
+					//Updates bullet
 					if(bul->active)
 					{
 						bul->mass -= 1.f * (float)dt;
 						if(bul->mass < 0.f)
 							bul->active = false;
-						if(CheckCollision (Virus, bul, (float)dt))
+
+						//Bullet kills player if collided
+						if(CheckCollision (bul, Virus, (float)dt))
 						{
-							Virus->Minus1Life();
+							Virus->SetPlayerState(CPlayer::DEAD);
 							bul->active = false;
 						}
+
 						//Check bullet - structure collision
 						for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
 						{
@@ -715,7 +753,14 @@ void SceneStealth::UpdateMenuKeypress(void)
 		if(GetKeyState(VK_DOWN) && !GetKeyState(VK_UP))
 			menu_main.UpdateSelection(false);
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 0)//Play
+		{
+			if(b_ReInitGameVars)
+			{
+				b_ReInitGameVars = false;
+				InitGame();
+			}
 			GameState = STATE_PLAYING;
+		}
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 5)//Exit
 			b_ExitScene = true;
 	}
@@ -887,7 +932,7 @@ bool SceneStealth::GetKeyState(const unsigned char key)
 	return myKeys[key];
 }
 
-void SceneStealth::ProcessKeys(void)
+void SceneStealth::ProcessNameInput(void)
 {
 	//Name input for high scores
 	if(tempHighScore.GetNameCharCount() < HS_NameLength)
@@ -1218,16 +1263,18 @@ void SceneStealth::ProcessKeys(void)
 			{
 				tempHighScore.SetCharToAdd(tempHighScore.GetCharToAdd() - 32);
 			}
+			tempHighScore.AddNameCharCount();
 			tempHighScore.SetNameInput();
-		}
-
-		//Backspace
-		else if(Application::IsKeyPressed(VK_BACK) && tempHighScore.GetNameCharCount() > 0)
-		{
-			tempHighScore.SetCharToRemoved();
 		}
 	}
 
+	//Backspace
+	if(Application::IsKeyPressed(VK_BACK) && tempHighScore.GetNameCharCount() > 0)
+	{
+		tempHighScore.SetCharToRemove();
+		tempHighScore.SubtractNameCharCount();
+	}
+	
 	static bool b_ReturnKeyState = false;
 	//Confirm name
 	if(Application::IsKeyPressed(VK_RETURN) && !b_ReturnKeyState)
@@ -1243,11 +1290,19 @@ void SceneStealth::ProcessKeys(void)
 		{
 			name << tempHighScore.GetNameString().at(i);
 		}
-		//name << tempHighScore.GetName();
-		//CHighscore replace = CHighscore(name.str(), LeftPlayer->score);
-		//Score_List.at(HighScoreCount-1) = replace;
-		//HS_List.SortHighScore();
+		tempHighScore.SetName(name.str());
+		HS_List.SetNewHighScore(tempHighScore, LvlHandler.GetCurrentStage()-1);
+		b_NewHighScore = false;
 	}
+}
+
+void SceneStealth::Restart(void)
+{
+	GameState = STATE_MENU;
+	b_ReInitGameVars = true;
+	//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
+	Virus->PlayerReset();
+	LvlHandler.Exit();
 }
 
 void SceneStealth::RenderGO(GameObject *go)
@@ -1364,6 +1419,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 		}
 		break;
+	case GameObject::GO_ENDPOINT:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BOX], bLightEnabled);
+		modelStack.PopMatrix();
+	break;
 	}
 }
 
@@ -1524,6 +1586,9 @@ void SceneStealth::RenderGame(void)
 	}
 
 	modelStack.PopMatrix();
+
+	//Renders elapsed time(score)
+	RenderScore();
 }
 
 void SceneStealth::RenderMenu(void)
@@ -1551,14 +1616,17 @@ void SceneStealth::RenderMenu(void)
 
 	RenderDesc(menu_main);
 
-	//Entering Highscore codes here
-	/*RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! You have acquired a new high score!!", Color(), 4.f, 4.f, 44.f);
-	std::ostringstream HighScoreName;
-	for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
+	if(b_NewHighScore)
 	{
-		HighScoreName << tempHighScore.GetNameString()[i];
+		//Entering Highscore codes here
+		RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! You have acquired a new high score!!", Color(), 4.f, 4.f, 52.f);
+		std::ostringstream HighScoreName;
+		for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
+		{
+			HighScoreName << tempHighScore.GetNameString()[i];
+		}
+		RenderTextOnScreen(meshList[GEO_TEXT], "Please enter your name: " + HighScoreName.str(), Color(0, 1, 0), 3.f, 4.f, 48.f);
 	}
-	RenderTextOnScreen(meshList[GEO_TEXT], "Please enter your name: " + HighScoreName.str(), Color(0, 1, 0), 3.f, 4.f, 40.f);*/
 }
 
 void SceneStealth::RenderDesc(CMenu &menuItem)
@@ -1594,7 +1662,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			for(int i = 0; i < HS_List.GetHighScoreCount(); ++i)
 			{
 				std::ostringstream HighScore;
-				HighScore << "#" << i+1 << ": " << HS_List.GetScoreList().at(i);
+				HighScore << "Level #" << i+1 << ": " << HS_List.GetScoreList().at(i);
 				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
 			}
 		}
@@ -1634,27 +1702,38 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 
 void SceneStealth::RenderUI(void)
 {
+	//Render FPS
 	std::stringstream ssFPS;
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
 
-	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
-	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
-    Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.23, Application::GetWindowHeight() * 0.08, Application::GetWindowWidth() * 0.145, Application::GetWindowHeight() * 0.8975,false,false);
-	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
-	//Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * 0.75, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5,false,false);
-	/*for(int i = 0; i < Virus->getLives(); i++)
-	{
-		Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.8975,false,false);
-	}*/
+	//Renders healthbar and current lives
+	RenderHealthbar();
+	//Renders inventory and items in it
+	RenderInventory();
+	//Renders elapsed time(score)
+	RenderScore();
+	//Render dialogues in scene
+	RenderDialogBox();
+}
 
-	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
-
+void SceneStealth::RenderHealthbar(void)
+{
 	//Health
 	std::stringstream ssH;
 	ssH << 'x' << Virus->getLives();
 	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 5, 12, 53.5);
 
+	//Hotbar for items
+	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
+	//Hotbar selection indicator
+	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
+    //Player health
+	Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.23, Application::GetWindowHeight() * 0.08, Application::GetWindowWidth() * 0.145, Application::GetWindowHeight() * 0.8975,false,false);
+	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+}
+void SceneStealth::RenderInventory(void)
+{
 	if(Virus->m_pInv.getHold() != 0)
 	{
 		//Testing inventory
@@ -1715,8 +1794,30 @@ void SceneStealth::RenderUI(void)
 			}
 		}
 	}
+}
+void SceneStealth::RenderScore(void)
+{
+	std::stringstream ssScore;
+	if(tempHighScore.GetMinutes() < 10)
+		ssScore << "0" << tempHighScore.GetMinutes();
+	else
+		ssScore << tempHighScore.GetMinutes();
+	if(tempHighScore.GetSeconds() < 10)
+		ssScore << " : 0" << tempHighScore.GetSeconds();
+	else
+		ssScore << " : " << tempHighScore.GetSeconds();
 
-	//RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 10, 50);//fps
+}
+void SceneStealth::RenderDialogBox(void)
+{
+	//Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * 0.75, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5,false,false);
+	/*for(int i = 0; i < Virus->getLives(); i++)
+	{
+		Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.8975,false,false);
+	}*/
+
+	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
 }
 
 void SceneStealth::RenderBackground()
@@ -1802,20 +1903,16 @@ void SceneStealth::Render()
 	switch(GameState)
 	{
 	case STATE_MENU:
-		RenderMenu(); //Calling of rendermenu
+		RenderMenu();		//Calling of rendermenu
+		RenderBackground();	// Render the background image
 		break;
 	case STATE_PLAYING:
-		RenderGame(); //Game playing screen
+		RenderGame();		//Game playing screen
+		RenderUI();			//Calling of render UI
 		break;
 	default:
 		break;
-	}
-	
-	//Calling of render UI
-	RenderUI();
-
-	// Render the background image
-	RenderBackground();
+	}	
 }
 
 void SceneStealth::Exit()
@@ -1846,6 +1943,9 @@ void SceneStealth::Exit()
 		delete go;
 		menu_main.m_menuList.pop_back();
 	}
+
+	//Updates new highscore list(if any)
+	HS_List.WriteHighScore();
 }
 
 bool SceneStealth::GetExit()

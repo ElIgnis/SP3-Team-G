@@ -16,6 +16,7 @@ CLevelHandler::CLevelHandler(void)
 	, m_iObjLine(0)
 	, m_iCurrentStage(1)
 	, m_bStageSelection(false)
+	, m_bStageCompleted(false)
 {
 }
 
@@ -260,6 +261,15 @@ void CLevelHandler::SetCurrentStage(const int newCurrentStage)
 int CLevelHandler::GetCurrentStage(void)
 {
 	return m_iCurrentStage;
+}
+
+void CLevelHandler::SetStageCompleted(const bool newStageCompleted)
+{
+	this->m_bStageCompleted = newStageCompleted;
+}
+bool CLevelHandler::GetStageCompleted(void)
+{
+	return m_bStageCompleted;
 }
 
 void CLevelHandler::Exit(void)

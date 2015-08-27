@@ -238,7 +238,7 @@ void SceneBase::Init()
 	meshList[GEO_CHECKPOINT]->textureID = LoadTGA("Image//CheckPoint.tga");
 
 	//CPU/Movable box
-	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("Ranged", "OBJ//Box.obj");
+	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("CPU_Box", "OBJ//Box.obj");
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Laser
