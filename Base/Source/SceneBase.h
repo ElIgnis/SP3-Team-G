@@ -110,6 +110,7 @@ public:
 		GEO_HOTSEL,
 		GEO_HEALTHUI,
 		GEO_HEALTH,
+		GEO_DIALOGUE_BOX,
 		NUM_GEOMETRY,
 	};
 protected:

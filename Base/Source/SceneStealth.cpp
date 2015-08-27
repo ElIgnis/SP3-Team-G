@@ -200,7 +200,20 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
-		case GameObject::GO_HOLE:
+
+	case GameObject::GO_ENEMY:
+		{
+			float distSquared = ((go2->pos + go2->vel) - (go1->pos + go1->vel)).LengthSquared();
+			float combinedRadius = go1->scale.x + go2->scale.x;
+
+			if(distSquared <= combinedRadius * combinedRadius)
+			{
+				return true;
+			}
+			return false;
+		}
+		break;
+	case GameObject::GO_HOLE:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -231,6 +244,7 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 {
 	switch(go2->type)
 	{
+		case GameObject::GO_ENEMY:
 		case GameObject::GO_BALL:
 		{
 			//Speed of vel = mag of vel(0.5mv^2)
@@ -390,6 +404,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		bool b_ColCheck = false;
 
 		//Check player collision with structure
+		if(!Application::IsKeyPressed('g'))
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
@@ -440,7 +455,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 			else
 				Virus->pos += Virus->vel * dt;
 		}
-
+		if(!Application::IsKeyPressed('g'))
+			Virus->pos += Virus->vel * 5 *dt;
 		//Check player collision with powerups
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
 		{
@@ -524,6 +540,18 @@ void SceneStealth::UpdateEnemies(const double dt)
 				Virus->Minus1Life();
 				Virus->pos.x = Virus->GetCurrentCP().x;
 				Virus->pos.y = Virus->GetCurrentCP().y;
+			}
+			//Enemy to enemy collision
+			for(std::vector<CEnemy *>::iterator it2 = it + 1; it2 !=LvlHandler.GetEnemy_List().end(); ++it2)
+			{
+				GameObject *go2 = (GameObject *)*it2;
+				if(CheckCollision(go, go2, dt))
+				{
+					CollisionResponse(go, go2, dt);
+					/*
+					go->vel = ((go->vel + go2->vel).Normalized() * 15.f * dt);
+					go2->vel = go->vel;*/
+				}
 			}
 			//Stunning enemies within range
 			if((go->pos - Virus->pos).LengthSquared() < 1000 && GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
@@ -1362,7 +1390,10 @@ void SceneStealth::RenderGame(void)
 		CNoiseObject *nobj = (CNoiseObject *)*it;
 		modelStack.PushMatrix();
 		modelStack.Translate(nobj->GetPosition().x, nobj->GetPosition().y, nobj->GetPosition().z);
-		RenderMesh(meshList[GEO_ALERT], bLightEnabled);
+		if(nobj->GetActive())
+			RenderMesh(meshList[GEO_TRACK], bLightEnabled);
+		else
+			RenderMesh(meshList[GEO_ALERT], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 
@@ -1591,7 +1622,7 @@ void SceneStealth::RenderUI(void)
 	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
     Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.23, Application::GetWindowHeight() * 0.08, Application::GetWindowWidth() * 0.145, Application::GetWindowHeight() * 0.8975,false,false);
 	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
-	
+	//Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * 0.75, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5,false,false);
 	/*for(int i = 0; i < Virus->getLives(); i++)
 	{
 		Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.8975,false,false);
