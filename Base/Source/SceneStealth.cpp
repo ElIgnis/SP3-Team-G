@@ -184,6 +184,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	case GameObject::GO_POWERUP_HEALTH:
 	case GameObject::GO_BOX:
 	case GameObject::GO_LASER_MACHINE:
+	case GameObject::GO_LASER:
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
@@ -428,7 +429,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 			if(go->active)
 			{
 				if(CheckCollision(Virus,go,dt))
+				{
 					b_ColCheck = true;
+					if(go->type == GameObject::GO_LASER)
+						Virus->SetPlayerState(CPlayer::DEAD);
+				}
 				if(Application::IsKeyPressed(VK_RETURN))
 					go->CheckBonusInteraction(Virus->pos);
 			}
@@ -1309,7 +1314,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_HOLE], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
-	/*case GameObject::GO_LASER_MACHINE:
+	case GameObject::GO_LASER_MACHINE:
 		{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1318,9 +1323,19 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_LASER_MACHINE], bLightEnabled);
 		modelStack.PopMatrix();
-		}*/
+		}
 		break;
-
+	case GameObject::GO_LASER:
+		{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
+			modelStack.Rotate(angle, 0, 0 ,1);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_LASER], bLightEnabled);
+		modelStack.PopMatrix();
+		}
+		break;
 	}
 }
 
@@ -1390,7 +1405,12 @@ void SceneStealth::RenderGame(void)
 		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
 		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
 		modelStack.Scale(5, 5, 5);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		//Render lever switch
+		if(go->type == GameObject::GO_LEVER)
+			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		//Render laser switch
+		if(go->type == GameObject::GO_LASER)
+			RenderMesh(meshList[GEO_BALL], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 
