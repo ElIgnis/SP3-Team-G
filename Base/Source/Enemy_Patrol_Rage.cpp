@@ -6,6 +6,7 @@
 #define Patrol_waitTime 1.f
 #define AggroTime 1.f
 #define ChargeTime 0.5f
+#define Scan_rotation 60.f
 
 CEnemy_Patrol_Rage::CEnemy_Patrol_Rage() 
 	: m_bPatrolDir(true)
@@ -106,9 +107,11 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 			vel = normal * Chase_moveSpd * (float)dt;
 			if((pos - trackingPos).Length() < 1.f)
 			{
-				state = STATE_WAIT;
+				state = STATE_SCAN;
 				vel.SetZero();
-				m_fWaitTime = Patrol_waitTime;
+				//m_fWaitTime = Patrol_waitTime;
+				m_fRotPoint = dir.z;
+				m_fCurrentRot = dir.z -90;
 			}
 		}
 		break;
@@ -121,6 +124,25 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 				m_fStunRecover = 0.f;
 				state = STATE_TRACK;
 			}
+		}
+		break;
+	case STATE_SCAN:
+		{
+			if((dir.z < m_fRotPoint + Scan_rotation && ((dir.z + 1 >= m_fRotPoint + Scan_rotation) && m_bLookDir)))	
+			{
+				m_bLookDir = false;
+			}
+			else if(dir.z > m_fRotPoint - Scan_rotation && ((dir.z - 1 <= m_fRotPoint - Scan_rotation) && !m_bLookDir))
+			{
+				state = STATE_PATROL;
+				m_bTracking = false;
+				m_bLookDir = true;
+				break;
+			}
+			if(m_bLookDir)
+				dir.z += 1;
+			else
+				dir.z -= 1;
 		}
 		break;
 	default:

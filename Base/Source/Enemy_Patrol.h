@@ -24,6 +24,7 @@ private:
 	int m_iCurrentPatrolpoint; //Current patrol index in m_patrolposList
 	bool m_bPatrolDir;
 	float m_fAggroTime; //Time before enemy stops aggro
+	float m_fRotPoint;
 };
 
 #endif

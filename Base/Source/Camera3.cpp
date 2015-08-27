@@ -264,7 +264,7 @@ void Camera3::Update(double dt)
 		// * sin(rotateAngle.x)
 		// * cos(rotateAngle.x)
 
-		std::cout << rotateAngle.y << "   " << sin(rotateAngle.y) << "   " << CameraAngle << "   " << position << "    " << TargetPlayer->pos << std::endl;
+		//std::cout << rotateAngle.y << "   " << sin(rotateAngle.y) << "   " << CameraAngle << "   " << position << "    " << TargetPlayer->pos << std::endl;
 		
 		//if(position.z <= 60.f && position.y >= 70.f)
 		//{

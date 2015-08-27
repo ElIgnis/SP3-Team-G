@@ -54,7 +54,7 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
-	LvlHandler.LoadMap("Level//Level 4.txt");
+	LvlHandler.LoadMap("Level//Level 1.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
@@ -114,7 +114,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	switch(go2->type)
 	{
 		//Ball to ball
-		case GameObject::GO_PLAYER:
+	case GameObject::GO_PLAYER:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -127,7 +127,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		}
 		break;
 
-		case GameObject::GO_CHECKPOINT:
+	case GameObject::GO_CHECKPOINT:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -141,10 +141,10 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
-	
+
 		///////////STRUCTURE COLLISIONS//////////////////
 
-		case GameObject::GO_WALL:
+	case GameObject::GO_WALL:
 		{
 			if(go1->type == GameObject::GO_BOX && go2->type == GameObject::GO_WALL)
 			{
@@ -177,13 +177,13 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			}
 		}
 		break;
-		case GameObject::GO_LEVER:
-		case GameObject::GO_POWERUP_INVIS:
-		case GameObject::GO_POWERUP_FREEZE:
-		case GameObject::GO_POWERUP_SPEED:
-		case GameObject::GO_POWERUP_HEALTH:
-		case GameObject::GO_BOX:
-		case GameObject::GO_LASER_MACHINE:
+	case GameObject::GO_LEVER:
+	case GameObject::GO_POWERUP_INVIS:
+	case GameObject::GO_POWERUP_FREEZE:
+	case GameObject::GO_POWERUP_SPEED:
+	case GameObject::GO_POWERUP_HEALTH:
+	case GameObject::GO_BOX:
+	case GameObject::GO_LASER_MACHINE:
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
@@ -200,7 +200,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
-		case GameObject::GO_HOLE:
+	case GameObject::GO_HOLE:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -409,7 +409,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
-						CollisionResponse(Virus,go,dt);
+							CollisionResponse(Virus,go,dt);
 						else
 							b_ColCheck = true;
 						break;
@@ -420,6 +420,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
+
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -474,29 +475,13 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 
 		Virus->m_bIsHiding = false;
-	//}
-	////Respawning of player
-	//else
-	//{
-	//	//Check for last CP.
-	//	//If lives > 0, respawn there
-	//}
-
-		if (Virus->getLives() <= 0)
-		{	
-			Virus->SetPlayerState(CPlayer::DEAD);
-		}
-
-		if (Virus->pos == Virus->GetCurrentCP())
-		{
-			if (Virus->GetPlayerState() == CPlayer::DEAD)
-			{
-				Virus->SetPlayerState(CPlayer::ALIVE);
-				//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
-			}
-			else 
-				Virus->SetPlayerState(CPlayer::ALIVE);
-		}
+		//}
+		////Respawning of player
+		//else
+		//{
+		//	//Check for last CP.
+		//	//If lives > 0, respawn there
+		//}
 
 		//Check Player Collision with CheckPoints
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
@@ -514,6 +499,20 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
+	//Out of lives
+	if (Virus->getLives() <= 0)
+	{	
+		Virus->SetPlayerState(CPlayer::DEAD);
+		//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
+	}
+
+	//Death and respawn
+	if (Virus->GetPlayerState() == CPlayer::DEAD)
+	{
+		Virus->pos.x = Virus->GetCurrentCP().x;
+		Virus->pos.y = Virus->GetCurrentCP().y;
+		Virus->SetPlayerState(CPlayer::ALIVE);
+	}
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
@@ -524,13 +523,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)
 		{
-			//Player collide with enemy
-			if(CheckCollision(go, Virus, dt))
-			{
-				Virus->Minus1Life();
-				Virus->pos.x = Virus->GetCurrentCP().x;
-				Virus->pos.y = Virus->GetCurrentCP().y;
-			}
 			//Stunning enemies within range
 			if((go->pos - Virus->pos).LengthSquared() < 1000 && GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
@@ -551,7 +543,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 				//Set player state to dead on collision with any enemy
 				if(CheckCollision(go, Virus, dt))
 				{
-					//Virus->SetPlayerState(CPlayer::DEAD);
+					Virus->SetPlayerState(CPlayer::DEAD);
+					Virus->Minus1Life();
 				}
 				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 				{
@@ -568,7 +561,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
-				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD)
+				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD && !Virus->GetPowerupStatus(CItem::SPEED))
 				{
 					if(CheckDetectionRange(go, Virus))
 					{
@@ -645,8 +638,9 @@ void SceneStealth::UpdateEnemies(const double dt)
 						bul->mass -= 1.f * (float)dt;
 						if(bul->mass < 0.f)
 							bul->active = false;
-						if(CheckCollision (Virus, bul, (float)dt))
+						if(CheckCollision (bul, Virus, (float)dt))
 						{
+							Virus->SetPlayerState(CPlayer::DEAD);
 							Virus->Minus1Life();
 							bul->active = false;
 						}

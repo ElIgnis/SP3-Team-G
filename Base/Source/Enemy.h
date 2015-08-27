@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Vector3.h"
+#include "Mtx44.h"
 #include <string>
 #include <vector>
 
@@ -62,11 +63,13 @@ protected:
 	bool m_bIsDetected;
 	bool m_bAlerted;
 	bool m_bTracking;
+	bool m_bLookDir;//For scanning state
 	std::vector<GameObject *> m_BulletList;
 	float m_fWaitTime; //Time to wait before continueing
 	float f_alertTime;
 	float f_detection_angle;
 	float m_fStunRecover;
+	float m_fCurrentRot;//Scan state rotation
 };
 
 #endif
