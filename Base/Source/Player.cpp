@@ -5,10 +5,13 @@ CPlayer::CPlayer(void)
 	, m_fDisguiseCDTimer(0.f)
 	, m_bChangeDisguise(false)
 	, CurrentState(ALIVE)
+	, m_bUsedStun(false)
+	, m_fStunReuseTimer(2.f)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
 	this->m_bIsHiding = false;
+	this->m_CurrentCP = pos;
 	for(int i = 0; i < CItem::ITEM_TOTAL; ++i)
 		m_bPowerupStatus[i] = false;
 }
@@ -56,6 +59,12 @@ void CPlayer::Update(const double dt)
 
 			m_bChangeDisguise = false;
 		}
+	}
+
+	//Update Stun timer
+	if(m_bUsedStun)
+	{
+		m_fStunReuseTimer -= dt;
 	}
 
 	for(unsigned i = 0; i < NoiseObject_List.size(); ++i)
@@ -141,17 +150,19 @@ bool CPlayer::FinishedDisguise(const double dt)
 		return false;
 }
 
-void CPlayer::TriggerItemEffect(CItem *item)
+void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
 {
-	switch(item->GetItemType())
+	switch(type)
 	{
 	case CItem::HEALTH:
 		add1Life();
 		break;
 	case CItem::FREEZE:
+		break;
 	case CItem::SPEED:
+		break;
 	case CItem::INVIS:
-		ActivatePowerup(item->GetItemType(), 3.f);
+		ActivatePowerup(type, 3.f);
 		break;
 	case CItem::DISGUISE:
 		m_bChangeDisguise = true;
@@ -168,4 +179,15 @@ void CPlayer::TriggerItemEffect(CItem *item)
 vector<CNoiseObject *> &CPlayer::GetNoiseObject_List(void)
 {
 	return NoiseObject_List;
+}
+
+void CPlayer::SetStunReuseTimer(const float newReuseTimer)
+{
+	//Starts triggering stun cooldown
+	m_bUsedStun = true;
+	this->m_fStunReuseTimer = newReuseTimer;
+}
+float CPlayer::GetStunReuseTimer(void)
+{
+	return m_fStunReuseTimer;
 }
