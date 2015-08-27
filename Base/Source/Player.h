@@ -64,4 +64,6 @@ public:
 	vector<CNoiseObject *> &GetNoiseObject_List(void);
 
 	bool m_bIsHiding;
+
+	void PlayerReset(void);
 };

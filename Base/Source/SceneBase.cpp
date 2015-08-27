@@ -264,6 +264,13 @@ void SceneBase::Init()
 	meshList[GEO_HOTSEL] = MeshBuilder::GenerateQuad("InventoryHotbar2", Color(1, 1, 1), 1.f);
 	meshList[GEO_HOTSEL]->textureID = LoadTGA("Image//hotbar_select.tga");
 
+	//Health Bar UI
+	meshList[GEO_HEALTHUI] = MeshBuilder::GenerateQuad("HealthUI", Color(1, 1, 1), 1.f);
+	meshList[GEO_HEALTHUI]->textureID = LoadTGA("Image//HealthUI.tga");
+
+	//Health UI
+	meshList[GEO_HEALTH] = MeshBuilder::GenerateQuad("HealthUI", Color(0, 1, 0), 1.f);
+
 	//Sound
 	engine = createIrrKlangDevice();
 	if(!engine)
@@ -275,7 +282,7 @@ void SceneBase::Init()
 void SceneBase::Update(double dt)
 {
 	//Keyboard Section
-	/*if(Application::IsKeyPressed('1'))
+	if(Application::IsKeyPressed('1'))
 		glEnable(GL_CULL_FACE);
 	if(Application::IsKeyPressed('2'))
 		glDisable(GL_CULL_FACE);
@@ -290,7 +297,7 @@ void SceneBase::Update(double dt)
 	if(Application::IsKeyPressed('6'))
 	{
 		bLightEnabled = false;
-	}*/
+	}
 
 	fps = (float)(1.f / dt);
 	camera.Update(dt);

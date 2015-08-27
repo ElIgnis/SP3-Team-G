@@ -108,6 +108,8 @@ public:
 		//UI
 		GEO_HOTBAR,
 		GEO_HOTSEL,
+		GEO_HEALTHUI,
+		GEO_HEALTH,
 		NUM_GEOMETRY,
 	};
 protected:
