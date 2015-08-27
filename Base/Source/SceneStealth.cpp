@@ -79,7 +79,7 @@ void SceneStealth::InitGame(void)
 
 	//Initializing the player
 	Virus = new CPlayer;
-	Virus->pos.Set(-75,35,0);
+	Virus->pos.Set(-95,35,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 	Virus->setLives(3);
@@ -327,7 +327,8 @@ void SceneStealth::Update(double dt)
 	default:
 		break;
 	}
-	//cout << LvlHandler.GetCheckPoint_List().size() << endl;
+	if(Application::IsKeyPressed('P'))
+		std::cout<<Virus->pos<<std::endl;
 	ProcessKeys();
 }
 
@@ -359,7 +360,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 		else if(!Application::IsKeyPressed('B') && btest == true)
 			btest = false;
 
-		//cout << "Health : " << Virus->getLives() << endl;
 
 		Virus->Update(dt);
 
@@ -597,6 +597,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 						go->SetIsDetected(false);
 					}
 				}
+				else
+					go->SetIsDetected(false);
 
 				
 
@@ -729,7 +731,12 @@ void SceneStealth::UpdateGameKeypress(void)
 	//Forward movement
 	if(GetKeyState('w'))
 	{
-		Virus->dir.z = camera.GetCameraAngle();
+		if(GetKeyState('d'))
+			Virus->dir.z = camera.GetCameraAngle() - 45.f;
+		else if(GetKeyState('a'))
+			Virus->dir.z = camera.GetCameraAngle() + 45.f;
+		else
+			Virus->dir.z = camera.GetCameraAngle();
 		m_force.x = MoveSpeed * MoveSpeedModifier;
 		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
@@ -737,7 +744,12 @@ void SceneStealth::UpdateGameKeypress(void)
 	//Reverse movement
 	else if(GetKeyState('s'))
 	{
-		Virus->dir.z = camera.GetCameraAngle() + 180.f;
+		if(GetKeyState('d'))
+			Virus->dir.z = camera.GetCameraAngle() - 135.f;
+		else if(GetKeyState('a'))
+			Virus->dir.z = camera.GetCameraAngle() + 135.f;
+		else
+			Virus->dir.z = camera.GetCameraAngle() + 180.f;
 		m_force.x = MoveSpeed * MoveSpeedModifier;
 		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
@@ -1424,6 +1436,7 @@ void SceneStealth::RenderGame(void)
 			{
 				modelStack.PushMatrix();
 				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(go->dir.z, 0, 0, 1);
 				RenderMesh(meshList[GEO_ALERT], bLightEnabled);
 				modelStack.PopMatrix();
 			}
@@ -1431,6 +1444,7 @@ void SceneStealth::RenderGame(void)
 			{
 				modelStack.PushMatrix();
 				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(go->dir.z, 0, 0, 1);
 				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
 				modelStack.PopMatrix();
 			}
