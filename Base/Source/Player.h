@@ -28,6 +28,8 @@ private:
 	bool m_bChangeDisguise;
 	float m_fDisguiseCDTimer;
 
+
+
 public:
 	CPlayer(void);
 	CPlayer(Vector3 pos);
