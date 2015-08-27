@@ -164,6 +164,15 @@ void SceneBase::Init()
 	meshList[GEO_STARTMENU] = MeshBuilder::GenerateQuad("Background", Color(1, 0, 0), 1.f);
 	meshList[GEO_STARTMENU]->textureID = LoadTGA("Image//StartMenu_Background.tga");
 	
+	meshList[GEO_MENUSPRITE] = MeshBuilder::GenerateSpriteAnimation("TheMatrix",2,5);
+	meshList[GEO_MENUSPRITE]->textureID = LoadTGA("Image//matrixSprite.tga");
+	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSPRITE]);
+	if(menuAnim)
+	{
+		menuAnim->m_anim = new Animation();
+		menuAnim->m_anim->Set(0,4,0,1.f);
+	}
+
 	//Text
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
@@ -285,6 +294,12 @@ void SceneBase::Update(double dt)
 
 	fps = (float)(1.f / dt);
 	camera.Update(dt);
+	//Sprite Animation
+	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);
+	if(menuAnim)
+	{
+		menuAnim->Update(dt);
+	}
 }
 
 void SceneBase::RenderText(Mesh* mesh, std::string text, Color color)
