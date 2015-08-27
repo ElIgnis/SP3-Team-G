@@ -76,7 +76,7 @@ void SceneStealth::InitGame(void)
 	//Initializing m_force for the player
 	m_force = 0.f;
 	m_speed = 1.f;
-
+	rotateAngle = 90;
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->pos.Set(-95,35,0);
@@ -325,10 +325,10 @@ void SceneStealth::Update(double dt)
 	switch(GameState)
 	{
 	case STATE_MENU:
-		camera.SetPersp(false);
-		camera.Reset();
-		UpdateMenu(dt);
-		UpdateMenuKeypress();
+			camera.SetPersp(false);
+			camera.Reset();
+			UpdateMenu(dt);
+			UpdateMenuKeypress();
 		break;
 	case STATE_PLAYING:
 		//Set the camera to target this player
@@ -698,6 +698,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 void SceneStealth::UpdateMenu(const double dt)
 {
 	menu_main.Update(dt);
+	rotateAngle += 5 * (float)dt;
 }
 
 void SceneStealth::UpdateMenuKeypress(void)
@@ -1511,7 +1512,16 @@ void SceneStealth::RenderMenu(void)
 	//Background screen
 	modelStack.PushMatrix();
 	modelStack.Scale(224.f, 126.f, 1.f);
-	RenderMesh(meshList[GEO_STARTMENU], false);
+	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(90,-45,10);
+	modelStack.Rotate(-90,1,0,0);
+	modelStack.Rotate(-90,0,0,1);
+	modelStack.Rotate(rotateAngle, 1, 1,0);
+	modelStack.Scale(15.f,15.f,15.f);
+	RenderMesh(meshList[GEO_PLAYER], false);
 	modelStack.PopMatrix();
 	
 	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
@@ -1548,12 +1558,6 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 		break;
 	case 1: //Option 2 for Level Select
 		{
-			//for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
-			//{
-			//	std::stringstream ssDesc;
-			//	ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
-			//	RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
-			//}
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
 			if(LvlHandler.GetCurrentStage() == 1)
 				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
