@@ -1,8 +1,8 @@
-##LEVERS##
-#GO_LEVER,-20.50,-7.0,0.00,1.00,0.00,5.00,30.0,10.0,90.0,-50.0,0.0
-##ENEMIES##
-#   Sentry Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,  rotation1, rotation2, turnSpd
-#   Patrol Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,(Insert patrol points here(x,y))
+#######################################################################################################################################
+##ENEMIES##                                                                                                                           #
+#   Sentry Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,  rotation1, rotation2, turnSpd  #
+#   Patrol Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,(Insert patrol points here(x,y)) #
+#######################################################################################################################################
 ENEMY_SENTRY, -45.0, -55.0, 0, 0, 1, 92, 30, 320, 135, 5
 #ENEMY_SENTRY, 100.0, 50, 0, 0, -1, 50, 30, 270, 180, 1
 ENEMY_SENTRY, 55.0, -140.0, 0, 0, 1, 92, 30, 320, 180, 4
