@@ -4,6 +4,7 @@
 #include "NoiseObject.h"
 
 #define DisguiseChangeTimer 1.f
+#define StunCooldown 2.f
 
 class CPlayer : public GameObject
 {
@@ -28,7 +29,8 @@ private:
 	bool m_bChangeDisguise;
 	float m_fDisguiseCDTimer;
 
-
+	float m_fStunReuseTimer;
+	bool m_bUsedStun;
 
 public:
 	CPlayer(void);
@@ -53,6 +55,9 @@ public:
 
 	void TriggerItemEffect(CItem *item);
 	bool FinishedDisguise(const double dt);
+
+	void SetStunReuseTimer(const float newReuseTimer);
+	float GetStunReuseTimer(void);
 
 	virtual void Update(const double dt);
 
