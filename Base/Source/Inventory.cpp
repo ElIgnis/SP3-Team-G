@@ -2,29 +2,22 @@
 
 
 CInventory::CInventory(void)
-	: m_iSize(5)
-	, m_iHolding(0)
+	: m_iHolding(0)
+	, m_iSize(9)
 {
+	for(int i = 0; i < m_iSize; ++i)
+	{
+		Inventory[i] = new CItem(CItem::BLANK);
+	}
 }
 
 CInventory::~CInventory(void)
 {
-	while(Inventory.size() > 0)
+	for(int i = 0; i < m_iSize; ++i)
 	{
-		CItem *Item = Inventory.back();
-		delete Item;
-		Inventory.pop_back();
+		delete Inventory[i];
 	}
-}
-
-void CInventory::setSize(unsigned int size)
-{
-	this->m_iSize = size;
-}
-
-unsigned int CInventory::getSize(void)
-{
-	return m_iSize;
+	//delete [] Inventory;
 }
 
 void CInventory::setHold(unsigned int hold)
@@ -38,7 +31,7 @@ unsigned int CInventory::getHold(void)
 }
 
 //Add item into the inventory
-bool CInventory::AddItem(CItem *item)
+bool CInventory::AddItem(CItem::ITEM_TYPE type)
 {
 	//If the inventory is full.
 	if(m_iHolding == m_iSize)
@@ -48,61 +41,60 @@ bool CInventory::AddItem(CItem *item)
 	else
 	{
 		//If the inventory is empty. 
-		if(m_iHolding == 0)
+		if(Inventory[0]->GetItemType() == CItem::BLANK)
 		{
-			Inventory.push_back(item);
+			Inventory[0]->setIndex(0);
+			Inventory[0]->SetItemType(type);
+			Inventory[0]->itemAddStack();
 			m_iHolding +=1;
-			item->itemAddStack();
 			return true;
 		}
-		//If the inventory s not and full and not empty
+		//If the inventory is not and full and not empty
 		else
 		{
 			for(int i = 0; i < m_iHolding; i+=1)
 			{
 				//Checks for an existing item in the inventory
-				if(Inventory[i]->GetItemType() == item->GetItemType())
+				if(Inventory[i]->GetItemType() == type)
 				{
-					item->itemAddStack();
 					Inventory[i]->itemAddStack();
 					return true;
 				}
 				//If no exisiting, push new.
-				else
+				else if(Inventory[i + 1]->GetItemType() == CItem::BLANK)
 				{
-					Inventory.push_back(item);
+					Inventory[i + 1]->setIndex(i + 1);
+					Inventory[i + 1]->SetItemType(type);
+					Inventory[i + 1]->itemAddStack();
 					m_iHolding +=1;
-					item->itemAddStack();
 					return true;
 				}
 			}
 		}
 	}
-	return false;
 }
 
-//Del item from the inventory
-bool CInventory::UseItem(int i)
+//Check item in the inventory
+bool CInventory::checkItem(int keypress)
 {
-	if(m_iHolding == 0)
-	{
+	keypress -= 1;
+	if(Inventory[keypress]->GetItemType() == CItem::BLANK)
 		return false;
+	else
+		return true;
+}
+
+void CInventory::delItem(int keypress)
+{
+	keypress -= 1;
+	if(Inventory[keypress]->getItemStack() == 1)
+	{
+		Inventory[keypress]->SetItemType(CItem::BLANK);
+		m_iHolding-=1;
+		Inventory[keypress]->itemDelStack();
 	}
 	else
 	{
-		i -= 1;
-		if(Inventory[i]->getItemStack() == 1)
-		{
-			Inventory.erase(Inventory.begin() + i);
-			m_iHolding-=1;
-			return true;
-		}
-		else
-		{
-			Inventory[i]->itemDelStack();
-			return true;
-		}
-
+		Inventory[keypress]->itemDelStack();
 	}
-	return false;
 }

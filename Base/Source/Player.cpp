@@ -150,17 +150,19 @@ bool CPlayer::FinishedDisguise(const double dt)
 		return false;
 }
 
-void CPlayer::TriggerItemEffect(CItem *item)
+void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
 {
-	switch(item->GetItemType())
+	switch(type)
 	{
 	case CItem::HEALTH:
 		add1Life();
 		break;
 	case CItem::FREEZE:
+		break;
 	case CItem::SPEED:
+		break;
 	case CItem::INVIS:
-		ActivatePowerup(item->GetItemType(), 3.f);
+		ActivatePowerup(type, 3.f);
 		break;
 	case CItem::DISGUISE:
 		m_bChangeDisguise = true;
