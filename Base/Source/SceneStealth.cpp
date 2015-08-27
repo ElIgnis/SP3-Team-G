@@ -348,12 +348,12 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
 		if (Application::IsKeyPressed('V'))
-			Virus->TriggerItemEffect(test);
+			Virus->TriggerItemEffect(test->GetItemType());
 
 		static bool btest = false;
 		if(Application::IsKeyPressed('B') && btest == false)
 		{
-			Virus->TriggerItemEffect(testes);
+			Virus->TriggerItemEffect(testes->GetItemType());
 			btest = true;
 		}
 		else if(!Application::IsKeyPressed('B') && btest == true)
@@ -453,19 +453,19 @@ void SceneStealth::UpdatePlayer(const double dt)
 					switch(go->type)
 					{
 					case GameObject::GO_POWERUP_FREEZE:
-						Virus->m_pInv.AddItem(new CItem(CItem::FREEZE));
+						Virus->m_pInv.AddItem((CItem::FREEZE));
 						break;
 					case GameObject::GO_POWERUP_SPEED:
-						Virus->m_pInv.AddItem(new CItem(CItem::SPEED));
+						Virus->m_pInv.AddItem((CItem::SPEED));
 						break;
 					case GameObject::GO_POWERUP_HEALTH:
-						Virus->m_pInv.AddItem(new CItem(CItem::HEALTH));
+						Virus->m_pInv.AddItem((CItem::HEALTH));
 						break;
 					case GameObject::GO_POWERUP_INVIS:
-						Virus->m_pInv.AddItem(new CItem(CItem::INVIS));
+						Virus->m_pInv.AddItem((CItem::INVIS));
 						break;
 					case GameObject::GO_POWERUP_NOISE:
-						Virus->m_pInv.AddItem(new CItem(CItem::NOISE));
+						Virus->m_pInv.AddItem((CItem::NOISE));
 						break;
 					}
 					go->active = false;
@@ -758,66 +758,74 @@ void SceneStealth::UpdateGameKeypress(void)
 
 	if(GetKeyState('1'))
 	{
-		cout << "hit 1" << endl;
-		if(Virus->m_pInv.UseItem(1))
+		if(Virus->m_pInv.checkItem(1))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType());
+			Virus->m_pInv.delItem(1);
 		}
 	}
 	if(GetKeyState('2'))
 	{
-		if(Virus->m_pInv.UseItem(2))
+		if(Virus->m_pInv.checkItem(2))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType());
+			Virus->m_pInv.delItem(2);
 		}
 	}
 	if(GetKeyState('3'))
 	{
-		if(Virus->m_pInv.UseItem(3))
+		if(Virus->m_pInv.checkItem(3))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType());
+			Virus->m_pInv.delItem(3);
 		}
 	}
 	if(GetKeyState('4'))
 	{
-		if(Virus->m_pInv.UseItem(4))
+		if(Virus->m_pInv.checkItem(4))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType());
+			Virus->m_pInv.delItem(4);
 		}
 	}
 	if(GetKeyState('5'))
 	{
-		if(Virus->m_pInv.UseItem(5))
+		if(Virus->m_pInv.checkItem(5))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType());
+			Virus->m_pInv.delItem(5);
 		}
 	}
 	if(GetKeyState('6'))
 	{
-		if(Virus->m_pInv.UseItem(6))
+		if(Virus->m_pInv.checkItem(6))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType());
+			Virus->m_pInv.delItem(6);
 		}
 	}
 	if(GetKeyState('7'))
 	{
-		if(Virus->m_pInv.UseItem(7))
+		if(Virus->m_pInv.checkItem(7))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType());
+			Virus->m_pInv.delItem(7);
 		}
 	}
 	if(GetKeyState('8'))
 	{
-		if(Virus->m_pInv.UseItem(8))
+		if(Virus->m_pInv.checkItem(8))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType());
+			Virus->m_pInv.delItem(8);
 		}
 	}
 	if(GetKeyState('9'))
 	{
-		if(Virus->m_pInv.UseItem(9))
+		if(Virus->m_pInv.checkItem(9))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType());
+			Virus->m_pInv.delItem(9);
 		}
 	}
 
@@ -1291,7 +1299,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_HOLE], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
-	case GameObject::GO_LASER_MACHINE:
+	/*case GameObject::GO_LASER_MACHINE:
 		{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1300,7 +1308,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_LASER_MACHINE], bLightEnabled);
 		modelStack.PopMatrix();
-		}
+		}*/
 		break;
 
 	}
@@ -1570,11 +1578,11 @@ void SceneStealth::RenderUI(void)
 	if(Virus->m_pInv.getHold() != 0)
 	{
 		//Testing inventory
-		for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
+		for(unsigned int i = 0; i < 9; ++i)
 		{
 			switch(Virus->m_pInv.Inventory[i]->GetItemType())
 			{
-			case 1:
+			case 2:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1583,7 +1591,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render Freeze
-			case 2:
+			case 3:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1592,7 +1600,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render SPEED
-			case 3:
+			case 4:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1601,7 +1609,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render NOISE
-			case 4:
+			case 5:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1610,7 +1618,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render Invisibility
-			case 5:
+			case 6:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1619,7 +1627,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render Disguise
-			case 6:
+			case 7:
 				break;
 			default:
 				break;

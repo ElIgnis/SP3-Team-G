@@ -49,7 +49,7 @@ public:
 	Vector3 GetCurrentCP(void);
 	void SetCurrentCP(Vector3 CP);
 
-	void TriggerItemEffect(CItem *item);
+	void TriggerItemEffect(CItem::ITEM_TYPE type);
 	bool FinishedDisguise(const double dt);
 
 	virtual void Update(const double dt);

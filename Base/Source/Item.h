@@ -10,7 +10,8 @@ class CItem
 public:
 	enum ITEM_TYPE
 	{
-		KEY = 0,
+		BLANK= 0,
+		KEY,
 		HEALTH,
 		FREEZE,
 		SPEED,
@@ -19,6 +20,7 @@ public:
 		DISGUISE,
 		ITEM_TOTAL,
 	};
+	ITEM_TYPE itemType;
 
 	CItem(void);
 	CItem(ITEM_TYPE typeValue = HEALTH);
@@ -36,7 +38,6 @@ public:
 
 private:
 	unsigned int m_uiStack;
-	ITEM_TYPE itemType;
 	unsigned int m_uiIndex;
 };
 
