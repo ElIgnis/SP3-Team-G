@@ -4,17 +4,15 @@
 #define Bullet_Size 2.f
 #define Bullet_Spd 60.f
 #define Sentry_waitTime 1.f
+#define Sentry_waitTime_track 2.f
 
 CEnemy_Sentry::CEnemy_Sentry() 
-	: m_bLookDir(true)
-	, m_fTurnSpd(1.f)
+	: m_fTurnSpd(1.f)
 {
 }
 
 CEnemy_Sentry::CEnemy_Sentry(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle, float m_fScanRot1, float m_fScanRot2, float m_fTurnSpd)
-	: m_bLookDir(true)
-	, m_fCurrentRot(5)
-	, m_fShootCD(0.f)
+	: m_fShootCD(0.f)
 {
 	this->pos = pos;
 	this->scale = scale;
@@ -45,6 +43,9 @@ void CEnemy_Sentry::Update(const double dt)
 				(m_fCurrentRot > m_fScanRot2 && ((m_fCurrentRot - m_fTurnSpd <= m_fScanRot2) && !m_bLookDir)))	
 			{
 				m_bLookDir = !m_bLookDir;
+				state = STATE_WAIT;
+				m_fWaitTime = Sentry_waitTime;
+				break;
 			}
 			if(m_bLookDir)
 				m_fCurrentRot += m_fTurnSpd;
@@ -83,7 +84,7 @@ void CEnemy_Sentry::Update(const double dt)
 			normal = (trackingPos - pos).Normalized();
 			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			state = STATE_WAIT;
-			m_fWaitTime = Sentry_waitTime;
+			m_fWaitTime = Sentry_waitTime_track;
 		}
 		break;
 	case STATE_WAIT:
@@ -95,6 +96,7 @@ void CEnemy_Sentry::Update(const double dt)
 				m_bTracking = false;
 			}
 		}
+		break;
 	case STATE_STUNNED:
 		{
 			//Countdown timer until enemy is unstunned

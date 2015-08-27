@@ -11,18 +11,16 @@ private:
 	unsigned int m_iSize;
 	unsigned int m_iHolding;
 public:
-	vector<CItem *>Inventory;
+	CItem* Inventory[9];
 
 	CInventory(void);
 	~CInventory(void);
 
-	void setSize(unsigned int size);
-	unsigned int getSize(void);
 	void setHold(unsigned int size);
 	unsigned int getHold(void);
 
-	bool AddItem(CItem *item);
-	bool UseItem(int index);
-
+	bool AddItem(CItem::ITEM_TYPE type);
+	bool checkItem(int keypress);
+	void delItem(int keypress);
 };
 

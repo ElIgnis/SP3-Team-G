@@ -76,7 +76,7 @@ void SceneStealth::InitGame(void)
 	//Initializing m_force for the player
 	m_force = 0.f;
 	m_speed = 1.f;
-
+	rotateAngle = 90;
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->pos.Set(-75,45,0);
@@ -114,7 +114,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	switch(go2->type)
 	{
 		//Ball to ball
-		case GameObject::GO_PLAYER:
+	case GameObject::GO_PLAYER:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -127,7 +127,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		}
 		break;
 
-		case GameObject::GO_CHECKPOINT:
+	case GameObject::GO_CHECKPOINT:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -141,10 +141,10 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
-	
+
 		///////////STRUCTURE COLLISIONS//////////////////
 
-		case GameObject::GO_WALL:
+	case GameObject::GO_WALL:
 		{
 			if(go1->type == GameObject::GO_BOX && go2->type == GameObject::GO_WALL)
 			{
@@ -177,13 +177,13 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			}
 		}
 		break;
-		case GameObject::GO_LEVER:
-		case GameObject::GO_POWERUP_INVIS:
-		case GameObject::GO_POWERUP_FREEZE:
-		case GameObject::GO_POWERUP_SPEED:
-		case GameObject::GO_POWERUP_HEALTH:
-		case GameObject::GO_BOX:
-		case GameObject::GO_LASER_MACHINE:
+	case GameObject::GO_LEVER:
+	case GameObject::GO_POWERUP_INVIS:
+	case GameObject::GO_POWERUP_FREEZE:
+	case GameObject::GO_POWERUP_SPEED:
+	case GameObject::GO_POWERUP_HEALTH:
+	case GameObject::GO_BOX:
+	case GameObject::GO_LASER_MACHINE:
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
@@ -200,7 +200,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
-		case GameObject::GO_HOLE:
+	case GameObject::GO_HOLE:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -311,10 +311,10 @@ void SceneStealth::Update(double dt)
 	switch(GameState)
 	{
 	case STATE_MENU:
-		camera.SetPersp(false);
-		camera.Reset();
-		UpdateMenu(dt);
-		UpdateMenuKeypress();
+			camera.SetPersp(false);
+			camera.Reset();
+			UpdateMenu(dt);
+			UpdateMenuKeypress();
 		break;
 	case STATE_PLAYING:
 		//Set the camera to target this player
@@ -327,7 +327,8 @@ void SceneStealth::Update(double dt)
 	default:
 		break;
 	}
-	//cout << LvlHandler.GetCheckPoint_List().size() << endl;
+	if(Application::IsKeyPressed('P'))
+		std::cout<<Virus->pos<<std::endl;
 	ProcessKeys();
 }
 
@@ -348,12 +349,12 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
 		if (Application::IsKeyPressed('V'))
-			Virus->TriggerItemEffect(test);
+			Virus->TriggerItemEffect(test->GetItemType());
 
 		static bool btest = false;
 		if(Application::IsKeyPressed('B') && btest == false)
 		{
-			Virus->TriggerItemEffect(testes);
+			Virus->TriggerItemEffect(testes->GetItemType());
 			btest = true;
 		}
 		else if(!Application::IsKeyPressed('B') && btest == true)
@@ -409,7 +410,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
-						CollisionResponse(Virus,go,dt);
+							CollisionResponse(Virus,go,dt);
 						else
 							b_ColCheck = true;
 						break;
@@ -420,6 +421,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
+
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -453,19 +455,19 @@ void SceneStealth::UpdatePlayer(const double dt)
 					switch(go->type)
 					{
 					case GameObject::GO_POWERUP_FREEZE:
-						Virus->m_pInv.AddItem(new CItem(CItem::FREEZE));
+						Virus->m_pInv.AddItem((CItem::FREEZE));
 						break;
 					case GameObject::GO_POWERUP_SPEED:
-						Virus->m_pInv.AddItem(new CItem(CItem::SPEED));
+						Virus->m_pInv.AddItem((CItem::SPEED));
 						break;
 					case GameObject::GO_POWERUP_HEALTH:
-						Virus->m_pInv.AddItem(new CItem(CItem::HEALTH));
+						Virus->m_pInv.AddItem((CItem::HEALTH));
 						break;
 					case GameObject::GO_POWERUP_INVIS:
-						Virus->m_pInv.AddItem(new CItem(CItem::INVIS));
+						Virus->m_pInv.AddItem((CItem::INVIS));
 						break;
 					case GameObject::GO_POWERUP_NOISE:
-						Virus->m_pInv.AddItem(new CItem(CItem::NOISE));
+						Virus->m_pInv.AddItem((CItem::NOISE));
 						break;
 					}
 					go->active = false;
@@ -474,29 +476,13 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 
 		Virus->m_bIsHiding = false;
-	//}
-	////Respawning of player
-	//else
-	//{
-	//	//Check for last CP.
-	//	//If lives > 0, respawn there
-	//}
-
-		if (Virus->getLives() <= 0)
-		{	
-			Virus->SetPlayerState(CPlayer::DEAD);
-		}
-
-		if (Virus->pos == Virus->GetCurrentCP())
-		{
-			if (Virus->GetPlayerState() == CPlayer::DEAD)
-			{
-				Virus->SetPlayerState(CPlayer::ALIVE);
-				//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
-			}
-			else 
-				Virus->SetPlayerState(CPlayer::ALIVE);
-		}
+		//}
+		////Respawning of player
+		//else
+		//{
+		//	//Check for last CP.
+		//	//If lives > 0, respawn there
+		//}
 
 		//Check Player Collision with CheckPoints
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
@@ -514,6 +500,20 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
+	//Out of lives
+	if (Virus->getLives() <= 0)
+	{	
+		Virus->SetPlayerState(CPlayer::DEAD);
+		//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
+	}
+
+	//Death and respawn
+	if (Virus->GetPlayerState() == CPlayer::DEAD)
+	{
+		Virus->pos.x = Virus->GetCurrentCP().x;
+		Virus->pos.y = Virus->GetCurrentCP().y;
+		Virus->SetPlayerState(CPlayer::ALIVE);
+	}
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
@@ -524,21 +524,18 @@ void SceneStealth::UpdateEnemies(const double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)
 		{
-			//Player collide with enemy
-			if(CheckCollision(go, Virus, dt))
-			{
-				Virus->Minus1Life();
-				Virus->pos.x = Virus->GetCurrentCP().x;
-				Virus->pos.y = Virus->GetCurrentCP().y;
-			}
 			//Stunning enemies within range
-			if((go->pos - Virus->pos).LengthSquared() < 1000)
+			if((go->pos - Virus->pos).LengthSquared() < 1000 && GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
-				//TODO::Set delay
-				if(GetKeyState(VK_SPACE))
+
+				//Enemies must not be in alerted or attacking state
+				if(go->GetState() != CEnemy::STATE_ALERT || go->GetState() != CEnemy::STATE_ATTACK)
 				{
 					go->SetState(CEnemy::STATE_STUNNED);
 				}
+
+				//Set Delay
+				Virus->SetStunReuseTimer(StunCooldown);
 			}
 		
 			//Check if player use freeze powerup
@@ -547,7 +544,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 				//Set player state to dead on collision with any enemy
 				if(CheckCollision(go, Virus, dt))
 				{
-					//Virus->SetPlayerState(CPlayer::DEAD);
+					Virus->SetPlayerState(CPlayer::DEAD);
+					Virus->Minus1Life();
 				}
 				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 				{
@@ -564,7 +562,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
-				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD)
+				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD && !Virus->GetPowerupStatus(CItem::SPEED))
 				{
 					if(CheckDetectionRange(go, Virus))
 					{
@@ -595,6 +593,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 						go->SetIsDetected(false);
 					}
 				}
+				else
+					go->SetIsDetected(false);
 
 				
 
@@ -639,8 +639,9 @@ void SceneStealth::UpdateEnemies(const double dt)
 						bul->mass -= 1.f * (float)dt;
 						if(bul->mass < 0.f)
 							bul->active = false;
-						if(CheckCollision (Virus, bul, (float)dt))
+						if(CheckCollision (bul, Virus, (float)dt))
 						{
+							Virus->SetPlayerState(CPlayer::DEAD);
 							Virus->Minus1Life();
 							bul->active = false;
 						}
@@ -670,6 +671,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 void SceneStealth::UpdateMenu(const double dt)
 {
 	menu_main.Update(dt);
+	rotateAngle += 5 * (float)dt;
 }
 
 void SceneStealth::UpdateMenuKeypress(void)
@@ -727,7 +729,12 @@ void SceneStealth::UpdateGameKeypress(void)
 	//Forward movement
 	if(GetKeyState('w'))
 	{
-		Virus->dir.z = camera.GetCameraAngle();
+		if(GetKeyState('d'))
+			Virus->dir.z = camera.GetCameraAngle() - 45.f;
+		else if(GetKeyState('a'))
+			Virus->dir.z = camera.GetCameraAngle() + 45.f;
+		else
+			Virus->dir.z = camera.GetCameraAngle();
 		m_force.x = MoveSpeed * MoveSpeedModifier;
 		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
@@ -735,7 +742,12 @@ void SceneStealth::UpdateGameKeypress(void)
 	//Reverse movement
 	else if(GetKeyState('s'))
 	{
-		Virus->dir.z = camera.GetCameraAngle() + 180.f;
+		if(GetKeyState('d'))
+			Virus->dir.z = camera.GetCameraAngle() - 135.f;
+		else if(GetKeyState('a'))
+			Virus->dir.z = camera.GetCameraAngle() + 135.f;
+		else
+			Virus->dir.z = camera.GetCameraAngle() + 180.f;
 		m_force.x = MoveSpeed * MoveSpeedModifier;
 		m_force.y = MoveSpeed * MoveSpeedModifier;
 	}
@@ -758,66 +770,74 @@ void SceneStealth::UpdateGameKeypress(void)
 
 	if(GetKeyState('1'))
 	{
-		cout << "hit 1" << endl;
-		if(Virus->m_pInv.UseItem(1))
+		if(Virus->m_pInv.checkItem(1))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType());
+			Virus->m_pInv.delItem(1);
 		}
 	}
 	if(GetKeyState('2'))
 	{
-		if(Virus->m_pInv.UseItem(2))
+		if(Virus->m_pInv.checkItem(2))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType());
+			Virus->m_pInv.delItem(2);
 		}
 	}
 	if(GetKeyState('3'))
 	{
-		if(Virus->m_pInv.UseItem(3))
+		if(Virus->m_pInv.checkItem(3))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType());
+			Virus->m_pInv.delItem(3);
 		}
 	}
 	if(GetKeyState('4'))
 	{
-		if(Virus->m_pInv.UseItem(4))
+		if(Virus->m_pInv.checkItem(4))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType());
+			Virus->m_pInv.delItem(4);
 		}
 	}
 	if(GetKeyState('5'))
 	{
-		if(Virus->m_pInv.UseItem(5))
+		if(Virus->m_pInv.checkItem(5))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType());
+			Virus->m_pInv.delItem(5);
 		}
 	}
 	if(GetKeyState('6'))
 	{
-		if(Virus->m_pInv.UseItem(6))
+		if(Virus->m_pInv.checkItem(6))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType());
+			Virus->m_pInv.delItem(6);
 		}
 	}
 	if(GetKeyState('7'))
 	{
-		if(Virus->m_pInv.UseItem(7))
+		if(Virus->m_pInv.checkItem(7))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType());
+			Virus->m_pInv.delItem(7);
 		}
 	}
 	if(GetKeyState('8'))
 	{
-		if(Virus->m_pInv.UseItem(8))
+		if(Virus->m_pInv.checkItem(8))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType());
+			Virus->m_pInv.delItem(8);
 		}
 	}
 	if(GetKeyState('9'))
 	{
-		if(Virus->m_pInv.UseItem(9))
+		if(Virus->m_pInv.checkItem(9))
 		{
-			//Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9]);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType());
+			Virus->m_pInv.delItem(9);
 		}
 	}
 
@@ -1291,7 +1311,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_HOLE], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
-	case GameObject::GO_LASER_MACHINE:
+	/*case GameObject::GO_LASER_MACHINE:
 		{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1300,7 +1320,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_LASER_MACHINE], bLightEnabled);
 		modelStack.PopMatrix();
-		}
+		}*/
 		break;
 
 	}
@@ -1422,6 +1442,7 @@ void SceneStealth::RenderGame(void)
 			{
 				modelStack.PushMatrix();
 				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(go->dir.z, 0, 0, 1);
 				RenderMesh(meshList[GEO_ALERT], bLightEnabled);
 				modelStack.PopMatrix();
 			}
@@ -1429,6 +1450,7 @@ void SceneStealth::RenderGame(void)
 			{
 				modelStack.PushMatrix();
 				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(go->dir.z, 0, 0, 1);
 				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
 				modelStack.PopMatrix();
 			}
@@ -1460,7 +1482,16 @@ void SceneStealth::RenderMenu(void)
 	//Background screen
 	modelStack.PushMatrix();
 	modelStack.Scale(224.f, 126.f, 1.f);
-	RenderMesh(meshList[GEO_STARTMENU], false);
+	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(90,-45,10);
+	modelStack.Rotate(-90,1,0,0);
+	modelStack.Rotate(-90,0,0,1);
+	modelStack.Rotate(rotateAngle, 1, 1,0);
+	modelStack.Scale(15.f,15.f,15.f);
+	RenderMesh(meshList[GEO_PLAYER], false);
 	modelStack.PopMatrix();
 	
 	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
@@ -1497,12 +1528,6 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 		break;
 	case 1: //Option 2 for Level Select
 		{
-			//for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
-			//{
-			//	std::stringstream ssDesc;
-			//	ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
-			//	RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
-			//}
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
 			if(LvlHandler.GetCurrentStage() == 1)
 				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
@@ -1584,11 +1609,11 @@ void SceneStealth::RenderUI(void)
 	if(Virus->m_pInv.getHold() != 0)
 	{
 		//Testing inventory
-		for(unsigned int i = 0; i < Virus->m_pInv.getHold(); i+=1)
+		for(unsigned int i = 0; i < 9; ++i)
 		{
 			switch(Virus->m_pInv.Inventory[i]->GetItemType())
 			{
-			case 1:
+			case 2:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1597,7 +1622,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render Freeze
-			case 2:
+			case 3:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1606,7 +1631,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render SPEED
-			case 3:
+			case 4:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1615,7 +1640,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render NOISE
-			case 4:
+			case 5:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1624,7 +1649,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render Invisibility
-			case 5:
+			case 6:
 				{
 					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
@@ -1633,7 +1658,7 @@ void SceneStealth::RenderUI(void)
 				}
 				break;
 				//Render Disguise
-			case 6:
+			case 7:
 				break;
 			default:
 				break;

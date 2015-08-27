@@ -12,6 +12,8 @@ CEnemy::CEnemy()
 	, f_detection_angle(30.f)
 	, m_fWaitTime(0.f)
 	, m_fStunRecover(0.f)
+	, m_bLookDir(true)
+	, m_fCurrentRot(5)
 {
 }
 

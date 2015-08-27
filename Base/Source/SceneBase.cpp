@@ -164,6 +164,15 @@ void SceneBase::Init()
 	meshList[GEO_STARTMENU] = MeshBuilder::GenerateQuad("Background", Color(1, 0, 0), 1.f);
 	meshList[GEO_STARTMENU]->textureID = LoadTGA("Image//StartMenu_Background.tga");
 	
+	meshList[GEO_MENUSPRITE] = MeshBuilder::GenerateSpriteAnimation("TheMatrix",2,5);
+	meshList[GEO_MENUSPRITE]->textureID = LoadTGA("Image//matrixSprite.tga");
+	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSPRITE]);
+	if(menuAnim)
+	{
+		menuAnim->m_anim = new Animation();
+		menuAnim->m_anim->Set(0,4,0,1.f);
+	}
+
 	//Text
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
@@ -183,10 +192,12 @@ void SceneBase::Init()
 	meshList[GEO_PLAYER]->textureID = LoadTGA("Image//PlayerTexture.tga");
 
 	//Enemy alert
-	meshList[GEO_ALERT] = MeshBuilder::GenerateSphere("ball", Color(1, 0, 0), 10, 10, 3.f); 
+	meshList[GEO_ALERT] = MeshBuilder::GenerateOBJ("GEO_ALERT", "OBJ//enemy_alert.obj");
+	meshList[GEO_ALERT]->textureID = LoadTGA("Image//red.tga");
 
 	//Enemy tracking
-	meshList[GEO_TRACK] = MeshBuilder::GenerateSphere("ball", Color(1, 0, 1), 10, 10, 3.f); 
+	meshList[GEO_TRACK] = MeshBuilder::GenerateOBJ("GEO_ALERT", "OBJ//enemy_track.obj");
+	meshList[GEO_TRACK]->textureID = LoadTGA("Image//red.tga");
 
 	//Firewall - Patrolling Enemy
 	meshList[GEO_FIREWALL] = MeshBuilder::GenerateOBJ("Melee", "OBJ//Firewall.obj");
@@ -231,8 +242,8 @@ void SceneBase::Init()
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Laser
-	meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
-	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
+	//meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
+	//meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
@@ -290,6 +301,12 @@ void SceneBase::Update(double dt)
 
 	fps = (float)(1.f / dt);
 	camera.Update(dt);
+	//Sprite Animation
+	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);
+	if(menuAnim)
+	{
+		menuAnim->Update(dt);
+	}
 }
 
 void SceneBase::RenderText(Mesh* mesh, std::string text, Color color)

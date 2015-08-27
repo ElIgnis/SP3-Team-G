@@ -4,11 +4,9 @@
 CItem::CItem(void)
 	: m_uiStack(0)
 	, m_uiIndex(0)
-	, itemType(KEY)
-
+	, itemType(ITEM_TOTAL)
 {
 }
-
 
 CItem::~CItem(void)
 {
@@ -17,15 +15,8 @@ CItem::~CItem(void)
 CItem::CItem(ITEM_TYPE type)
 	: m_uiStack(0)
 	, m_uiIndex(0)
-	, itemType(type)
 {
-}
-
-CItem::CItem(unsigned int stack, unsigned int index, ITEM_TYPE type)
-	: m_uiStack(stack)
-	, m_uiIndex(index)
-	, itemType(type)
-{
+	this->itemType = type;
 }
 
 void CItem::itemAddStack(void)

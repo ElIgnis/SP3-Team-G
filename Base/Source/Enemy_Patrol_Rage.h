@@ -26,6 +26,7 @@ private:
 	float m_fAggroTime; //Time before enemy stops aggro
 	bool m_bCharge;
 	float m_fChargeTime;
+	float m_fRotPoint;
 };
 
 #endif
