@@ -5,6 +5,8 @@ CPlayer::CPlayer(void)
 	, m_fDisguiseCDTimer(0.f)
 	, m_bChangeDisguise(false)
 	, CurrentState(ALIVE)
+	, m_bUsedStun(false)
+	, m_fStunReuseTimer(2.f)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
@@ -56,6 +58,12 @@ void CPlayer::Update(const double dt)
 
 			m_bChangeDisguise = false;
 		}
+	}
+
+	//Update Stun timer
+	if(m_bUsedStun)
+	{
+		m_fStunReuseTimer -= dt;
 	}
 
 	for(unsigned i = 0; i < NoiseObject_List.size(); ++i)
@@ -170,4 +178,15 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
 vector<CNoiseObject *> &CPlayer::GetNoiseObject_List(void)
 {
 	return NoiseObject_List;
+}
+
+void CPlayer::SetStunReuseTimer(const float newReuseTimer)
+{
+	//Starts triggering stun cooldown
+	m_bUsedStun = true;
+	this->m_fStunReuseTimer = newReuseTimer;
+}
+float CPlayer::GetStunReuseTimer(void)
+{
+	return m_fStunReuseTimer;
 }

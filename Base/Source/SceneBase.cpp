@@ -183,10 +183,12 @@ void SceneBase::Init()
 	meshList[GEO_PLAYER]->textureID = LoadTGA("Image//PlayerTexture.tga");
 
 	//Enemy alert
-	meshList[GEO_ALERT] = MeshBuilder::GenerateSphere("ball", Color(1, 0, 0), 10, 10, 3.f); 
+	meshList[GEO_ALERT] = MeshBuilder::GenerateOBJ("GEO_ALERT", "OBJ//enemy_alert.obj");
+	meshList[GEO_ALERT]->textureID = LoadTGA("Image//red.tga");
 
 	//Enemy tracking
-	meshList[GEO_TRACK] = MeshBuilder::GenerateSphere("ball", Color(1, 0, 1), 10, 10, 3.f); 
+	meshList[GEO_TRACK] = MeshBuilder::GenerateOBJ("GEO_ALERT", "OBJ//enemy_track.obj");
+	meshList[GEO_TRACK]->textureID = LoadTGA("Image//red.tga");
 
 	//Firewall - Patrolling Enemy
 	meshList[GEO_FIREWALL] = MeshBuilder::GenerateOBJ("Melee", "OBJ//Firewall.obj");
