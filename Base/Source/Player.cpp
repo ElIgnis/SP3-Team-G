@@ -6,7 +6,7 @@ CPlayer::CPlayer(void)
 	, m_bChangeDisguise(false)
 	, CurrentState(ALIVE)
 	, m_bUsedStun(false)
-	, m_fStunReuseTimer(0.f)
+	, m_fStunReuseTimer(2.f)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
@@ -63,7 +63,7 @@ void CPlayer::Update(const double dt)
 	//Update Stun timer
 	if(m_bUsedStun)
 	{
-		m_fStunReuseTimer += dt;
+		m_fStunReuseTimer -= dt;
 	}
 
 	for(unsigned i = 0; i < NoiseObject_List.size(); ++i)

@@ -532,15 +532,17 @@ void SceneStealth::UpdateEnemies(const double dt)
 				Virus->pos.y = Virus->GetCurrentCP().y;
 			}
 			//Stunning enemies within range
-			if((go->pos - Virus->pos).LengthSquared() < 1000 && GetKeyState(VK_SPACE))
+			if((go->pos - Virus->pos).LengthSquared() < 1000 && GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
+
 				//Enemies must not be in alerted or attacking state
 				if(go->GetState() != CEnemy::STATE_ALERT || go->GetState() != CEnemy::STATE_ATTACK)
 				{
 					go->SetState(CEnemy::STATE_STUNNED);
 				}
-				//TODO::Set delay
 
+				//Set Delay
+				Virus->SetStunReuseTimer(StunCooldown);
 			}
 		
 			//Check if player use freeze powerup
