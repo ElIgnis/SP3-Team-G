@@ -1,9 +1,14 @@
 ##LEVERS##
 #GO_LEVER,-20.50,-7.0,0.00,1.00,0.00,5.00,30.0,10.0,90.0,-50.0,0.0
 ##ENEMIES##
-#   Sentry Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detetionrange, detectionangle,  rotation1, rotation2, turnSpd
-#   Patrol Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detetionrange, detectionangle,(Insert patrol points here(x,y))
-ENEMY_SENTRY, -45, -55, 0, 0, 1,50,30, 340, 0, 5
-ENEMY_SENTRY, 100, 50, 0, 0, -1,50,30, 270, 180, 1
+#   Sentry Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,  rotation1, rotation2, turnSpd
+#   Patrol Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,(Insert patrol points here(x,y))
+ENEMY_SENTRY, -45.0, -55.0, 0, 0, 1, 92, 30, 320, 135, 5
+#ENEMY_SENTRY, 100.0, 50, 0, 0, -1, 50, 30, 270, 180, 1
+ENEMY_SENTRY, 55.0, -140.0, 0, 0, 1, 92, 30, 320, 180, 4
+ENEMY_SENTRY, 110.0, -138.0, 0, 0, 1, 80, 30, 100, 0, 3
+ENEMY_SENTRY, 110.0, -62.0, 0, 0, 1, 50, 30, 320, 180, 3
+ENEMY_SENTRY, 170.0, -70.0, 0, 0, 1, 92, 30, 100, 0, 3
+#Probably wont use for Level 01
 ENEMY_PATROL_RAGE,10,-50,0,0,1,50,30,4,50,-50,50,45,10,45,10,-50
 ENEMY_PATROL, 0, 0, 0, 0, 1,50,30, 4, 50, -50, 50, 45, 10, 45, 10, -50
