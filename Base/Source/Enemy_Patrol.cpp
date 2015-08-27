@@ -76,13 +76,16 @@ void CEnemy_Patrol::Update(const double dt)
 		break;
 	case STATE_ATTACK:
 		{
-			trackingPos = player_position;
-			normal = (player_position - pos).Normalized();
-			//Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
-			//dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
-			vel = normal * Chase_moveSpd * (float)dt;
-			if(!m_bIsDetected)
+			if(m_bIsDetected)
+			{
+				trackingPos = player_position;
+				normal = (player_position - pos).Normalized();
+				//Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
+				//dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
+				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+				vel = normal * Chase_moveSpd * (float)dt;
+			}
+			else
 				state = STATE_TRACK;
 		}
 		break;
@@ -106,6 +109,7 @@ void CEnemy_Patrol::Update(const double dt)
 			m_fStunRecover += (float)dt;
 			if(m_fStunRecover > StunDuration)
 			{
+				trackingPos = pos;
 				m_fStunRecover = 0.f;
 				state = STATE_TRACK;
 			}
