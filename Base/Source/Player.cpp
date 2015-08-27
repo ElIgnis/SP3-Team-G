@@ -191,3 +191,37 @@ float CPlayer::GetStunReuseTimer(void)
 {
 	return m_fStunReuseTimer;
 }
+
+void CPlayer::PlayerReset(void)
+{
+	 m_pLives = 3;
+	 m_fDisguiseCDTimer = 0.f;
+	 m_bChangeDisguise = false;
+	 CurrentState = ALIVE;
+	 m_bUsedStun = false;
+	 m_fStunReuseTimer = 0.f;
+	 this->m_CurrentCP = pos;
+	 this->m_bIsHiding = false;
+	 for (int i = 0; i < CItem::ITEM_TOTAL; ++i)
+	 {
+		m_fPowerupTime[i] = 0;
+	 }
+	 for(int i = 0; i < CItem::ITEM_TOTAL; ++i)
+	 {
+		m_bPowerupStatus[i] = false;
+	 }
+
+	 while(NoiseObject_List.size() > 0)
+	{
+		CNoiseObject *Item = NoiseObject_List.back();
+		delete Item;
+		NoiseObject_List.pop_back();
+	}
+
+	 for(int i = 0; i < 9; ++i)
+	{
+		m_pInv.Inventory[i] = new CItem(CItem::BLANK);
+	}
+
+	 
+}

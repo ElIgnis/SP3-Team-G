@@ -3,7 +3,7 @@
 
 #define ScreenLR 112.f
 #define ScreenUD 63.f
-#define IventoryUp 0.16875f
+#define InventoryUp 0.16875f
 #define InventoryScale 0.04375f
 #define InventoryOffset 0.08125f
 

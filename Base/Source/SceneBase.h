@@ -71,6 +71,7 @@ public:
 		GEO_AXES,
 		GEO_TEXT,
 		GEO_STARTMENU,
+		GEO_MENUSPRITE,
 		GEO_BALL,
 		GEO_CUBE,
 		GEO_QUAD,
@@ -108,6 +109,9 @@ public:
 		//UI
 		GEO_HOTBAR,
 		GEO_HOTSEL,
+		GEO_HEALTHUI,
+		GEO_HEALTH,
+		GEO_DIALOGUE_BOX,
 		NUM_GEOMETRY,
 	};
 protected:

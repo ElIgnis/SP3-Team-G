@@ -15,6 +15,7 @@ CEnemy::CEnemy()
 	, m_bLookDir(true)
 	, m_fCurrentRot(5)
 {
+	this->type = GameObject::GO_ENEMY;
 }
 
 CEnemy::CEnemy(Vector3 pos, ENEMY_STATE state) 
@@ -35,6 +36,7 @@ void CEnemy::Update(const double dt)
 		{
 			if(m_bIsDetected)
 			{
+				trackingPos = player_position;
 				normal = (player_position - pos).Normalized();
 				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			}

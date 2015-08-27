@@ -164,6 +164,15 @@ void SceneBase::Init()
 	meshList[GEO_STARTMENU] = MeshBuilder::GenerateQuad("Background", Color(1, 0, 0), 1.f);
 	meshList[GEO_STARTMENU]->textureID = LoadTGA("Image//StartMenu_Background.tga");
 	
+	meshList[GEO_MENUSPRITE] = MeshBuilder::GenerateSpriteAnimation("TheMatrix",2,5);
+	meshList[GEO_MENUSPRITE]->textureID = LoadTGA("Image//matrixSprite.tga");
+	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSPRITE]);
+	if(menuAnim)
+	{
+		menuAnim->m_anim = new Animation();
+		menuAnim->m_anim->Set(0,4,0,1.f);
+	}
+
 	//Text
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
@@ -258,6 +267,15 @@ void SceneBase::Init()
 	meshList[GEO_HOTBAR]->textureID = LoadTGA("Image//hotbar.tga");
 	meshList[GEO_HOTSEL] = MeshBuilder::GenerateQuad("InventoryHotbar2", Color(1, 1, 1), 1.f);
 	meshList[GEO_HOTSEL]->textureID = LoadTGA("Image//hotbar_select.tga");
+	meshList[GEO_DIALOGUE_BOX] = MeshBuilder::GenerateQuad("DialogueBox", Color(1, 1, 1), 1.f);
+	meshList[GEO_DIALOGUE_BOX]->textureID = LoadTGA("Image//dialogue_box.tga");
+
+	//Health Bar UI
+	meshList[GEO_HEALTHUI] = MeshBuilder::GenerateQuad("HealthUI", Color(1, 1, 1), 1.f);
+	meshList[GEO_HEALTHUI]->textureID = LoadTGA("Image//HealthUI.tga");
+
+	//Health UI
+	meshList[GEO_HEALTH] = MeshBuilder::GenerateQuad("HealthUI", Color(0, 1, 0), 1.f);
 
 	//Sound
 	engine = createIrrKlangDevice();
@@ -289,6 +307,13 @@ void SceneBase::Update(double dt)
 
 	fps = (float)(1.f / dt);
 	camera.Update(dt);
+	rotateAngle += 40 * (float)dt;
+	//Sprite Animation
+	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);
+	if(menuAnim)
+	{
+		menuAnim->Update(dt);
+	}
 }
 
 void SceneBase::RenderText(Mesh* mesh, std::string text, Color color)

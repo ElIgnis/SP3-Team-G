@@ -54,7 +54,7 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
-	LvlHandler.LoadMap("Level//Level 1.txt");
+	LvlHandler.LoadMap("Level//Level 4.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
@@ -76,10 +76,10 @@ void SceneStealth::InitGame(void)
 	//Initializing m_force for the player
 	m_force = 0.f;
 	m_speed = 1.f;
-
+	rotateAngle = 90;
 	//Initializing the player
 	Virus = new CPlayer;
-	Virus->pos.Set(-95,35,0);
+	Virus->pos.Set(-75,45,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 	Virus->setLives(3);
@@ -114,7 +114,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	switch(go2->type)
 	{
 		//Ball to ball
-	case GameObject::GO_PLAYER:
+		case GameObject::GO_PLAYER:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -127,7 +127,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		}
 		break;
 
-	case GameObject::GO_CHECKPOINT:
+		case GameObject::GO_CHECKPOINT:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -141,10 +141,10 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
-
+	
 		///////////STRUCTURE COLLISIONS//////////////////
 
-	case GameObject::GO_WALL:
+		case GameObject::GO_WALL:
 		{
 			if(go1->type == GameObject::GO_BOX && go2->type == GameObject::GO_WALL)
 			{
@@ -201,6 +201,19 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
+
+	case GameObject::GO_ENEMY:
+		{
+			float distSquared = ((go2->pos + go2->vel) - (go1->pos + go1->vel)).LengthSquared();
+			float combinedRadius = go1->scale.x + go2->scale.x;
+
+			if(distSquared <= combinedRadius * combinedRadius)
+			{
+				return true;
+			}
+			return false;
+		}
+		break;
 	case GameObject::GO_HOLE:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
@@ -232,6 +245,7 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 {
 	switch(go2->type)
 	{
+		case GameObject::GO_ENEMY:
 		case GameObject::GO_BALL:
 		{
 			//Speed of vel = mag of vel(0.5mv^2)
@@ -312,10 +326,10 @@ void SceneStealth::Update(double dt)
 	switch(GameState)
 	{
 	case STATE_MENU:
-		camera.SetPersp(false);
-		camera.Reset();
-		UpdateMenu(dt);
-		UpdateMenuKeypress();
+			camera.SetPersp(false);
+			camera.Reset();
+			UpdateMenu(dt);
+			UpdateMenuKeypress();
 		break;
 	case STATE_PLAYING:
 		//Set the camera to target this player
@@ -361,6 +375,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		else if(!Application::IsKeyPressed('B') && btest == true)
 			btest = false;
 
+		cout << "Health : " << Virus->getLives() << endl;
 
 		Virus->Update(dt);
 
@@ -390,6 +405,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		bool b_ColCheck = false;
 
 		//Check player collision with structure
+		if(!Application::IsKeyPressed('g'))
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
@@ -410,7 +426,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
-							CollisionResponse(Virus,go,dt);
+						CollisionResponse(Virus,go,dt);
 						else
 							b_ColCheck = true;
 						break;
@@ -421,7 +437,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
-
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -445,7 +460,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 			else
 				Virus->pos += Virus->vel * dt;
 		}
-
+		if(!Application::IsKeyPressed('g'))
+			Virus->pos += Virus->vel * 5 *dt;
 		//Check player collision with powerups
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
 		{
@@ -480,13 +496,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 
 		Virus->m_bIsHiding = false;
-		//}
-		////Respawning of player
-		//else
-		//{
-		//	//Check for last CP.
-		//	//If lives > 0, respawn there
-		//}
 
 		//Check Player Collision with CheckPoints
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
@@ -504,14 +513,16 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
+
 	//Out of lives
 	if (Virus->getLives() <= 0)
 	{	
-		Virus->SetPlayerState(CPlayer::DEAD);
 		//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
+		Virus->PlayerReset();
+		LvlHandler.Exit();
 	}
 
-	//Death and respawn
+	//Restart when Lives = 0
 	if (Virus->GetPlayerState() == CPlayer::DEAD)
 	{
 		Virus->pos.x = Virus->GetCurrentCP().x;
@@ -528,6 +539,25 @@ void SceneStealth::UpdateEnemies(const double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)
 		{
+			//Player collide with enemy
+			if(CheckCollision(go, Virus, dt))
+			{
+				Virus->Minus1Life();
+				Virus->pos.x = Virus->GetCurrentCP().x;
+				Virus->pos.y = Virus->GetCurrentCP().y;
+			}
+			//Enemy to enemy collision
+			for(std::vector<CEnemy *>::iterator it2 = it + 1; it2 !=LvlHandler.GetEnemy_List().end(); ++it2)
+			{
+				GameObject *go2 = (GameObject *)*it2;
+				if(CheckCollision(go, go2, dt))
+				{
+					CollisionResponse(go, go2, dt);
+					/*
+					go->vel = ((go->vel + go2->vel).Normalized() * 15.f * dt);
+					go2->vel = go->vel;*/
+				}
+			}
 			//Stunning enemies within range
 			if((go->pos - Virus->pos).LengthSquared() < 1000 && GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
@@ -548,8 +578,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				//Set player state to dead on collision with any enemy
 				if(CheckCollision(go, Virus, dt))
 				{
-					Virus->SetPlayerState(CPlayer::DEAD);
-					Virus->Minus1Life();
+					//Virus->SetPlayerState(CPlayer::DEAD);
 				}
 				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 				{
@@ -566,7 +595,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
-				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD && !Virus->GetPowerupStatus(CItem::SPEED))
+				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD)
 				{
 					if(CheckDetectionRange(go, Virus))
 					{
@@ -643,9 +672,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 						bul->mass -= 1.f * (float)dt;
 						if(bul->mass < 0.f)
 							bul->active = false;
-						if(CheckCollision (bul, Virus, (float)dt))
+						if(CheckCollision (Virus, bul, (float)dt))
 						{
-							Virus->SetPlayerState(CPlayer::DEAD);
 							Virus->Minus1Life();
 							bul->active = false;
 						}
@@ -1377,7 +1405,10 @@ void SceneStealth::RenderGame(void)
 		CNoiseObject *nobj = (CNoiseObject *)*it;
 		modelStack.PushMatrix();
 		modelStack.Translate(nobj->GetPosition().x, nobj->GetPosition().y, nobj->GetPosition().z);
-		RenderMesh(meshList[GEO_ALERT], bLightEnabled);
+		if(nobj->GetActive())
+			RenderMesh(meshList[GEO_TRACK], bLightEnabled);
+		else
+			RenderMesh(meshList[GEO_ALERT], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 
@@ -1500,7 +1531,16 @@ void SceneStealth::RenderMenu(void)
 	//Background screen
 	modelStack.PushMatrix();
 	modelStack.Scale(224.f, 126.f, 1.f);
-	RenderMesh(meshList[GEO_STARTMENU], false);
+	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(90,-45,10);
+	modelStack.Rotate(-90,1,0,0);
+	modelStack.Rotate(-90,0,0,1);
+	modelStack.Rotate(rotateAngle, 1, 1, 1);
+	modelStack.Scale(15.f,15.f,15.f);
+	RenderMesh(meshList[GEO_PLAYER], false);
 	modelStack.PopMatrix();
 	
 	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
@@ -1531,18 +1571,12 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 3, 40, 45 - j * 2.5);
 			}
 		}
 		break;
 	case 1: //Option 2 for Level Select
 		{
-			//for(unsigned j = 0; j < menu_main.m_menuList[1]->vec_DescTokens.size(); ++j)
-			//{
-			//	std::stringstream ssDesc;
-			//	ssDesc << menu_main.m_menuList[1]->vec_DescTokens[j];
-			//	RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
-			//}
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
 			if(LvlHandler.GetCurrentStage() == 1)
 				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
@@ -1602,10 +1636,24 @@ void SceneStealth::RenderUI(void)
 {
 	std::stringstream ssFPS;
 	ssFPS << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 2, 1);//fps
+	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
 
 	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
 	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
+    Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.23, Application::GetWindowHeight() * 0.08, Application::GetWindowWidth() * 0.145, Application::GetWindowHeight() * 0.8975,false,false);
+	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+	//Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * 0.75, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5,false,false);
+	/*for(int i = 0; i < Virus->getLives(); i++)
+	{
+		Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.8975,false,false);
+	}*/
+
+	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+
+	//Health
+	std::stringstream ssH;
+	ssH << 'x' << Virus->getLives();
+	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 5, 12, 53.5);
 
 	if(Virus->m_pInv.getHold() != 0)
 	{
@@ -1616,7 +1664,7 @@ void SceneStealth::RenderUI(void)
 			{
 			case 2:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x' <<  Virus->m_pInv.Inventory[i]->getItemStack();
 					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
@@ -1625,7 +1673,7 @@ void SceneStealth::RenderUI(void)
 				//Render Freeze
 			case 3:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
 					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
@@ -1634,7 +1682,7 @@ void SceneStealth::RenderUI(void)
 				//Render SPEED
 			case 4:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
 					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
@@ -1643,7 +1691,7 @@ void SceneStealth::RenderUI(void)
 				//Render NOISE
 			case 5:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
 					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
@@ -1652,7 +1700,7 @@ void SceneStealth::RenderUI(void)
 				//Render Invisibility
 			case 6:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * IventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
 					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
@@ -1668,7 +1716,7 @@ void SceneStealth::RenderUI(void)
 		}
 	}
 
-	RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
+	//RenderTextOnScreen(meshList[GEO_TEXT], "Playing Screen", Color(1, 0, 0), 5, 3, 57);
 }
 
 void SceneStealth::RenderBackground()
