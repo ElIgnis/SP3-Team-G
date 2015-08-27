@@ -7,15 +7,12 @@
 #define Sentry_waitTime_track 2.f
 
 CEnemy_Sentry::CEnemy_Sentry() 
-	: m_bLookDir(true)
-	, m_fTurnSpd(1.f)
+	: m_fTurnSpd(1.f)
 {
 }
 
 CEnemy_Sentry::CEnemy_Sentry(Vector3 pos, Vector3 scale, Vector3 norm, float f_detection_range, float f_detection_angle, float m_fScanRot1, float m_fScanRot2, float m_fTurnSpd)
-	: m_bLookDir(true)
-	, m_fCurrentRot(5)
-	, m_fShootCD(0.f)
+	: m_fShootCD(0.f)
 {
 	this->pos = pos;
 	this->scale = scale;
