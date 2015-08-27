@@ -294,6 +294,7 @@ void SceneBase::Update(double dt)
 
 	fps = (float)(1.f / dt);
 	camera.Update(dt);
+	rotateAngle += 40 * (float)dt;
 	//Sprite Animation
 	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);
 	if(menuAnim)
