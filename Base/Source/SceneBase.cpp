@@ -266,6 +266,13 @@ void SceneBase::Init()
 	meshList[GEO_DIALOGUE_BOX] = MeshBuilder::GenerateQuad("DialogueBox", Color(1, 1, 1), 1.f);
 	meshList[GEO_DIALOGUE_BOX]->textureID = LoadTGA("Image//dialogue_box.tga");
 
+	//Health Bar UI
+	meshList[GEO_HEALTHUI] = MeshBuilder::GenerateQuad("HealthUI", Color(1, 1, 1), 1.f);
+	meshList[GEO_HEALTHUI]->textureID = LoadTGA("Image//HealthUI.tga");
+
+	//Health UI
+	meshList[GEO_HEALTH] = MeshBuilder::GenerateQuad("HealthUI", Color(0, 1, 0), 1.f);
+
 	//Sound
 	engine = createIrrKlangDevice();
 	if(!engine)

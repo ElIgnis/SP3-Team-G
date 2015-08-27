@@ -273,4 +273,11 @@ void CLevelHandler::Exit(void)
 		delete go;
 		Interactables_List.pop_back();
 	}
+
+	while(CheckPoint_List.size() > 0)
+	{
+		GameObject *go = CheckPoint_List.back();
+		delete go;
+		CheckPoint_List.pop_back();
+	}
 }
