@@ -1,4 +1,4 @@
-oooo,0,2
+wooo,0,1
 abcd,1,50
 test,2,10
 abcd,2,15

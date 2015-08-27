@@ -95,7 +95,7 @@ void SceneStealth::CompareScore(int CurrentLevel)
 {
 	GameState = STATE_MENU;
 	LvlHandler.SetStageCompleted(false);
-	
+
 	//Overwrite score if lower
 	if(tempHighScore < HS_List.GetScoreList().at(CurrentLevel -1))
 	{
@@ -379,6 +379,7 @@ void SceneStealth::Update(double dt)
 		if(LvlHandler.GetStageCompleted())
 		{
 			CompareScore(LvlHandler.GetCurrentStage());
+			Restart();
 		}
 		break;
 	default:
@@ -1293,6 +1294,7 @@ void SceneStealth::ProcessNameInput(void)
 		tempHighScore.SetName(name.str());
 		HS_List.SetNewHighScore(tempHighScore, LvlHandler.GetCurrentStage()-1);
 		b_NewHighScore = false;
+		LvlHandler.SetStageCompleted(false);
 	}
 }
 
@@ -1303,6 +1305,7 @@ void SceneStealth::Restart(void)
 	//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
 	Virus->PlayerReset();
 	LvlHandler.Exit();
+	tempHighScore.Reset();
 }
 
 void SceneStealth::RenderGO(GameObject *go)

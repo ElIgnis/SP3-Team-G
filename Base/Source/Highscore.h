@@ -47,6 +47,7 @@ public:
 
 	string GetName(void);
 	int GetScore(void);
+	void Reset(void);
 
 	//Get and Set Functions
 	int GetNameCharCount(void);

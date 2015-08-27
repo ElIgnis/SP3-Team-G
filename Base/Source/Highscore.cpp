@@ -145,3 +145,10 @@ void CHighscore::operator=(const CHighscore &AssignTime)
 	this->i_Minutes = AssignTime.i_Minutes;
 	this->i_Seconds = AssignTime.i_Seconds;
 }
+
+void CHighscore::Reset(void)
+{
+	this->s_Name = "";
+	this->i_Minutes = 0;
+	this->i_Seconds = 0;
+}
