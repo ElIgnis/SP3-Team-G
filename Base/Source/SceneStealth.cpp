@@ -476,13 +476,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 
 		Virus->m_bIsHiding = false;
-		//}
-		////Respawning of player
-		//else
-		//{
-		//	//Check for last CP.
-		//	//If lives > 0, respawn there
-		//}
 
 		//Check Player Collision with CheckPoints
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
@@ -500,14 +493,16 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 	}
+
 	//Out of lives
 	if (Virus->getLives() <= 0)
 	{	
-		Virus->SetPlayerState(CPlayer::DEAD);
 		//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
+		Virus->PlayerReset();
+		LvlHandler.Exit();
 	}
 
-	//Death and respawn
+	//Restart when Lives = 0
 	if (Virus->GetPlayerState() == CPlayer::DEAD)
 	{
 		Virus->pos.x = Virus->GetCurrentCP().x;
