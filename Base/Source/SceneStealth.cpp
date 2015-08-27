@@ -54,7 +54,7 @@ void SceneStealth::Init()
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
 
 	HS_List.LoadHighScore();
-	LvlHandler.LoadMap("Level//Level 1.txt");
+	LvlHandler.LoadMap("Level//Level 4.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
 
@@ -114,7 +114,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	switch(go2->type)
 	{
 		//Ball to ball
-	case GameObject::GO_PLAYER:
+		case GameObject::GO_PLAYER:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -127,7 +127,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		}
 		break;
 
-	case GameObject::GO_CHECKPOINT:
+		case GameObject::GO_CHECKPOINT:
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
@@ -141,10 +141,10 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			return false;
 		}
 		break;
-
+	
 		///////////STRUCTURE COLLISIONS//////////////////
 
-	case GameObject::GO_WALL:
+		case GameObject::GO_WALL:
 		{
 			if(go1->type == GameObject::GO_BOX && go2->type == GameObject::GO_WALL)
 			{
@@ -184,6 +184,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	case GameObject::GO_POWERUP_HEALTH:
 	case GameObject::GO_BOX:
 	case GameObject::GO_LASER_MACHINE:
+	case GameObject::GO_LASER:
 		{
 			//|(w0 - b1).N| < r + h / 2
 			Vector3 w0 = go2->pos;
@@ -425,7 +426,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
-							CollisionResponse(Virus,go,dt);
+						CollisionResponse(Virus,go,dt);
 						else
 							b_ColCheck = true;
 						break;
@@ -436,7 +437,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
-
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -444,7 +444,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 			if(go->active)
 			{
 				if(CheckCollision(Virus,go,dt))
+				{
 					b_ColCheck = true;
+					if(go->type == GameObject::GO_LASER)
+						Virus->SetPlayerState(CPlayer::DEAD);
+				}
 				if(Application::IsKeyPressed(VK_RETURN))
 					go->CheckBonusInteraction(Virus->pos);
 			}
@@ -535,6 +539,13 @@ void SceneStealth::UpdateEnemies(const double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)
 		{
+			//Player collide with enemy
+			if(CheckCollision(go, Virus, dt))
+			{
+				Virus->Minus1Life();
+				Virus->pos.x = Virus->GetCurrentCP().x;
+				Virus->pos.y = Virus->GetCurrentCP().y;
+			}
 			//Enemy to enemy collision
 			for(std::vector<CEnemy *>::iterator it2 = it + 1; it2 !=LvlHandler.GetEnemy_List().end(); ++it2)
 			{
@@ -567,8 +578,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				//Set player state to dead on collision with any enemy
 				if(CheckCollision(go, Virus, dt))
 				{
-					Virus->SetPlayerState(CPlayer::DEAD);
-					Virus->Minus1Life();
+					//Virus->SetPlayerState(CPlayer::DEAD);
 				}
 				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 				{
@@ -585,7 +595,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
-				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD && !Virus->GetPowerupStatus(CItem::SPEED))
+				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD)
 				{
 					if(CheckDetectionRange(go, Virus))
 					{
@@ -662,9 +672,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 						bul->mass -= 1.f * (float)dt;
 						if(bul->mass < 0.f)
 							bul->active = false;
-						if(CheckCollision (bul, Virus, (float)dt))
+						if(CheckCollision (Virus, bul, (float)dt))
 						{
-							Virus->SetPlayerState(CPlayer::DEAD);
 							Virus->Minus1Life();
 							bul->active = false;
 						}
@@ -694,7 +703,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 void SceneStealth::UpdateMenu(const double dt)
 {
 	menu_main.Update(dt);
-	rotateAngle += 5 * (float)dt;
 }
 
 void SceneStealth::UpdateMenuKeypress(void)
@@ -1334,7 +1342,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_HOLE], bLightEnabled);
 		modelStack.PopMatrix();
 		break;
-	/*case GameObject::GO_LASER_MACHINE:
+	case GameObject::GO_LASER_MACHINE:
 		{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1343,9 +1351,19 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_LASER_MACHINE], bLightEnabled);
 		modelStack.PopMatrix();
-		}*/
+		}
 		break;
-
+	case GameObject::GO_LASER:
+		{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
+			modelStack.Rotate(angle, 0, 0 ,1);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_LASER], bLightEnabled);
+		modelStack.PopMatrix();
+		}
+		break;
 	}
 }
 
@@ -1418,7 +1436,12 @@ void SceneStealth::RenderGame(void)
 		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
 		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
 		modelStack.Scale(5, 5, 5);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		//Render lever switch
+		if(go->type == GameObject::GO_LEVER)
+			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		//Render laser switch
+		if(go->type == GameObject::GO_LASER)
+			RenderMesh(meshList[GEO_BALL], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 
@@ -1515,7 +1538,7 @@ void SceneStealth::RenderMenu(void)
 	modelStack.Translate(90,-45,10);
 	modelStack.Rotate(-90,1,0,0);
 	modelStack.Rotate(-90,0,0,1);
-	modelStack.Rotate(rotateAngle, 1, 1,0);
+	modelStack.Rotate(rotateAngle, 1, 1, 1);
 	modelStack.Scale(15.f,15.f,15.f);
 	RenderMesh(meshList[GEO_PLAYER], false);
 	modelStack.PopMatrix();
@@ -1548,7 +1571,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 3, 40, 45 - j * 2.5);
 			}
 		}
 		break;

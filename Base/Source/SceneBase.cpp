@@ -242,8 +242,12 @@ void SceneBase::Init()
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Laser
-	//meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
-	//meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
+	meshList[GEO_LASER] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
+	meshList[GEO_LASER]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
+
+	//Laser Machine
+	meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser_Machine", "OBJ//Laser_Machine.obj");
+	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
@@ -303,6 +307,7 @@ void SceneBase::Update(double dt)
 
 	fps = (float)(1.f / dt);
 	camera.Update(dt);
+	rotateAngle += 40 * (float)dt;
 	//Sprite Animation
 	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);
 	if(menuAnim)

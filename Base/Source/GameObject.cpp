@@ -44,6 +44,8 @@ void GameObject::SetDetails(std::string newType, Vector3 newPos, Vector3 newNorm
 		this->type = GO_HOLE;
 	else if(newType == "GO_LASER_MACHINE")
 		this->type = GO_LASER_MACHINE;
+	else if(newType == "GO_LASER")
+		this->type = GO_LASER;
 
 	this->pos = newPos;
 	this->normal = newNormal;

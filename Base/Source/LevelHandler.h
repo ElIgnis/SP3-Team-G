@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "Enemy.h"
 #include "Lever.h"
-#include "Interactables.h"
+#include "Laser.h"
 #include "Enemy_Patrol.h"
 #include "Enemy_Patrol_Rage.h"
 #include "Enemy_Sentry.h"
@@ -65,6 +65,23 @@ public:
 		EPOINT1,
 		EPOINT2,
 		ENUM_INDEX,
+	};
+
+	enum InteractableIndex
+	{
+		INTERACT_TYPE = 0,
+		I_POSX,
+		I_POSY,
+		I_POSZ,
+		I_NORMALX,
+		I_NORMALY,
+		I_SCALEX,
+		I_SCALEY,
+		I_SCALEZ,
+		I_ACTIVATE_POSX,
+		I_ACTIVATE_POSY,
+		I_ACTIVATE_POSZ,
+		I_NUM_INDEX,
 	};
 
 	CLevelHandler(void);

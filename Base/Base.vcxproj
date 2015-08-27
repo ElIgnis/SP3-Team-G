@@ -24,6 +24,7 @@
     <ClCompile Include="Source\Interactables.cpp" />
     <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\Laser.cpp" />
     <ClCompile Include="Source\LevelHandler.cpp" />
     <ClCompile Include="Source\LoadOBJ.cpp" />
     <ClCompile Include="Source\LoadTGA.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="Source\Interactables.h" />
     <ClInclude Include="Source\Inventory.h" />
     <ClInclude Include="Source\Item.h" />
+    <ClInclude Include="Source\Laser.h" />
     <ClInclude Include="Source\LevelHandler.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\LoadOBJ.h" />

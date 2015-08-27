@@ -29,6 +29,7 @@ public:
 		GO_CHECKPOINT,
 		GO_LASER_MACHINE,
 		GO_ENEMY,
+		GO_LASER,
 		NUM_GO
 	};
 	GAMEOBJECT_TYPE type;
