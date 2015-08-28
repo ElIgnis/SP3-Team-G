@@ -15,7 +15,7 @@ void CMenu::SpaceOptions(const float topPos, const float botPos, const float xPo
 	m_menuList.back()->pos.Set(xPos, botPos);
 	for(int i = 1; i < m_menuList.size() - 1; ++i)
 	{
-		m_menuList[i]->pos.Set(xPos, topPos - (((topPos - botPos) / m_menuList.size() + 1) * i));
+		m_menuList[i]->pos.Set(xPos, topPos - (((topPos - botPos) / (m_menuList.size() - 1)) * i));
 	}
 }
 

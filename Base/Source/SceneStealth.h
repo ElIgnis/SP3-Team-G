@@ -7,6 +7,8 @@
 #define InventoryScale 0.04375f
 #define InventoryOffset 0.08125f
 
+#define SpeedPowerupModifier 2.f
+
 #define ReboundFactor 2.f
 #define MoveSpeed 50.f
 #define MoveSpeedModifier 1.f
@@ -23,6 +25,7 @@
 #include "Menu.h"
 #include "Enemy.h"
 #include "Interactables.h"
+#include "DialogueBox.h"
 #include "Player.h"
 
 using std::vector;
@@ -73,9 +76,13 @@ public:
 	//Update everything related to enemies(enemy collision to player, structures)
 	void UpdateEnemies(const double dt);
 
+	//Update dialogue boxes
+	void UpdateDialogue(double dt);
+	
 	//Update keypress
 	void UpdateMenuKeypress(void);
 	void UpdateGameKeypress(void);
+	void UpdatePauseKeypress(void);
 
 	//Compare scores to see if high score is achieved;
 	void CompareScore(int CurrentLevel);
@@ -110,6 +117,7 @@ public:
 	void RenderInventory(void);
 	void RenderScore(void);
 	void RenderDialogBox(void);
+	void RenderPause(void);
 
 protected:
 
@@ -137,6 +145,7 @@ private:
 
 	//Menu
 	CMenu menu_main;
+	CMenu menu_pause;
 
 	//Game state
 	GAME_STATE GameState;
@@ -156,6 +165,9 @@ private:
 
 	//New High score
 	bool b_NewHighScore;
+
+	//Game pause state
+	bool b_PauseGame;
 
 	CItem *test;
 	CItem *testes;

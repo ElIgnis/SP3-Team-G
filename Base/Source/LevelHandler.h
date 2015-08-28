@@ -7,11 +7,14 @@
 #include "Enemy_Patrol.h"
 #include "Enemy_Patrol_Rage.h"
 #include "Enemy_Sentry.h"
+#include "DialogueBox.h"
 #include "Item.h"
 #include <string>
 #include <vector>
 #include <fstream>
 #include <sstream>
+
+#define Num_Levels 4
 
 using std::string;
 using std::vector;
@@ -28,7 +31,7 @@ private:
 	vector<CInteractables *> Interactables_List;
 	vector<string>Level_Tokens;
 	vector<string>Level_Tokens2;
-	vector<CEnemy * > Dialogue_List[4];
+	vector<CDialogue_Box * > Dialogue_List;
 	char m_cSplit_Char;
 	string m_sLevelData;
 	string m_sLevelData2;
@@ -101,11 +104,13 @@ public:
 	vector<GameObject *> &GetPowerup_List(void);
 	vector<GameObject *> &GetCheckPoint_List(void);
 	vector<CEnemy *> &GetEnemy_List(void);
+	vector<CDialogue_Box *> &GetDialogue_List(void);
 	vector<CInteractables *> &GetInteractables_List(void);
 
 	void LoadMap(string newMap);
 	void LoadEnemies(string newMap);
 	void LoadInteractables(string newMap);
+	void LoadDialogue(string newMap);
 	void Exit(void);
 };
 

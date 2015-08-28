@@ -220,6 +220,50 @@ void CLevelHandler::LoadInteractables(string mapLevel)
 		std::cout << "Load level file failed OHMY" << std::endl;
 }
 
+void CLevelHandler::LoadDialogue(string newMap)
+{
+	std::ifstream theFile(newMap);
+	std::string line;
+	bool b_nextDialogue = true;
+	CDialogue_Box *db;
+	vector<string>Dialogue_tokens;
+	if (theFile.is_open())
+	{
+		while ( std::getline (theFile,line) )
+		{
+			std::istringstream split(line);
+
+			if(line[0] == '/')
+				continue;
+			//Dont read lines with #
+			if(line[0] == '#')
+			{
+				b_nextDialogue = true;
+				Dialogue_List.push_back(db);
+				continue;
+			}
+			if(b_nextDialogue)
+			{
+				db = new CDialogue_Box;
+				for(string each; std::getline(split, each, m_cSplit_Char);)
+				{
+					Dialogue_tokens.push_back(each);
+				}
+				db->SetWorldPos(Vector3(stof(Dialogue_tokens[0]), stof(Dialogue_tokens[1]), stof(Dialogue_tokens[2])));
+				b_nextDialogue = false;
+				while(Dialogue_tokens.size() > 0)
+					Dialogue_tokens.pop_back();
+			}
+			else
+			{
+				db->Text_List.push_back(line);
+			}
+		}
+		theFile.close();
+	}
+	else std::cout << "Unable to open dialogue file";
+}
+
 vector<GameObject *> &CLevelHandler::GetStructure_List(void)
 {
 	return Structure_List;
@@ -238,6 +282,11 @@ vector<GameObject *> &CLevelHandler::GetCheckPoint_List(void)
 vector<CEnemy *> &CLevelHandler::GetEnemy_List(void)
 {
 	return Enemy_List;
+}
+
+vector<CDialogue_Box *> &CLevelHandler::GetDialogue_List(void)
+{
+	return Dialogue_List;
 }
 
 vector<CInteractables *> &CLevelHandler::GetInteractables_List(void)
