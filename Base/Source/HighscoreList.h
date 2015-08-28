@@ -25,6 +25,7 @@ public:
 	void WriteHighScore(void);
 	void SortHighScore(void);
 
+	void SetNewHighScore(CHighscore NewHighScore, const int index);
 	int GetHighScoreCount(void);
 
 	vector<CHighscore> GetScoreList(void);

@@ -16,6 +16,7 @@ CLevelHandler::CLevelHandler(void)
 	, m_iObjLine(0)
 	, m_iCurrentStage(1)
 	, m_bStageSelection(false)
+	, m_bStageCompleted(false)
 {
 }
 
@@ -85,7 +86,6 @@ void CLevelHandler::LoadMap(string mapLevel)
 		std::cout << "Load level file failed" << std::endl;
 }
 			
-
 void CLevelHandler::LoadEnemies(string mapLevel)
 {
 	//Load Level details
@@ -176,20 +176,39 @@ void CLevelHandler::LoadInteractables(string mapLevel)
 			if(Level_Tokens2.at(GO_TYPE) == "GO_LEVER")
 			{
 				CInteractables *in = new CLever( 
-					Vector3(stof(Level_Tokens2.at(POSX))
-					, stof(Level_Tokens2.at(POSY))
-					, stof(Level_Tokens2.at(POSZ )))
+					Vector3(stof(Level_Tokens2.at(I_POSX))
+					, stof(Level_Tokens2.at(I_POSY))
+					, stof(Level_Tokens2.at(I_POSZ )))
 					//normal
-					, Vector3(stof(Level_Tokens2.at(NORMALX))
-					, stof(Level_Tokens2.at(NORMALY)))
+					, Vector3(stof(Level_Tokens2.at(I_NORMALX))
+					, stof(Level_Tokens2.at(I_NORMALY)))
 					//scale
-					, Vector3(stof(Level_Tokens2.at(SCALEX))
-					, stof(Level_Tokens2.at(SCALEY))
-					, stof(Level_Tokens2.at(SCALEZ)))
-					
-					,Vector3(stof(Level_Tokens2.at(Int_posx))
-					, stof(Level_Tokens2.at(Int_posy))
-					, stof(Level_Tokens2.at(Int_posz))));
+					, Vector3(stof(Level_Tokens2.at(I_SCALEX))
+					, stof(Level_Tokens2.at(I_SCALEY))
+					, stof(Level_Tokens2.at(I_SCALEZ)))
+					//Activation position
+					,Vector3(stof(Level_Tokens2.at(I_ACTIVATE_POSX))
+					, stof(Level_Tokens2.at(I_ACTIVATE_POSY))
+					, stof(Level_Tokens2.at(I_ACTIVATE_POSZ))));
+				Interactables_List.push_back(in);
+			}
+			if(Level_Tokens2.at(GO_TYPE) == "GO_LASER")
+			{
+				CInteractables *in = new CLaser( 
+					Vector3(stof(Level_Tokens2.at(I_POSX))
+					, stof(Level_Tokens2.at(I_POSY))
+					, stof(Level_Tokens2.at(I_POSZ )))
+					//normal
+					, Vector3(stof(Level_Tokens2.at(I_NORMALX))
+					, stof(Level_Tokens2.at(I_NORMALY)))
+					//scale
+					, Vector3(stof(Level_Tokens2.at(I_SCALEX))
+					, stof(Level_Tokens2.at(I_SCALEY))
+					, stof(Level_Tokens2.at(I_SCALEZ)))
+					//Activation position
+					,Vector3(stof(Level_Tokens2.at(I_ACTIVATE_POSX))
+					, stof(Level_Tokens2.at(I_ACTIVATE_POSY))
+					, stof(Level_Tokens2.at(I_ACTIVATE_POSZ))));
 				Interactables_List.push_back(in);
 			}
 			while(Level_Tokens2.size() > 0)
@@ -242,6 +261,15 @@ void CLevelHandler::SetCurrentStage(const int newCurrentStage)
 int CLevelHandler::GetCurrentStage(void)
 {
 	return m_iCurrentStage;
+}
+
+void CLevelHandler::SetStageCompleted(const bool newStageCompleted)
+{
+	this->m_bStageCompleted = newStageCompleted;
+}
+bool CLevelHandler::GetStageCompleted(void)
+{
+	return m_bStageCompleted;
 }
 
 void CLevelHandler::Exit(void)

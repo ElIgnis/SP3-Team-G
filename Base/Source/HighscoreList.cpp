@@ -13,6 +13,11 @@ CHighscore_List::~CHighscore_List()
 {
 }
 
+void CHighscore_List::SetNewHighScore(CHighscore NewHighScore, const int index)
+{
+	vec_ScoreList.at(index) = NewHighScore;
+}
+
 void CHighscore_List::LoadHighScore(void)
 {
 	//Load High score
@@ -37,7 +42,8 @@ void CHighscore_List::LoadHighScore(void)
 
 			//Assign scores
 			Highscore = CHighscore(vec_ScoreTokens.at(CHighscore::NAME + (i_ObjLine * CHighscore::SCORE_INDEX))
-				, std::stoi(vec_ScoreTokens.at(CHighscore::SCORE + (i_ObjLine * CHighscore::SCORE_INDEX))));
+				, std::stoi(vec_ScoreTokens.at(CHighscore::MINUTES + (i_ObjLine * CHighscore::SCORE_INDEX)))
+				, std::stoi(vec_ScoreTokens.at(CHighscore::SECONDS + (i_ObjLine * CHighscore::SCORE_INDEX))));
 
 			vec_ScoreList.push_back(Highscore);
 			++this->i_ObjLine;
@@ -52,14 +58,14 @@ void CHighscore_List::LoadHighScore(void)
 void CHighscore_List::WriteHighScore(void)
 {
 	std::ofstream outHighScore;
-	outHighScore.open("High Score.txt");
+	outHighScore.open("Descriptions//HighScore.txt");
 	
 	if(outHighScore.good())
 	{
 		for(std::vector<CHighscore>::iterator it = vec_ScoreList.begin(); it != vec_ScoreList.end(); ++it)
 		{
 			CHighscore temp = *it;
-			outHighScore << temp.GetName() << "," << temp.GetScore() << std::endl;
+			outHighScore << temp.GetName() << "," << temp.GetMinutes() << "," << temp.GetSeconds() << std::endl;
 		}
 		outHighScore.close();
 	}
@@ -74,7 +80,7 @@ void CHighscore_List::SortHighScore(void)
 	{
 		for(int j = 0; j < i_HighScoreCount-1; ++j)
 		{
-			if(vec_ScoreList.at(j).GetScore() < vec_ScoreList.at(j+1).GetScore())
+			if(vec_ScoreList.at(j) < vec_ScoreList.at(j+1))
 			{
 				CHighscore temp = vec_ScoreList.at(j);
 				vec_ScoreList.at(j) = vec_ScoreList.at(j+1);

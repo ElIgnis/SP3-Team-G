@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "Enemy.h"
 #include "Lever.h"
-#include "Interactables.h"
+#include "Laser.h"
 #include "Enemy_Patrol.h"
 #include "Enemy_Patrol_Rage.h"
 #include "Enemy_Sentry.h"
@@ -35,6 +35,7 @@ private:
 	int m_iObjLine;
 	int m_iCurrentStage;
 	bool m_bStageSelection;
+	bool m_bStageCompleted;
 
 public:
 	//Tokens indexing
@@ -67,6 +68,23 @@ public:
 		ENUM_INDEX,
 	};
 
+	enum InteractableIndex
+	{
+		INTERACT_TYPE = 0,
+		I_POSX,
+		I_POSY,
+		I_POSZ,
+		I_NORMALX,
+		I_NORMALY,
+		I_SCALEX,
+		I_SCALEY,
+		I_SCALEZ,
+		I_ACTIVATE_POSX,
+		I_ACTIVATE_POSY,
+		I_ACTIVATE_POSZ,
+		I_NUM_INDEX,
+	};
+
 	CLevelHandler(void);
 	~CLevelHandler(void);
 
@@ -75,6 +93,9 @@ public:
 
 	void SetCurrentStage(const int newCurrentStage);
 	int GetCurrentStage(void);
+
+	void SetStageCompleted(const bool newStageCompleted);
+	bool GetStageCompleted(void);
 
 	vector<GameObject *> &GetStructure_List(void);
 	vector<GameObject *> &GetPowerup_List(void);

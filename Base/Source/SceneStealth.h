@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <string>
+#include <iomanip>
 #include "SceneBase.h"
 #include "Highscore.h"
 #include "HighscoreList.h"
@@ -22,7 +23,6 @@
 #include "Menu.h"
 #include "Enemy.h"
 #include "Interactables.h"
-//#include "NoiseObject.h"
 #include "Player.h"
 
 using std::vector;
@@ -40,6 +40,7 @@ class SceneStealth : public SceneBase
 	{
 		STATE_MENU,
 		STATE_PLAYING,
+		STATE_PAUSED,
 		NUM_GAMESTATES,//number of gamestates
 	};
 public:
@@ -68,6 +69,7 @@ public:
 
 	//Update everything related to player(player collision to structures, powerups, player movement..)
 	void UpdatePlayer(const double dt);
+	void UpdatePlayerScore(const double dt);
 	//Update everything related to enemies(enemy collision to player, structures)
 	void UpdateEnemies(const double dt);
 
@@ -75,12 +77,21 @@ public:
 	void UpdateMenuKeypress(void);
 	void UpdateGameKeypress(void);
 
+	//Compare scores to see if high score is achieved;
+	void CompareScore(int CurrentLevel);
+	void UpdateNewHighScore(void);
+
 	virtual void UpdateKeyDown(const unsigned char key);
 	virtual void UpdateKeyUp(const unsigned char key);
 	bool GetKeyState(const unsigned char key);
 
+	//Restarts the game(all vars and maps)
+	void Restart(void);
+	void RestartLevel(void);
+	void RestartGame(void);
+
 	//Process key input
-	void ProcessKeys(void);
+	void ProcessNameInput(void);
 
 	//Rendering section
 	////////////////////////////////////////
@@ -95,6 +106,10 @@ public:
 	void RenderBackground();
 	//Render UI items
 	void RenderUI(void);
+	void RenderHealthbar(void);
+	void RenderInventory(void);
+	void RenderScore(void);
+	void RenderDialogBox(void);
 
 protected:
 
@@ -107,13 +122,15 @@ protected:
 	Vector3 u1, u2, v1, v2;
 
 private:
+	//Track time elapsed
+	float timeElapsed;
+
 	//Check for exit scene
 	bool b_ExitScene;
 
 	//Player vars
 	CPlayer *Virus;
 	Vector3 m_force;
-	float m_speed;
 
 	//Scene rotation
 	float rotateScene;
@@ -133,6 +150,12 @@ private:
 
 	//Keypress handler
 	bool myKeys[255];
+
+	//Check to reload all game vars
+	bool b_ReInitGameVars;
+
+	//New High score
+	bool b_NewHighScore;
 
 	CItem *test;
 	CItem *testes;

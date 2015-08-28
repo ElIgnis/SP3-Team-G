@@ -17,8 +17,6 @@ class CHighscore
 {
 private:
 	string s_Name;
-	int i_Score;
-	int i_ScoreIndex;
 
 	//High score writing
 	bool b_CapitalLetter;
@@ -27,23 +25,29 @@ private:
 	char c_CharToBeAdded;
 	int i_NameCharCount;
 
+	//Var to track score
+	int i_Minutes;
+	int i_Seconds;
+
 	vector<char> vec_NameInput;
 
 public:
 	CHighscore();
-	CHighscore(string newName, int newScore);
+	CHighscore(string newName, int newMinutes, int newSeconds);
 	~CHighscore();
 
 	//Highscore
 	enum ScoreIndex
 	{
 		NAME = 0,
-		SCORE,
+		MINUTES,
+		SECONDS,
 		SCORE_INDEX,
 	};
 
 	string GetName(void);
 	int GetScore(void);
+	void Reset(void);
 
 	//Get and Set Functions
 	int GetNameCharCount(void);
@@ -54,7 +58,7 @@ public:
 	void SetCapitalLetter(const bool newCapitalLetter);
 
 	void SetCharToAdd(const char newChar);
-	void SetCharToRemoved(void);
+	void SetCharToRemove(void);
 	char GetCharToAdd(void);
 
 	void SetNameInput(void);
@@ -63,6 +67,15 @@ public:
 	vector<char> GetNameString(void);
 
 	void SetName(string newName);
-	void SetScore(int newScore);
+	void SetNewHighScore(const CHighscore &AssignTime);
+
+	void ConvertToMinutes(CHighscore &ConvertTime);
+
+	int GetMinutes(void);
+	int GetSeconds(void);
+	void AddSeconds(void);
+
+	bool operator<(const CHighscore &CompareTime);
+	void operator=(const CHighscore &AssignTime);
 	friend ostream & operator<<(ostream &os, CHighscore &Highscore);
 };

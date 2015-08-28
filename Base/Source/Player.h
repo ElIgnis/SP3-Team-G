@@ -5,6 +5,7 @@
 
 #define DisguiseChangeTimer 1.f
 #define StunCooldown 2.f
+#define RespawnCooldown 2.f
 
 class CPlayer : public GameObject
 {
@@ -31,6 +32,8 @@ private:
 
 	float m_fStunReuseTimer;
 	bool m_bUsedStun;
+
+	float m_fRespawnTimer;
 
 public:
 	CPlayer(void);
@@ -59,7 +62,10 @@ public:
 	void SetStunReuseTimer(const float newReuseTimer);
 	float GetStunReuseTimer(void);
 
-	virtual void Update(const double dt);
+	void SetRespawnTimer(const float newRespawnTimer);
+	float GetRespawnTimer(void);
+
+	void UpdateTimers(const double dt);
 
 	vector<CNoiseObject *> &GetNoiseObject_List(void);
 
