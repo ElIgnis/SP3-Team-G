@@ -170,6 +170,7 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
 	case CItem::FREEZE:
 		break;
 	case CItem::SPEED:
+		ActivatePowerup(type, 3.f);
 		break;
 	case CItem::INVIS:
 		ActivatePowerup(type, 3.f);
@@ -179,7 +180,7 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
 		break;
 	case CItem::NOISE:
 		//Create new noise object and store inside NoiseObject_List
-		CNoiseObject *nobj = new CNoiseObject(this->pos, 1.f, 1.f);
+		CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
 		NoiseObject_List.push_back(nobj);
 		break;
 

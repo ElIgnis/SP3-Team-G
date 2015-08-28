@@ -252,7 +252,7 @@ void SceneBase::Init()
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL1]->textureID = LoadTGA("Image//Level1_Floor.tga");
-	
+	 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL3] = MeshBuilder::GenerateQuad("Floor_Level3", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL3]->textureID = LoadTGA("Image//Level3_Floor.tga");
@@ -306,7 +306,6 @@ void SceneBase::Update(double dt)
 	}
 
 	fps = (float)(1.f / dt);
-	camera.Update(dt);
 	rotateAngle += 40 * (float)dt;
 	//Sprite Animation
 	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);

@@ -10,6 +10,7 @@ SceneStealth::SceneStealth()
 	, b_ReInitGameVars(true)
 	, timeElapsed(0.f)
 	, b_NewHighScore(false)
+	, b_PauseGame(false)
 {
 }
 
@@ -55,7 +56,15 @@ void SceneStealth::Init()
 	menu_main.m_menuList.push_back(m);
 	menu_main.m_menuList[0]->SetIs_Selected(true);
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
-
+	CMenuItem *m2;
+	m = new CMenuItem("Continue", "Play.txt");m->ReadDescription();
+	menu_pause.m_menuList.push_back(m);
+	m = new CMenuItem("Restart", "Play.txt");m->ReadDescription();
+	menu_pause.m_menuList.push_back(m);
+	m = new CMenuItem("Exit", "Play.txt");m->ReadDescription();
+	menu_pause.m_menuList.push_back(m);
+	menu_pause.m_menuList[0]->SetIs_Selected(true);
+	menu_pause.SpaceOptions(35,15, 5); //Space out menu options equally
 	HS_List.LoadHighScore();
 	
 
@@ -76,6 +85,7 @@ void SceneStealth::InitGame(void)
 	LvlHandler.LoadMap("Level//Level 1.txt");
 	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
 	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
+	LvlHandler.LoadDialogue("Dialogue//Level 1_dialogue.txt");
 	
 	//Initializing m_force for the player
 	m_force = 0.f;
@@ -229,7 +239,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			Vector3 NP(-N.y, N.x);	//(N.y, -N.x)	//Perpendicular
 			float l = go2->scale.y;
 
-			if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.05f)
+			if(abs((w0 - b1).Dot(N)) < r + h * 0.5f && abs((w0 - b1).Dot(NP)) < r + l * 0.5f)
 				return true;
 			return false;
 		}
@@ -371,20 +381,33 @@ void SceneStealth::Update(double dt)
 		//Set the camera to target this player
 		camera.SetTargetPlayer(Virus);
 		camera.SetPersp(true);
-		UpdateGameKeypress();
-		UpdatePlayer(dt);
-		UpdateEnemies(dt);
-		UpdatePlayerScore(dt);
+		if(!b_PauseGame)
+		{
+			camera.Update(dt);
+			UpdateGameKeypress();
+			UpdatePlayer(dt);
+			UpdateEnemies(dt);
+			UpdatePlayerScore(dt);
+			UpdateDialogue(dt);
+		}
+		else
+		{
+			UpdatePauseKeypress();
+			menu_pause.Update(dt);
+		}
 		//Compare scores when level is completed
 		if(LvlHandler.GetStageCompleted())
 		{
 			CompareScore(LvlHandler.GetCurrentStage());
 			Restart();
+			GameState = STATE_MENU;
 		}
 		break;
 	default:
 		break;
 	}
+	if(Application::IsKeyPressed('J'))
+		std::cout<<Virus->pos<<std::endl;
 }
 
 void SceneStealth::UpdatePlayer(const double dt)
@@ -459,7 +482,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						b_ColCheck = true;
 						break;
 					case GameObject::GO_WALL:
-						//b_ColCheck = true;
+						b_ColCheck = true;
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
@@ -495,10 +518,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 		if(!b_ColCheck)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
-				Virus->pos += Virus->vel * 2 * dt;
+				Virus->pos += Virus->vel * SpeedPowerupModifier * dt;
 			else
 				Virus->pos += Virus->vel * dt;
 		}
+
 		//Check player collision with powerups
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetPowerup_List().begin(); it != LvlHandler.GetPowerup_List().end(); ++it)
 		{
@@ -555,6 +579,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 	if (Virus->getLives() <= 0)
 	{	
 		Restart();
+		GameState = STATE_MENU;
 	}
 
 	//Respawn with 2s delay
@@ -587,10 +612,10 @@ void SceneStealth::UpdateEnemies(const double dt)
 				GameObject *go2 = (GameObject *)*it2;
 				if(CheckCollision(go, go2, dt))
 				{
-					CollisionResponse(go, go2, dt);
-					/*
+					//CollisionResponse(go, go2, dt);
+					
 					go->vel = ((go->vel + go2->vel).Normalized() * 15.f * dt);
-					go2->vel = go->vel;*/
+					go2->vel = go->vel;
 				}
 			}
 			//Stunning enemies
@@ -614,7 +639,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 				{
 					CNoiseObject *nobj = (CNoiseObject *)*it;
-					if((nobj->GetPosition() - go->pos).LengthSquared() < 10000 //dist
+					if((nobj->GetPosition() - go->pos).LengthSquared() < 20000 //dist
 						&& go->GetState() != CEnemy::STATE_TRACK && !go->GetSpottedStatus()
 						&& nobj->GetActive())
 					{
@@ -626,7 +651,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
-				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD)
+				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD && !Virus->GetPowerupStatus(CItem::INVIS))
 				{
 					if(CheckDetectionRange(go, Virus))
 					{
@@ -733,6 +758,15 @@ void SceneStealth::UpdateEnemies(const double dt)
 				}
 			}
 		}
+	}
+}
+
+void SceneStealth::UpdateDialogue(const double dt)
+{
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		db->Update(dt, Virus);
 	}
 }
 
@@ -914,7 +948,39 @@ void SceneStealth::UpdateGameKeypress(void)
 			Virus->m_pInv.delItem(9);
 		}
 	}
+	if(GetKeyState('p'))
+		b_PauseGame = true;
+}
 
+void SceneStealth::UpdatePauseKeypress(void)
+{
+	if(GetKeyState(VK_UP) && !GetKeyState(VK_DOWN))
+		menu_pause.UpdateSelection(true);
+	if(GetKeyState(VK_DOWN) && !GetKeyState(VK_UP))
+		menu_pause.UpdateSelection(false);
+
+
+	if(GetKeyState(VK_RETURN))
+	{
+		switch(menu_pause.GetSelection())
+		{
+		case 0:
+			b_PauseGame = false;
+			break;
+		case 1:
+			b_PauseGame = false;
+			Restart();
+			InitGame();
+			break;
+		case 2:
+			b_PauseGame = false;
+			Restart();
+			GameState = STATE_MENU;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void SceneStealth::UpdateKeyDown(const unsigned char key)
@@ -1297,7 +1363,6 @@ void SceneStealth::ProcessNameInput(void)
 
 void SceneStealth::Restart(void)
 {
-	GameState = STATE_MENU;
 	b_ReInitGameVars = true;
 	//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
 	Virus->PlayerReset();
@@ -1812,13 +1877,46 @@ void SceneStealth::RenderScore(void)
 }
 void SceneStealth::RenderDialogBox(void)
 {
-	//Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * 0.75, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5,false,false);
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		modelStack.PushMatrix();
+		modelStack.Rotate(-rotateScene, 1, 0, 0);
+		modelStack.PushMatrix();
+		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -8);
+		modelStack.Scale(7, 7, 1);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		modelStack.PopMatrix();
+	}
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		if(db->GetDisplay())
+		{
+			Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * db->GetScale().x, Application::GetWindowHeight() * db->GetScale().y, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5,false,false);
+			if(db->GetTextDisplay())
+			{
+				for(int i = 0; i < db->Text_List.size(); ++i)
+					RenderTextOnScreen(meshList[GEO_TEXT], db->Text_List[i],Color(1,0,0),3,15, 48 - (2.5 * i));
+			}
+			break;
+		}
+	}
 	/*for(int i = 0; i < Virus->getLives(); i++)
 	{
 		Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.8975,false,false);
 	}*/
 
 	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+}
+void SceneStealth::RenderPause(void)
+{
+	for(unsigned i = 0; i < menu_pause.m_menuList.size(); ++i)
+	{
+		RenderTextOnScreen(meshList[GEO_TEXT], menu_pause.m_menuList[i]->GetText(), menu_pause.m_menuList[i]->GetColour(), 
+			menu_pause.m_menuList[i]->GetSize(), menu_pause.m_menuList[i]->pos.x, menu_pause.m_menuList[i]->pos.y);
+	}
 }
 
 void SceneStealth::RenderBackground()
@@ -1910,6 +2008,8 @@ void SceneStealth::Render()
 	case STATE_PLAYING:
 		RenderGame();		//Game playing screen
 		RenderUI();			//Calling of render UI
+		if(b_PauseGame)
+			RenderPause();
 		break;
 	default:
 		break;
@@ -1944,7 +2044,12 @@ void SceneStealth::Exit()
 		delete go;
 		menu_main.m_menuList.pop_back();
 	}
-
+	while(menu_pause.m_menuList.size() > 0)
+	{
+		CMenuItem *go = menu_pause.m_menuList.back();
+		delete go;
+		menu_pause.m_menuList.pop_back();
+	}
 	//Updates new highscore list(if any)
 	HS_List.WriteHighScore();
 }

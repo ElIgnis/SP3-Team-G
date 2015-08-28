@@ -135,6 +135,15 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyUp('s');
 	}
+	//P key
+	if(IsKeyPressed('P'))
+	{
+		scene->UpdateKeyDown('p');
+	}
+	else if(IsKeyReleased('P'))
+	{
+		scene->UpdateKeyUp('p');
+	}
 	//1 key
 	if(IsKeyPressed('1'))
 	{
@@ -270,13 +279,16 @@ bool Application::GetKeyboardUpdate()
 	}
 
 	//Enter key
-	if(IsKeyPressed(VK_RETURN))
+	static bool b_EntKey = false;
+	scene->UpdateKeyUp(VK_RETURN);
+	if(IsKeyPressed(VK_RETURN) && !b_EntKey)
 	{
+		b_EntKey = true;
 		scene->UpdateKeyDown(VK_RETURN);
 	}
-	if(IsKeyReleased(VK_RETURN))
+	if(IsKeyReleased(VK_RETURN) && b_EntKey)
 	{
-		scene->UpdateKeyUp(VK_RETURN);
+		b_EntKey = false;
 	}
 
 	//Spacebar key
