@@ -66,6 +66,7 @@ public:
 
 	//Initialise game variables
 	void InitGame(void);
+	void LoadLevel(const int LevelSelected);
 
 	//Update everything in the game scene here(Not Menu)
 	void UpdateMenu(const double dt);
@@ -86,7 +87,6 @@ public:
 
 	//Compare scores to see if high score is achieved;
 	void CompareScore(int CurrentLevel);
-	void UpdateNewHighScore(void);
 
 	virtual void UpdateKeyDown(const unsigned char key);
 	virtual void UpdateKeyUp(const unsigned char key);
@@ -164,7 +164,7 @@ private:
 	bool b_ReInitGameVars;
 
 	//New High score
-	bool b_NewHighScore;
+	bool b_NameEntered;
 
 	//Game pause state
 	bool b_PauseGame;

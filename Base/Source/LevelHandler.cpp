@@ -148,7 +148,7 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 		inGameLevel.close();
 	}
 	else
-		std::cout << "Load level file failed OHNO" << std::endl;
+		std::cout << "Load enemy file failed" << std::endl;
 }
 
 void CLevelHandler::LoadInteractables(string mapLevel)
@@ -217,7 +217,7 @@ void CLevelHandler::LoadInteractables(string mapLevel)
 		inGameLevel.close();
 	}
 	else
-		std::cout << "Load level file failed OHMY" << std::endl;
+		std::cout << "Load interactables file failed" << std::endl;
 }
 
 void CLevelHandler::LoadDialogue(string newMap)
@@ -323,6 +323,17 @@ bool CLevelHandler::GetStageCompleted(void)
 
 void CLevelHandler::Exit(void)
 {
+	//Clean up string tokens
+	if(Level_Tokens.size() > 0)
+	{
+		Level_Tokens.clear();
+	}
+	if(Level_Tokens2.size() > 0)
+	{
+		Level_Tokens2.clear();
+	}
+
+	//Clean up structure list
 	while(Structure_List.size() > 0)
 	{
 		GameObject *go = Structure_List.back();
@@ -330,6 +341,7 @@ void CLevelHandler::Exit(void)
 		Structure_List.pop_back();
 	}
 
+	//Clean up item list
 	while(Item_List.size() > 0)
 	{
 		GameObject *go = Item_List.back();
@@ -337,6 +349,7 @@ void CLevelHandler::Exit(void)
 		Item_List.pop_back();
 	}
 
+	//Clean up enemy list
 	while(Enemy_List.size() > 0)
 	{
 		GameObject *go = Enemy_List.back();
@@ -344,6 +357,7 @@ void CLevelHandler::Exit(void)
 		Enemy_List.pop_back();
 	}
 
+	//Clean up interactble list
 	while(Interactables_List.size() > 0)
 	{
 		GameObject *go = Interactables_List.back();
@@ -351,10 +365,19 @@ void CLevelHandler::Exit(void)
 		Interactables_List.pop_back();
 	}
 
+	//Clean up checkpoint list
 	while(CheckPoint_List.size() > 0)
 	{
 		GameObject *go = CheckPoint_List.back();
 		delete go;
 		CheckPoint_List.pop_back();
+	}
+
+	//Clean up dialogue list
+	while(Dialogue_List.size() > 0)
+	{
+		CDialogue_Box *go = Dialogue_List.back();
+		delete go;
+		Dialogue_List.pop_back();
 	}
 }

@@ -9,7 +9,7 @@ SceneStealth::SceneStealth()
 	, Virus(NULL)
 	, b_ReInitGameVars(true)
 	, timeElapsed(0.f)
-	, b_NewHighScore(false)
+	, b_NameEntered(false)
 	, b_PauseGame(false)
 {
 }
@@ -36,6 +36,7 @@ void SceneStealth::Init()
 		m_goList.push_back(go);
 	}
 
+	//Main menu
 	CMenuItem *m;
 	m = new CMenuItem("Play", "Play.txt");
 	m->ReadDescription();
@@ -56,6 +57,8 @@ void SceneStealth::Init()
 	menu_main.m_menuList.push_back(m);
 	menu_main.m_menuList[0]->SetIs_Selected(true);
 	menu_main.SpaceOptions(45,10, 5); //Space out menu options equally
+
+	//Pause menu
 	CMenuItem *m2;
 	m = new CMenuItem("Continue", "Play.txt");m->ReadDescription();
 	menu_pause.m_menuList.push_back(m);
@@ -81,12 +84,6 @@ void SceneStealth::Init()
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
-
-	//Loads level
-	LvlHandler.LoadMap("Level//Level 2.txt");
-	LvlHandler.LoadEnemies("Level//Level 2_enemies.txt");
-	LvlHandler.LoadInteractables("Level//Level 2_interactables.txt");
-	LvlHandler.LoadDialogue("Dialogue//Level 2_dialogue.txt");
 	
 	//Initializing m_force for the player
 	m_force = 0.f;
@@ -102,27 +99,47 @@ void SceneStealth::InitGame(void)
 	testes = new CItem(CItem::NOISE);
 }
 
+void SceneStealth::LoadLevel(const int LevelSelected)
+{
+	//Cleans up all loaded level elements
+	LvlHandler.Exit();
+
+	//Loads map
+	std::stringstream ssMap;
+	ssMap << "Level//Level " << LevelSelected << ".txt";
+	LvlHandler.LoadMap(ssMap.str());
+
+	//Load enemies
+	std::stringstream ssEnemy;
+	ssEnemy << "Level//Level " << LevelSelected << "_enemies.txt";
+	LvlHandler.LoadEnemies(ssEnemy.str());
+	
+	//Load interactables
+	std::stringstream ssInteractables;
+	ssInteractables << "Level//Level " << LevelSelected << "_interactables.txt";
+	LvlHandler.LoadInteractables(ssInteractables.str());
+
+	//Load dialogue
+	std::stringstream ssDialogue;
+	ssDialogue << "Dialogue//Level " << LevelSelected << "_dialogue.txt";
+	LvlHandler.LoadDialogue(ssDialogue.str());
+}
+
 void SceneStealth::CompareScore(int CurrentLevel)
 {
-	GameState = STATE_MENU;
-	LvlHandler.SetStageCompleted(false);
-
 	//Overwrite score if lower
 	if(tempHighScore < HS_List.GetScoreList().at(CurrentLevel -1))
 	{
-		b_NewHighScore = true;
+		std::cout << "new HS" << std::endl;
+		HS_List.SetNewHighScore(tempHighScore, LvlHandler.GetCurrentStage()-1);
 	}
-}
-
-void SceneStealth::UpdateNewHighScore(void)
-{
-	if(b_NewHighScore)
-		ProcessNameInput();
 }
 
 void SceneStealth::UpdatePlayerScore(const double dt)
 {
 	timeElapsed += (float)dt;
+	
+	//Updates every second
 	if(timeElapsed >= 1.0f)
 	{
 		timeElapsed = 0.f;
@@ -367,45 +384,71 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
-	switch(GameState)
+
+	//Let player input name
+	if(!b_NameEntered)
 	{
-	case STATE_MENU:
-		camera.SetPersp(false);
-		camera.Reset();
-		UpdateMenu(dt);
-		//Prevent updating of menu scrolling while entering high score
-		if(!b_NewHighScore)
+		ProcessNameInput();
+	}
+	//Only begin updating after name is input
+	else
+	{
+		switch(GameState)
+		{
+		case STATE_MENU:
+			camera.SetPersp(false);
+			camera.Reset();
+			UpdateMenu(dt);
 			UpdateMenuKeypress();
-		UpdateNewHighScore();
-		break;
-	case STATE_PLAYING:
-		//Set the camera to target this player
-		camera.SetTargetPlayer(Virus);
-		camera.SetPersp(true);
-		if(!b_PauseGame)
-		{
-			camera.Update(dt);
-			UpdateGameKeypress();
-			UpdatePlayer(dt);
-			UpdateEnemies(dt);
-			UpdatePlayerScore(dt);
-			UpdateDialogue(dt);
+			break;
+		case STATE_PLAYING:
+			//Set the camera to target this player
+			camera.SetTargetPlayer(Virus);
+			camera.SetPersp(true);
+			if(!b_PauseGame)
+			{
+				camera.Update(dt);
+				UpdateGameKeypress();
+				UpdatePlayer(dt);
+				UpdateEnemies(dt);
+				UpdatePlayerScore(dt);
+				UpdateDialogue(dt);
+			}
+			else
+			{
+				UpdatePauseKeypress();
+				menu_pause.Update(dt);
+			}
+			//Compare scores when level is completed
+			if(LvlHandler.GetStageCompleted())
+			{
+				std::cout << "run" << std::endl;
+				LvlHandler.SetStageCompleted(false);
+				int i_TempLevelSelect = LvlHandler.GetCurrentStage();
+
+				//Move on to next level
+				if(i_TempLevelSelect < 4)
+				{
+					//Compare score at end of stage
+					CompareScore(LvlHandler.GetCurrentStage());
+					//Resets score timer
+					tempHighScore.ResetTimer();
+					//Set level to next level
+					LvlHandler.SetCurrentStage(++i_TempLevelSelect);
+					//Loads set level
+					LoadLevel(LvlHandler.GetCurrentStage());
+				}
+				//If all levels are completed, return to menu
+				else
+				{
+					GameState = STATE_MENU;
+					Restart();
+				}
+			}
+			break;
+		default:
+			break;
 		}
-		else
-		{
-			UpdatePauseKeypress();
-			menu_pause.Update(dt);
-		}
-		//Compare scores when level is completed
-		if(LvlHandler.GetStageCompleted())
-		{
-			CompareScore(LvlHandler.GetCurrentStage());
-			Restart();
-			GameState = STATE_MENU;
-		}
-		break;
-	default:
-		break;
 	}
 	if(Application::IsKeyPressed('J'))
 		std::cout<<Virus->pos<<std::endl;
@@ -483,7 +526,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						b_ColCheck = true;
 						break;
 					case GameObject::GO_WALL:
-						b_ColCheck = true;
+						//b_ColCheck = true;
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
@@ -792,6 +835,8 @@ void SceneStealth::UpdateMenuKeypress(void)
 				b_ReInitGameVars = false;
 				InitGame();
 			}
+			//Loads selected level
+			LoadLevel(LvlHandler.GetCurrentStage());
 			GameState = STATE_PLAYING;
 		}
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 5)//Exit
@@ -1356,19 +1401,20 @@ void SceneStealth::ProcessNameInput(void)
 			name << tempHighScore.GetNameString().at(i);
 		}
 		tempHighScore.SetName(name.str());
-		HS_List.SetNewHighScore(tempHighScore, LvlHandler.GetCurrentStage()-1);
-		b_NewHighScore = false;
-		LvlHandler.SetStageCompleted(false);
+		b_NameEntered = true;
 	}
 }
 
 void SceneStealth::Restart(void)
 {
 	b_ReInitGameVars = true;
+	b_NameEntered = false;
+
 	//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
 	Virus->PlayerReset();
 	LvlHandler.Exit();
-	tempHighScore.Reset();
+	tempHighScore.ResetRecord();
+	
 }
 
 void SceneStealth::RenderGO(GameObject *go)
@@ -1674,24 +1720,27 @@ void SceneStealth::RenderMenu(void)
 	RenderMesh(meshList[GEO_PLAYER], false);
 	modelStack.PopMatrix();
 	
-	for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
-	{
-		RenderTextOnScreen(meshList[GEO_TEXT], menu_main.m_menuList[i]->GetText(), menu_main.m_menuList[i]->GetColour(), 
-			menu_main.m_menuList[i]->GetSize(), menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
-	}
-
-	RenderDesc(menu_main);
-
-	if(b_NewHighScore)
+	//Renders name input
+	if(!b_NameEntered)
 	{
 		//Entering Highscore codes here
-		RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! You have acquired a new high score!!", Color(), 4.f, 4.f, 52.f);
 		std::ostringstream HighScoreName;
 		for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
 		{
 			HighScoreName << tempHighScore.GetNameString()[i];
 		}
-		RenderTextOnScreen(meshList[GEO_TEXT], "Please enter your name: " + HighScoreName.str(), Color(0, 1, 0), 3.f, 4.f, 48.f);
+		RenderTextOnScreen(meshList[GEO_TEXT], "Please enter your name: " + HighScoreName.str(), Color(1, 1, 1), 3.f, 4.f, 48.f);
+	}
+	//Renders menu
+	else
+	{
+		RenderDesc(menu_main);
+
+		for(unsigned i = 0; i < menu_main.m_menuList.size(); ++i)
+		{
+			RenderTextOnScreen(meshList[GEO_TEXT], menu_main.m_menuList[i]->GetText(), menu_main.m_menuList[i]->GetColour(), 
+				menu_main.m_menuList[i]->GetSize(), menu_main.m_menuList[i]->pos.x, menu_main.m_menuList[i]->pos.y);
+		}
 	}
 }
 

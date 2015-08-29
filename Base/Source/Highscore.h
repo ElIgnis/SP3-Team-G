@@ -47,7 +47,8 @@ public:
 
 	string GetName(void);
 	int GetScore(void);
-	void Reset(void);
+	void ResetRecord(void);
+	void ResetTimer(void);
 
 	//Get and Set Functions
 	int GetNameCharCount(void);
@@ -67,7 +68,6 @@ public:
 	vector<char> GetNameString(void);
 
 	void SetName(string newName);
-	void SetNewHighScore(const CHighscore &AssignTime);
 
 	void ConvertToMinutes(CHighscore &ConvertTime);
 
