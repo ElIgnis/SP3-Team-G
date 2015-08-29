@@ -1784,11 +1784,6 @@ void SceneStealth::RenderUI(void)
 
 void SceneStealth::RenderHealthbar(void)
 {
-	//Health
-	std::stringstream ssH;
-	ssH << 'x' << Virus->getLives();
-	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 5, 12, 53.5);
-
 	//Hotbar for items
 	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
 	//Hotbar selection indicator
@@ -1796,6 +1791,11 @@ void SceneStealth::RenderHealthbar(void)
     //Player health
 	Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.23, Application::GetWindowHeight() * 0.08, Application::GetWindowWidth() * 0.145, Application::GetWindowHeight() * 0.8975,false,false);
 	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+
+	//Health
+	std::stringstream ssH;
+	ssH << 'x' << Virus->getLives();
+	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 5, 12, 53.5);
 }
 void SceneStealth::RenderInventory(void)
 {
@@ -1863,6 +1863,7 @@ void SceneStealth::RenderInventory(void)
 void SceneStealth::RenderScore(void)
 {
 	std::stringstream ssScore;
+	ssScore << "Time Elapsed: ";
 	if(tempHighScore.GetMinutes() < 10)
 		ssScore << "0" << tempHighScore.GetMinutes();
 	else
@@ -1872,7 +1873,7 @@ void SceneStealth::RenderScore(void)
 	else
 		ssScore << " : " << tempHighScore.GetSeconds();
 
-	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 10, 50);//fps
+	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 5, 48);
 }
 void SceneStealth::RenderDialogBox(void)
 {
