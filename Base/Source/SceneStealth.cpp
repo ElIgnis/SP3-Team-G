@@ -75,6 +75,7 @@ void SceneStealth::Init()
 	}
 
 	bLightEnabled = false;
+	rotateAngle = 90;
 }
 
 void SceneStealth::InitGame(void)
@@ -82,17 +83,17 @@ void SceneStealth::InitGame(void)
 	//Initialise all game variables here
 
 	//Loads level
-	LvlHandler.LoadMap("Level//Level 1.txt");
-	LvlHandler.LoadEnemies("Level//Level 1_enemies.txt");
-	LvlHandler.LoadInteractables("Level//Level 1_interactables.txt");
-	LvlHandler.LoadDialogue("Dialogue//Level 1_dialogue.txt");
+	LvlHandler.LoadMap("Level//Level 2.txt");
+	LvlHandler.LoadEnemies("Level//Level 2_enemies.txt");
+	LvlHandler.LoadInteractables("Level//Level 2_interactables.txt");
+	LvlHandler.LoadDialogue("Dialogue//Level 2_dialogue.txt");
 	
 	//Initializing m_force for the player
 	m_force = 0.f;
-	rotateAngle = 90;
+
 	//Initializing the player
 	Virus = new CPlayer;
-	Virus->pos.Set(-75,45,0);
+	Virus->pos.Set(-95,45,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 	Virus->setLives(3);
