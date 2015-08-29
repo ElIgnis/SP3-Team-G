@@ -607,17 +607,17 @@ void SceneStealth::UpdateEnemies(const double dt)
 				Virus->SetPlayerState(CPlayer::DEAD);
 			}
 			//Enemy to enemy collision
-			for(std::vector<CEnemy *>::iterator it2 = it + 1; it2 !=LvlHandler.GetEnemy_List().end(); ++it2)
-			{
-				GameObject *go2 = (GameObject *)*it2;
-				if(CheckCollision(go, go2, dt))
-				{
-					//CollisionResponse(go, go2, dt);
-					
-					go->vel = ((go->vel + go2->vel).Normalized() * 15.f * dt);
-					go2->vel = go->vel;
-				}
-			}
+			//for(std::vector<CEnemy *>::iterator it2 = it + 1; it2 !=LvlHandler.GetEnemy_List().end(); ++it2)
+			//{
+			//	GameObject *go2 = (GameObject *)*it2;
+			//	if(CheckCollision(go, go2, dt))
+			//	{
+			//		//CollisionResponse(go, go2, dt);
+			//		
+			//		go->vel = ((go->vel + go2->vel).Normalized() * 15.f * dt);
+			//		go2->vel = go->vel;
+			//	}
+			//}
 			//Stunning enemies
 			if(GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
