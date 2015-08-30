@@ -85,6 +85,7 @@ public:
 	void UpdateGameKeypress(void);
 	void UpdatePauseKeypress(void);
 	void UpdateDeadKeypress(void);
+	void UpdateLevelTransit(void);
 
 	//Compare scores to see if high score is achieved;
 	void CompareScore(int CurrentLevel);
@@ -119,6 +120,8 @@ public:
 	void RenderDialogBox(void);
 	void RenderPause(void);
 	void RenderDead(void);
+	void RenderLevelTransit(void);
+
 protected:
 
 	//Physics
@@ -164,8 +167,17 @@ private:
 	//Check to reload all game vars
 	bool b_ReInitGameVars;
 
-	//New High score
+	//Enter name at start of game
 	bool b_NameEntered;
+
+	//New High score
+	bool b_ShowHSNotice;
+
+	//Loading of next level
+	bool b_LoadNextLevel;
+
+	//Check if all levels completed
+	bool b_GameCompleted;
 
 	//Game pause state
 	bool b_PauseGame;

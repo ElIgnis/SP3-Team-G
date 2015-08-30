@@ -1,0 +1,10 @@
+#ALL LEVEL SPAWN POINTS TO BE INSERTED HERE#
+##Format: POS_X, POS_Y, POS_Z
+#Level 1#
+-74,45,0
+#Level 2#
+-95,45,0
+#Level 3#
+5,5,0
+#Level 4#
+3,3,0

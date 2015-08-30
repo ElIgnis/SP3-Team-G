@@ -12,6 +12,9 @@ SceneStealth::SceneStealth()
 	, b_NameEntered(false)
 	, b_PauseGame(false)
 	, b_OutOfLives(false)
+	, b_ShowHSNotice(false)
+	, b_LoadNextLevel(false)
+	, b_GameCompleted(false)
 {
 }
 
@@ -42,8 +45,7 @@ void SceneStealth::Init()
 	m = new CMenuItem("Play", "Play.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Level Select", "LevelSelect.txt");
-	m->ReadDescription();
+	m = new CMenuItem("Level Select");
 	menu_main.m_menuList.push_back(m);
 	m = new CMenuItem("Highscore");
 	menu_main.m_menuList.push_back(m);
@@ -95,13 +97,15 @@ void SceneStealth::Init()
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
-	
+
+	//Load ALL level spawn points
+	LvlHandler.LoadSpawnPoints("Level//SpawnPoints.txt");
+
 	//Initializing m_force for the player
 	m_force = 0.f;
 
 	//Initializing the player
 	Virus = new CPlayer;
-	Virus->pos.Set(-95,45,0);
 	Virus->scale.Set(7,7,7);
 	Virus->mass = 1.f;
 	Virus->setLives(3);
@@ -134,6 +138,9 @@ void SceneStealth::LoadLevel(const int LevelSelected)
 	std::stringstream ssDialogue;
 	ssDialogue << "Dialogue//Level " << LevelSelected << "_dialogue.txt";
 	LvlHandler.LoadDialogue(ssDialogue.str());
+
+	//Initializing the player spawn points based on level
+	Virus->pos = Vector3(*(LvlHandler.GetSpawn_List().at(LevelSelected-1)));
 }
 
 void SceneStealth::CompareScore(int CurrentLevel)
@@ -141,7 +148,7 @@ void SceneStealth::CompareScore(int CurrentLevel)
 	//Overwrite score if lower
 	if(tempHighScore < HS_List.GetScoreList().at(CurrentLevel -1))
 	{
-		std::cout << "new HS" << std::endl;
+		b_ShowHSNotice = true;
 		HS_List.SetNewHighScore(tempHighScore, LvlHandler.GetCurrentStage()-1);
 	}
 }
@@ -395,12 +402,13 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
-
+	
 	//Let player input name
 	if(!b_NameEntered)
 	{
 		ProcessNameInput();
 	}
+	
 	//Only begin updating after name is input
 	else
 	{
@@ -418,7 +426,7 @@ void SceneStealth::Update(double dt)
 			camera.SetPersp(true);
 
 			//Update game if not dead and paused
-			if(!b_PauseGame && !b_OutOfLives)
+			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
 				camera.Update(dt);
 				UpdateGameKeypress();
@@ -439,32 +447,44 @@ void SceneStealth::Update(double dt)
 				UpdateDeadKeypress();
 				menu_dead.Update(dt);
 			}
+			
+			//Update game clear menu
+			if(b_GameCompleted)
+			{
+				if(GetKeyState(VK_RETURN))
+				{
+					RestartGame();
+				}
+			}
 
 			//Compare scores when level is completed
 			if(LvlHandler.GetStageCompleted())
 			{
-				std::cout << "run" << std::endl;
-				LvlHandler.SetStageCompleted(false);
 				int i_TempLevelSelect = LvlHandler.GetCurrentStage();
-
+				UpdateLevelTransit();
+				
 				//Move on to next level
 				if(i_TempLevelSelect < 4)
 				{
 					//Compare score at end of stage
 					CompareScore(LvlHandler.GetCurrentStage());
-					//Resets score timer
-					tempHighScore.ResetTimer();
-					//Set level to next level
-					LvlHandler.SetCurrentStage(++i_TempLevelSelect);
-					//Loads set level
-					LoadLevel(LvlHandler.GetCurrentStage());
+
+					//Proceed to reset score and load next lvl after HS screen
+					if(b_LoadNextLevel)
+					{
+						b_LoadNextLevel = false;
+
+						//Resets score timer
+						tempHighScore.ResetTimer();
+						//Set level to next level
+						LvlHandler.SetCurrentStage(++i_TempLevelSelect);
+						//Loads set level
+						LoadLevel(LvlHandler.GetCurrentStage());
+					}
 				}
 				//If all levels are completed, return to menu
 				else
-				{
-					GameState = STATE_MENU;
-					RestartGame();
-				}
+					b_GameCompleted = true;
 			}
 			break;
 		default:
@@ -897,12 +917,12 @@ void SceneStealth::UpdateMenuKeypress(void)
 void SceneStealth::UpdateGameKeypress(void)
 {
 	m_force = 0.f;
-	if(GetKeyState(VK_BACK))//change game state
-		GameState = STATE_MENU;
-	if(GetKeyState(VK_RETURN))
-	{
-		//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
-	}
+	//if(GetKeyState(VK_BACK))//change game state
+	//	GameState = STATE_MENU;
+	//if(GetKeyState(VK_RETURN))
+	//{
+	//	//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
+	//}
 
 	//Forward movement
 	if(GetKeyState('w'))
@@ -1061,7 +1081,6 @@ void SceneStealth::UpdateDeadKeypress(void)
 	if(GetKeyState(VK_DOWN) && !GetKeyState(VK_UP))
 		menu_dead.UpdateSelection(false);
 
-	std::cout << menu_dead.GetSelection() << std::endl;
 	if(GetKeyState(VK_RETURN))
 	{
 		switch(menu_dead.GetSelection())
@@ -1081,6 +1100,16 @@ void SceneStealth::UpdateDeadKeypress(void)
 			break;
 		}
 		b_OutOfLives = false;
+	}
+}
+
+void SceneStealth::UpdateLevelTransit(void)
+{
+	if(GetKeyState(VK_RETURN))
+	{
+		b_LoadNextLevel = true;
+		b_ShowHSNotice = false;
+		LvlHandler.SetStageCompleted(false);
 	}
 }
 
@@ -1440,16 +1469,9 @@ void SceneStealth::ProcessNameInput(void)
 		tempHighScore.SubtractNameCharCount();
 	}
 	
-	static bool b_ReturnKeyState = false;
 	//Confirm name
-	if(Application::IsKeyPressed(VK_RETURN) && !b_ReturnKeyState)
+	if(GetKeyState(VK_RETURN))
 	{
-		b_ReturnKeyState = true;
-	}
-	if(!Application::IsKeyPressed(VK_RETURN) && b_ReturnKeyState)
-	{
-		b_ReturnKeyState = false;
-
 		std::stringstream name;
 		for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
 		{
@@ -1471,13 +1493,13 @@ void SceneStealth::RestartLevel(void)
 
 void SceneStealth::RestartGame(void)
 {
+	b_GameCompleted = false;
 	b_ReInitGameVars = true;
 	b_NameEntered = false;
-	GameState = STATE_MENU;
 	Virus->PlayerReset();
 	camera.Reset();
 	tempHighScore.ResetRecord();
-	
+	GameState = STATE_MENU;
 }
 
 void SceneStealth::RenderGO(GameObject *go)
@@ -1766,14 +1788,18 @@ void SceneStealth::RenderGame(void)
 	RenderScore();
 }
 
-void SceneStealth::RenderMenu(void)
+void SceneStealth::RenderBackground(void)
 {
 	//Background screen
 	modelStack.PushMatrix();
-	modelStack.Scale(224.f, 126.f, 1.f);
-	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.Scale(ScreenLR * 2, ScreenUD * 2, 1.f);
+	Render2DMesh(meshList[GEO_MENUSPRITE], false, Application::GetWindowWidth() * 1.f, Application::GetWindowHeight() * 1.f, Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f);
+	//RenderMesh(meshList[GEO_MENUSPRITE], false);
 	modelStack.PopMatrix();
+}
 
+void SceneStealth::RenderMenu(void)
+{
 	modelStack.PushMatrix();
 	modelStack.Translate(90,-45,10);
 	modelStack.Rotate(-90,1,0,0);
@@ -1840,7 +1866,17 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			for(int i = 0; i < HS_List.GetHighScoreCount(); ++i)
 			{
 				std::ostringstream HighScore;
-				HighScore << "Level #" << i+1 << ": " << HS_List.GetScoreList().at(i);
+				HighScore << "Level #" << i+1 << ": " << HS_List.GetScoreList().at(i).GetName() << " ";
+				//Rendering another 0 for mins < 10
+				if(HS_List.GetScoreList().at(i).GetMinutes() < 10)
+					HighScore << "0" << HS_List.GetScoreList().at(i).GetMinutes() << ":";
+				else
+					HighScore << HS_List.GetScoreList().at(i).GetMinutes() << ":";
+				//Rendering another 0 for sec < 10
+				if(HS_List.GetScoreList().at(i).GetSeconds() < 10)
+					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
+				else
+					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
 				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
 			}
 		}
@@ -2023,7 +2059,6 @@ void SceneStealth::RenderDialogBox(void)
 
 	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
 }
-
 void SceneStealth::RenderPause(void)
 {
 	for(unsigned i = 0; i < menu_pause.m_menuList.size(); ++i)
@@ -2032,7 +2067,6 @@ void SceneStealth::RenderPause(void)
 			menu_pause.m_menuList[i]->GetSize(), menu_pause.m_menuList[i]->pos.x, menu_pause.m_menuList[i]->pos.y);
 	}
 }
-
 void SceneStealth::RenderDead(void)
 {
 	std::stringstream ssNotice;
@@ -2045,10 +2079,35 @@ void SceneStealth::RenderDead(void)
 			menu_dead.m_menuList[i]->GetSize(), menu_dead.m_menuList[i]->pos.x, menu_dead.m_menuList[i]->pos.y);
 	}
 }
+void SceneStealth::RenderLevelTransit(void)
+{	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	RenderBackground();
 
-void SceneStealth::RenderBackground()
-{
-	Render2DMesh(meshList[GEO_STARTMENU], false, 1.0f);
+	//Text for transit screen
+	if(LvlHandler.GetCurrentStage() < 4)
+		RenderTextOnScreen(meshList[GEO_TEXT], "Level Completed!", Color(0, 1, 0), 3, 5, 48);
+	//Text for completing game
+	else
+		RenderTextOnScreen(meshList[GEO_TEXT], "Game Completed!", Color(0, 1, 0), 3, 5, 48);
+	
+	RenderTextOnScreen(meshList[GEO_TEXT], "Press Enter to continue", Color(0, 1, 0), 3, 5, 36);
+	if(b_ShowHSNotice)
+	{
+		std::stringstream ssNotice;
+		if(tempHighScore.GetMinutes() < 10)
+			ssNotice << "0" << tempHighScore.GetMinutes();
+		else
+			ssNotice << tempHighScore.GetMinutes();
+		if(tempHighScore.GetSeconds() < 10)
+			ssNotice << " : 0" << tempHighScore.GetSeconds();
+		else
+			ssNotice << " : " << tempHighScore.GetSeconds();
+		RenderTextOnScreen(meshList[GEO_TEXT], "Congratulations! New highscore timing!", Color(0, 1, 0), 3, 5, 44);
+		RenderTextOnScreen(meshList[GEO_TEXT], ssNotice.str(), Color(0, 1, 0), 3, 5, 40);
+	}
+	
 }
 
 void SceneStealth::Render()
@@ -2129,8 +2188,8 @@ void SceneStealth::Render()
 	switch(GameState)
 	{
 	case STATE_MENU:
+		RenderBackground();	//Rendering of menu background
 		RenderMenu();		//Calling of rendermenu
-		RenderBackground();	// Render the background image
 		break;
 	case STATE_PLAYING:
 		RenderGame();		//Game playing screen
@@ -2139,8 +2198,12 @@ void SceneStealth::Render()
 		if(b_PauseGame)
 			RenderPause();
 		//Render dead screen
-		if(b_OutOfLives)
+		else if(b_OutOfLives)
 			RenderDead();
+		else if(LvlHandler.GetStageCompleted())
+		{
+			RenderLevelTransit();
+		}
 		break;
 	default:
 		break;
@@ -2175,11 +2238,27 @@ void SceneStealth::Exit()
 		delete go;
 		menu_main.m_menuList.pop_back();
 	}
+	//Clean up pause Menu
 	while(menu_pause.m_menuList.size() > 0)
 	{
 		CMenuItem *go = menu_pause.m_menuList.back();
 		delete go;
 		menu_pause.m_menuList.pop_back();
+	}
+	//Clean up dead Menu
+	while(menu_dead.m_menuList.size() > 0)
+	{
+		CMenuItem *go = menu_dead.m_menuList.back();
+		delete go;
+		menu_dead.m_menuList.pop_back();
+	}
+
+	//Clean up spawn list
+	while(LvlHandler.GetSpawn_List().size() > 0)
+	{
+		Vector3 *spawn = LvlHandler.GetSpawn_List().back();
+		delete spawn;
+		LvlHandler.GetSpawn_List().pop_back();
 	}
 	//Updates new highscore list(if any)
 	HS_List.WriteHighScore();

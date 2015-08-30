@@ -284,10 +284,11 @@ bool Application::GetKeyboardUpdate()
 	if(IsKeyPressed(VK_RETURN) && !b_EntKey)
 	{
 		b_EntKey = true;
-		scene->UpdateKeyDown(VK_RETURN);
+		
 	}
-	if(IsKeyReleased(VK_RETURN) && b_EntKey)
+	if(!IsKeyPressed(VK_RETURN) && b_EntKey)
 	{
+		scene->UpdateKeyDown(VK_RETURN);
 		b_EntKey = false;
 	}
 

@@ -26,6 +26,9 @@ CLevelHandler::~CLevelHandler(void)
 
 void CLevelHandler::LoadMap(string mapLevel)
 {
+	//vector to contain elements split
+	vector<string>Level_Tokens;
+
 	//Reset line
 	m_iObjLine = 0;
 
@@ -85,12 +88,58 @@ void CLevelHandler::LoadMap(string mapLevel)
 	else
 		std::cout << "Load level file failed" << std::endl;
 }
-			
-void CLevelHandler::LoadEnemies(string mapLevel)
+
+void CLevelHandler::LoadSpawnPoints(string newSpawnPoint)
 {
+	//vector to contain elements split
+	vector<string>Spawn_Tokens;
+
+	//Reset line
+	m_iObjLine = 0;
+
 	//Load Level details
 	std::ifstream inGameLevel;
-	inGameLevel.open(mapLevel);
+	inGameLevel.open(newSpawnPoint);
+	if(inGameLevel.good())
+	{
+		while(getline(inGameLevel, m_sLevelData))
+		{
+			std::istringstream split(m_sLevelData);
+
+			//Dont read lines with #
+			if(m_sLevelData[0] == '#')
+			{
+				continue;
+			}
+
+			for(string each; std::getline(split, each, m_cSplit_Char);)
+			{
+				Spawn_Tokens.push_back(each);
+			}
+
+			//Create new spawn points
+			Vector3 *SpawnPoint = new Vector3();
+			SpawnPoint->Set(stof(Spawn_Tokens.at(SPAWN_POSX + (m_iObjLine * SPAWN_INDEX)))
+				, stof(Spawn_Tokens.at(SPAWN_POSY + (m_iObjLine * SPAWN_INDEX)))
+				, stof(Spawn_Tokens.at(SPAWN_POSZ + (m_iObjLine * SPAWN_INDEX))));
+
+				SpawnPoints_List.push_back(SpawnPoint);
+			++m_iObjLine;
+			}
+		inGameLevel.close();
+	}
+	else
+		std::cout << "Load spawn points file failed" << std::endl;
+}
+			
+void CLevelHandler::LoadEnemies(string newEnemies)
+{
+	//vector to contain elements split
+	vector<string>Enemy_Tokens;
+
+	//Load Level details
+	std::ifstream inGameLevel;
+	inGameLevel.open(newEnemies);
 	if(inGameLevel.good())
 	{
 		while(getline(inGameLevel, m_sLevelData2))
@@ -105,45 +154,45 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 
 			for(string each; std::getline(split, each, m_cSplit_Char);)
 			{
-				Level_Tokens2.push_back(each);
+				Enemy_Tokens.push_back(each);
 			}
 
-			if(Level_Tokens2.at(GO_TYPE) == "ENEMY_SENTRY")
+			if(Enemy_Tokens.at(GO_TYPE) == "ENEMY_SENTRY")
 			{
-				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
+				CEnemy *en = new CEnemy_Sentry(Vector3(stof(Enemy_Tokens[EPOSX]), stof(Enemy_Tokens[EPOSY]), stof(Enemy_Tokens[EPOSZ])),
 					Vector3(Enemy_Sentry_Size, Enemy_Sentry_Size, Enemy_Sentry_Size),
-					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0)
-					,stof(Level_Tokens2[EDETECTIONRANGE]), stof(Level_Tokens2[EDETECTIONANGLE])
-					,stof(Level_Tokens2[Enemy_Sentry_Rot1]), stof(Level_Tokens2[Enemy_Sentry_Rot2])
-					, stof(Level_Tokens2[Enemy_Sentry_RotSpd]));
+					Vector3(stof(Enemy_Tokens[ENORMALX]), stof(Enemy_Tokens[ENORMALY]), 0)
+					,stof(Enemy_Tokens[EDETECTIONRANGE]), stof(Enemy_Tokens[EDETECTIONANGLE])
+					,stof(Enemy_Tokens[Enemy_Sentry_Rot1]), stof(Enemy_Tokens[Enemy_Sentry_Rot2])
+					, stof(Enemy_Tokens[Enemy_Sentry_RotSpd]));
 				Enemy_List.push_back(en);
 			}
-			else if(Level_Tokens2.at(EGO_TYPE) == "ENEMY_PATROL")
+			else if(Enemy_Tokens.at(EGO_TYPE) == "ENEMY_PATROL")
 			{
-				CEnemy *en = new CEnemy_Patrol(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
+				CEnemy *en = new CEnemy_Patrol(Vector3(stof(Enemy_Tokens[EPOSX]), stof(Enemy_Tokens[EPOSY]), stof(Enemy_Tokens[EPOSZ])),
 					Vector3(Enemey_Patrol_Size, Enemey_Patrol_Size, Enemey_Patrol_Size), 
-					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0),
-					stof(Level_Tokens2[EDETECTIONRANGE]), stof(Level_Tokens2[EDETECTIONANGLE]));
-				int i_tempNum = stoi(Level_Tokens2[ENUM_POINTS]);//Number of patrol points
+					Vector3(stof(Enemy_Tokens[ENORMALX]), stof(Enemy_Tokens[ENORMALY]), 0),
+					stof(Enemy_Tokens[EDETECTIONRANGE]), stof(Enemy_Tokens[EDETECTIONANGLE]));
+				int i_tempNum = stoi(Enemy_Tokens[ENUM_POINTS]);//Number of patrol points
 				for(int i = 0; i < i_tempNum; ++i)
-					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[EPOINT1 + i * 2]), stof(Level_Tokens2[EPOINT2 + i * 2]), 0));
+					en->AddPatrolPoint(Vector3(stof(Enemy_Tokens[EPOINT1 + i * 2]), stof(Enemy_Tokens[EPOINT2 + i * 2]), 0));
 				en->normal.Normalize();
 				Enemy_List.push_back(en);
 			}
-			else if(Level_Tokens2.at(EGO_TYPE) == "ENEMY_PATROL_RAGE")
+			else if(Enemy_Tokens.at(EGO_TYPE) == "ENEMY_PATROL_RAGE")
 			{
-				CEnemy *en = new CEnemy_Patrol_Rage(Vector3(stof(Level_Tokens2[EPOSX]), stof(Level_Tokens2[EPOSY]), stof(Level_Tokens2[EPOSZ])),
+				CEnemy *en = new CEnemy_Patrol_Rage(Vector3(stof(Enemy_Tokens[EPOSX]), stof(Enemy_Tokens[EPOSY]), stof(Enemy_Tokens[EPOSZ])),
 					Vector3(Enemey_Patrol_Size, Enemey_Patrol_Size, Enemey_Patrol_Size),
-					Vector3(stof(Level_Tokens2[ENORMALX]), stof(Level_Tokens2[ENORMALY]), 0),
-					stof(Level_Tokens2[EDETECTIONRANGE]), stof(Level_Tokens2[EDETECTIONANGLE]));
-				int i_tempNum = stoi(Level_Tokens2[ENUM_POINTS]);//Number of patrol points
+					Vector3(stof(Enemy_Tokens[ENORMALX]), stof(Enemy_Tokens[ENORMALY]), 0),
+					stof(Enemy_Tokens[EDETECTIONRANGE]), stof(Enemy_Tokens[EDETECTIONANGLE]));
+				int i_tempNum = stoi(Enemy_Tokens[ENUM_POINTS]);//Number of patrol points
 				for(int i = 0; i < i_tempNum; ++i)
-					en->AddPatrolPoint(Vector3(stof(Level_Tokens2[EPOINT1 + i * 2]), stof(Level_Tokens2[EPOINT2 + i * 2]), 0));
+					en->AddPatrolPoint(Vector3(stof(Enemy_Tokens[EPOINT1 + i * 2]), stof(Enemy_Tokens[EPOINT2 + i * 2]), 0));
 				en->normal.Normalize();
 				Enemy_List.push_back(en);
 			}
-			while(Level_Tokens2.size() > 0)
-				Level_Tokens2.pop_back();
+			while(Enemy_Tokens.size() > 0)
+				Enemy_Tokens.pop_back();
 		}
 		inGameLevel.close();
 	}
@@ -151,11 +200,14 @@ void CLevelHandler::LoadEnemies(string mapLevel)
 		std::cout << "Load enemy file failed" << std::endl;
 }
 
-void CLevelHandler::LoadInteractables(string mapLevel)
+void CLevelHandler::LoadInteractables(string newInteractables)
 {
+	//vector to contain elements split
+	vector<string>Interactables_Tokens;
+
 	//Load Level details
 	std::ifstream inGameLevel;
-	inGameLevel.open(mapLevel);
+	inGameLevel.open(newInteractables);
 	if(inGameLevel.good())
 	{
 		while(getline(inGameLevel, m_sLevelData2))
@@ -170,49 +222,49 @@ void CLevelHandler::LoadInteractables(string mapLevel)
 
 			for(string each; std::getline(split, each, m_cSplit_Char);)
 			{
-				Level_Tokens2.push_back(each);
+				Interactables_Tokens.push_back(each);
 			}
 
-			if(Level_Tokens2.at(GO_TYPE) == "GO_LEVER")
+			if(Interactables_Tokens.at(GO_TYPE) == "GO_LEVER")
 			{
 				CInteractables *in = new CLever( 
-					Vector3(stof(Level_Tokens2.at(I_POSX))
-					, stof(Level_Tokens2.at(I_POSY))
-					, stof(Level_Tokens2.at(I_POSZ )))
+					Vector3(stof(Interactables_Tokens.at(I_POSX))
+					, stof(Interactables_Tokens.at(I_POSY))
+					, stof(Interactables_Tokens.at(I_POSZ )))
 					//normal
-					, Vector3(stof(Level_Tokens2.at(I_NORMALX))
-					, stof(Level_Tokens2.at(I_NORMALY)))
+					, Vector3(stof(Interactables_Tokens.at(I_NORMALX))
+					, stof(Interactables_Tokens.at(I_NORMALY)))
 					//scale
-					, Vector3(stof(Level_Tokens2.at(I_SCALEX))
-					, stof(Level_Tokens2.at(I_SCALEY))
-					, stof(Level_Tokens2.at(I_SCALEZ)))
+					, Vector3(stof(Interactables_Tokens.at(I_SCALEX))
+					, stof(Interactables_Tokens.at(I_SCALEY))
+					, stof(Interactables_Tokens.at(I_SCALEZ)))
 					//Activation position
-					,Vector3(stof(Level_Tokens2.at(I_ACTIVATE_POSX))
-					, stof(Level_Tokens2.at(I_ACTIVATE_POSY))
-					, stof(Level_Tokens2.at(I_ACTIVATE_POSZ))));
+					,Vector3(stof(Interactables_Tokens.at(I_ACTIVATE_POSX))
+					, stof(Interactables_Tokens.at(I_ACTIVATE_POSY))
+					, stof(Interactables_Tokens.at(I_ACTIVATE_POSZ))));
 				Interactables_List.push_back(in);
 			}
-			if(Level_Tokens2.at(GO_TYPE) == "GO_LASER")
+			if(Interactables_Tokens.at(GO_TYPE) == "GO_LASER")
 			{
 				CInteractables *in = new CLaser( 
-					Vector3(stof(Level_Tokens2.at(I_POSX))
-					, stof(Level_Tokens2.at(I_POSY))
-					, stof(Level_Tokens2.at(I_POSZ )))
+					Vector3(stof(Interactables_Tokens.at(I_POSX))
+					, stof(Interactables_Tokens.at(I_POSY))
+					, stof(Interactables_Tokens.at(I_POSZ )))
 					//normal
-					, Vector3(stof(Level_Tokens2.at(I_NORMALX))
-					, stof(Level_Tokens2.at(I_NORMALY)))
+					, Vector3(stof(Interactables_Tokens.at(I_NORMALX))
+					, stof(Interactables_Tokens.at(I_NORMALY)))
 					//scale
-					, Vector3(stof(Level_Tokens2.at(I_SCALEX))
-					, stof(Level_Tokens2.at(I_SCALEY))
-					, stof(Level_Tokens2.at(I_SCALEZ)))
+					, Vector3(stof(Interactables_Tokens.at(I_SCALEX))
+					, stof(Interactables_Tokens.at(I_SCALEY))
+					, stof(Interactables_Tokens.at(I_SCALEZ)))
 					//Activation position
-					,Vector3(stof(Level_Tokens2.at(I_ACTIVATE_POSX))
-					, stof(Level_Tokens2.at(I_ACTIVATE_POSY))
-					, stof(Level_Tokens2.at(I_ACTIVATE_POSZ))));
+					,Vector3(stof(Interactables_Tokens.at(I_ACTIVATE_POSX))
+					, stof(Interactables_Tokens.at(I_ACTIVATE_POSY))
+					, stof(Interactables_Tokens.at(I_ACTIVATE_POSZ))));
 				Interactables_List.push_back(in);
 			}
-			while(Level_Tokens2.size() > 0)
-				Level_Tokens2.pop_back();
+			while(Interactables_Tokens.size() > 0)
+				Interactables_Tokens.pop_back();
 		}
 		inGameLevel.close();
 	}
@@ -220,9 +272,9 @@ void CLevelHandler::LoadInteractables(string mapLevel)
 		std::cout << "Load interactables file failed" << std::endl;
 }
 
-void CLevelHandler::LoadDialogue(string newMap)
+void CLevelHandler::LoadDialogue(string newDialogue)
 {
-	std::ifstream theFile(newMap);
+	std::ifstream theFile(newDialogue);
 	std::string line;
 	bool b_nextDialogue = true;
 	CDialogue_Box *db;
@@ -294,6 +346,11 @@ vector<CInteractables *> &CLevelHandler::GetInteractables_List(void)
 	return Interactables_List;
 }
 
+vector<Vector3 *> &CLevelHandler::GetSpawn_List(void)
+{
+	return SpawnPoints_List;
+}
+
 void CLevelHandler::SetStageSelection(const bool newStageSelect)
 {
 	this->m_bStageSelection = newStageSelect;
@@ -323,16 +380,6 @@ bool CLevelHandler::GetStageCompleted(void)
 
 void CLevelHandler::Exit(void)
 {
-	//Clean up string tokens
-	if(Level_Tokens.size() > 0)
-	{
-		Level_Tokens.clear();
-	}
-	if(Level_Tokens2.size() > 0)
-	{
-		Level_Tokens2.clear();
-	}
-
 	//Clean up structure list
 	while(Structure_List.size() > 0)
 	{
