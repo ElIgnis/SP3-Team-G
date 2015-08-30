@@ -84,6 +84,7 @@ public:
 	void UpdateMenuKeypress(void);
 	void UpdateGameKeypress(void);
 	void UpdatePauseKeypress(void);
+	void UpdateDeadKeypress(void);
 
 	//Compare scores to see if high score is achieved;
 	void CompareScore(int CurrentLevel);
@@ -93,7 +94,6 @@ public:
 	bool GetKeyState(const unsigned char key);
 
 	//Restarts the game(all vars and maps)
-	void Restart(void);
 	void RestartLevel(void);
 	void RestartGame(void);
 
@@ -118,7 +118,7 @@ public:
 	void RenderScore(void);
 	void RenderDialogBox(void);
 	void RenderPause(void);
-
+	void RenderDead(void);
 protected:
 
 	//Physics
@@ -146,6 +146,7 @@ private:
 	//Menu
 	CMenu menu_main;
 	CMenu menu_pause;
+	CMenu menu_dead;
 
 	//Game state
 	GAME_STATE GameState;
@@ -168,6 +169,9 @@ private:
 
 	//Game pause state
 	bool b_PauseGame;
+
+	//Out of lives state
+	bool b_OutOfLives;
 
 	CItem *test;
 	CItem *testes;

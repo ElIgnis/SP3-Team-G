@@ -11,6 +11,7 @@ SceneStealth::SceneStealth()
 	, timeElapsed(0.f)
 	, b_NameEntered(false)
 	, b_PauseGame(false)
+	, b_OutOfLives(false)
 {
 }
 
@@ -68,9 +69,19 @@ void SceneStealth::Init()
 	menu_pause.m_menuList.push_back(m);
 	menu_pause.m_menuList[0]->SetIs_Selected(true);
 	menu_pause.SpaceOptions(35,15, 5); //Space out menu options equally
+
+	//Dead menu
+	CMenuItem *m3;
+	m = new CMenuItem("Restart Level");
+	menu_dead.m_menuList.push_back(m);
+	m = new CMenuItem("Return to menu");
+	menu_dead.m_menuList.push_back(m);
+	menu_dead.m_menuList[0]->SetIs_Selected(true);
+	menu_dead.SpaceOptions(35,15, 5); //Space out menu options equally
+
+	//Load high score
 	HS_List.LoadHighScore();
 	
-
 	//Initialise key list
 	for(int i=0; i<NumberOfKeys; ++i)
 	{
@@ -405,7 +416,9 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
-			if(!b_PauseGame)
+
+			//Update game if not dead and paused
+			if(!b_PauseGame && !b_OutOfLives)
 			{
 				camera.Update(dt);
 				UpdateGameKeypress();
@@ -414,11 +427,19 @@ void SceneStealth::Update(double dt)
 				UpdatePlayerScore(dt);
 				UpdateDialogue(dt);
 			}
-			else
+			//Update paused menu
+			else if(b_PauseGame)
 			{
 				UpdatePauseKeypress();
 				menu_pause.Update(dt);
 			}
+			//Update out of lives menu
+			else if(b_OutOfLives)
+			{
+				UpdateDeadKeypress();
+				menu_dead.Update(dt);
+			}
+
 			//Compare scores when level is completed
 			if(LvlHandler.GetStageCompleted())
 			{
@@ -442,7 +463,7 @@ void SceneStealth::Update(double dt)
 				else
 				{
 					GameState = STATE_MENU;
-					Restart();
+					RestartGame();
 				}
 			}
 			break;
@@ -619,22 +640,24 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 	}
 
-	//Out of lives
-	if (Virus->getLives() <= 0)
-	{	
-		Restart();
-		GameState = STATE_MENU;
-	}
-
 	//Respawn with 2s delay
 	if (Virus->GetPlayerState() == CPlayer::DEAD && Virus->GetRespawnTimer() < 0.f)
 	{
-		Virus->Minus1Life();
-		Virus->SetRespawnTimer(RespawnCooldown);
-		Virus->pos.x = Virus->GetCurrentCP().x;
-		Virus->pos.y = Virus->GetCurrentCP().y;
-		Virus->SetPlayerState(CPlayer::ALIVE);
+		//Out of lives
+		if(Virus->getLives() < 1)
+		{	
+			b_OutOfLives = true;
+		}
+		else
+		{
+			Virus->Minus1Life();
+			Virus->SetRespawnTimer(RespawnCooldown);
+			Virus->pos.x = Virus->GetCurrentCP().x;
+			Virus->pos.y = Virus->GetCurrentCP().y;
+			Virus->SetPlayerState(CPlayer::ALIVE);
+		}
 	}
+
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
@@ -830,6 +853,7 @@ void SceneStealth::UpdateMenuKeypress(void)
 			menu_main.UpdateSelection(false);
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 0)//Play
 		{
+			//Initialise vars if not done
 			if(b_ReInitGameVars)
 			{
 				b_ReInitGameVars = false;
@@ -1010,22 +1034,53 @@ void SceneStealth::UpdatePauseKeypress(void)
 	{
 		switch(menu_pause.GetSelection())
 		{
+		//Resume game
 		case 0:
 			b_PauseGame = false;
 			break;
+		//Restart level
 		case 1:
 			b_PauseGame = false;
-			Restart();
-			InitGame();
+			RestartLevel();
 			break;
+		//Return to menu
 		case 2:
 			b_PauseGame = false;
-			Restart();
+			RestartGame();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void SceneStealth::UpdateDeadKeypress(void)
+{
+	if(GetKeyState(VK_UP) && !GetKeyState(VK_DOWN))
+		menu_dead.UpdateSelection(true);
+	if(GetKeyState(VK_DOWN) && !GetKeyState(VK_UP))
+		menu_dead.UpdateSelection(false);
+
+	std::cout << menu_dead.GetSelection() << std::endl;
+	if(GetKeyState(VK_RETURN))
+	{
+		switch(menu_dead.GetSelection())
+		{
+		//Restart level
+		case 0:
+			b_PauseGame = false;
+			RestartLevel();
+			break;
+		//Return to menu
+		case 1:
+			b_PauseGame = false;
+			RestartGame();
 			GameState = STATE_MENU;
 			break;
 		default:
 			break;
 		}
+		b_OutOfLives = false;
 	}
 }
 
@@ -1405,14 +1460,22 @@ void SceneStealth::ProcessNameInput(void)
 	}
 }
 
-void SceneStealth::Restart(void)
+void SceneStealth::RestartLevel(void)
+{
+	b_ReInitGameVars = true;
+	InitGame();
+	Virus->PlayerReset();
+	LoadLevel(LvlHandler.GetCurrentStage());
+	tempHighScore.ResetRecord();
+}
+
+void SceneStealth::RestartGame(void)
 {
 	b_ReInitGameVars = true;
 	b_NameEntered = false;
-
-	//Restart Menu which includes go back to main menu or restart level. Maybe also add a choose another level. (Havent done)
+	GameState = STATE_MENU;
 	Virus->PlayerReset();
-	LvlHandler.Exit();
+	camera.Reset();
 	tempHighScore.ResetRecord();
 	
 }
@@ -1960,12 +2023,26 @@ void SceneStealth::RenderDialogBox(void)
 
 	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
 }
+
 void SceneStealth::RenderPause(void)
 {
 	for(unsigned i = 0; i < menu_pause.m_menuList.size(); ++i)
 	{
 		RenderTextOnScreen(meshList[GEO_TEXT], menu_pause.m_menuList[i]->GetText(), menu_pause.m_menuList[i]->GetColour(), 
 			menu_pause.m_menuList[i]->GetSize(), menu_pause.m_menuList[i]->pos.x, menu_pause.m_menuList[i]->pos.y);
+	}
+}
+
+void SceneStealth::RenderDead(void)
+{
+	std::stringstream ssNotice;
+	ssNotice << "You have ran out of lives...";
+	RenderTextOnScreen(meshList[GEO_TEXT], ssNotice.str(), Color(0, 1, 0), 3, 5, 44);
+
+	for(unsigned i = 0; i < menu_dead.m_menuList.size(); ++i)
+	{
+		RenderTextOnScreen(meshList[GEO_TEXT], menu_dead.m_menuList[i]->GetText(), menu_dead.m_menuList[i]->GetColour(), 
+			menu_dead.m_menuList[i]->GetSize(), menu_dead.m_menuList[i]->pos.x, menu_dead.m_menuList[i]->pos.y);
 	}
 }
 
@@ -2058,8 +2135,12 @@ void SceneStealth::Render()
 	case STATE_PLAYING:
 		RenderGame();		//Game playing screen
 		RenderUI();			//Calling of render UI
+		//Render paused screen
 		if(b_PauseGame)
 			RenderPause();
+		//Render dead screen
+		if(b_OutOfLives)
+			RenderDead();
 		break;
 	default:
 		break;

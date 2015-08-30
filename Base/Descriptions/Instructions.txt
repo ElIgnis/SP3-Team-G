@@ -6,7 +6,7 @@
    You are a rouge internet virus
 that has managed to infect a computer.
  Misson:
-  You have to AVOID certain anit-virus
+  You have to AVOID certain anti-virus
     sentries that gaurd the computer.
   Solve puzzles to go the next level.
   Infect the CPU.
