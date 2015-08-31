@@ -168,6 +168,7 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
 		add1Life();
 		break;
 	case CItem::FREEZE:
+		ActivatePowerup(type, 3.f);
 		break;
 	case CItem::SPEED:
 		ActivatePowerup(type, 3.f);
@@ -185,6 +186,12 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
 		break;
 
 	}
+}
+
+string CPlayer::GetItemUsed(CItem::ITEM_TYPE type)
+{
+	string a = "";
+	return a;
 }
 
 vector<CNoiseObject *> &CPlayer::GetNoiseObject_List(void)

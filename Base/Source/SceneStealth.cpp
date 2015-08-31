@@ -15,6 +15,8 @@ SceneStealth::SceneStealth()
 	, b_ShowHSNotice(false)
 	, b_LoadNextLevel(false)
 	, b_GameCompleted(false)
+	, f_FeedbackTimer(0.f)
+	, b_TriggerFBTimer(false)
 {
 }
 
@@ -434,6 +436,13 @@ void SceneStealth::Update(double dt)
 				UpdateEnemies(dt);
 				UpdatePlayerScore(dt);
 				UpdateDialogue(dt);
+				if(b_TriggerFBTimer)
+					f_FeedbackTimer += dt;
+				if(f_FeedbackTimer > DisplayTimer)
+				{
+					f_FeedbackTimer = 0.f;
+					b_TriggerFBTimer = false;
+				}
 			}
 			//Update paused menu
 			else if(b_PauseGame)
@@ -972,6 +981,9 @@ void SceneStealth::UpdateGameKeypress(void)
 		{
 			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType());
 			Virus->m_pInv.delItem(1);
+			b_TriggerFBTimer = true;
+			f_FeedbackTimer = 0.f;
+			ssFeedback << "Lives +1";
 		}
 	}
 	if(GetKeyState('2'))
@@ -2008,6 +2020,11 @@ void SceneStealth::RenderInventory(void)
 			}
 		}
 	}
+	//Text feedback
+	if(b_TriggerFBTimer)
+		RenderTextOnScreen(meshList[GEO_TEXT], ssFeedback.str(), Color(1, 1, 1), 5.f, 20, 10);
+	else
+		ssFeedback.str("");
 }
 void SceneStealth::RenderScore(void)
 {
