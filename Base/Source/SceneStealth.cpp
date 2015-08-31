@@ -25,8 +25,8 @@ SceneStealth::SceneStealth()
 
 SceneStealth::~SceneStealth()
 {
-	delete test;
-	delete testes;
+	delete Disguise;
+	delete Decoy;
 }
 
 void SceneStealth::Init()
@@ -115,8 +115,8 @@ void SceneStealth::InitGame(void)
 	Virus->mass = 1.f;
 	Virus->setLives(3);
 
-	test = new CItem(CItem::DISGUISE);
-	testes = new CItem(CItem::NOISE);
+	Disguise = new CItem(CItem::DISGUISE);
+	Decoy = new CItem(CItem::NOISE);
 }
 
 void SceneStealth::LoadLevel(const int LevelSelected)
@@ -536,17 +536,14 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.x = Virus->dir.x * acc.x;
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
-		//if (Application::IsKeyPressed('V'))
-			//Virus->TriggerSkillEffect(test->GetItemType());
+		//Apply disguise
+		if(GetKeyState('v'))
+			Virus->TriggerSkillEffect(Disguise->GetItemType());
 
-		static bool btest = false;
-		if(Application::IsKeyPressed('B') && btest == false)
-		{
-			//Virus->TriggerSkillEffect(testes->GetItemType());
-			btest = true;
-		}
-		else if(!Application::IsKeyPressed('B') && btest == true)
-			btest = false;
+		//Use Decoy
+		if(GetKeyState('b'))
+			Virus->TriggerSkillEffect(Decoy->GetItemType());
+		
 
 		bool b_boxColCheck = false;
 		bool b_ColCheck = false;
@@ -639,6 +636,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
 				Virus->pos += Virus->vel * SpeedPowerupModifier * dt;
+			else if(Virus->GetPlayerState() == CPlayer::DISGUISE)
+				Virus->pos += Virus->vel * DisguiseModifier * dt;
 			else
 				Virus->pos += Virus->vel * dt;
 		}
@@ -717,8 +716,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 			Virus->SetPlayerState(CPlayer::ALIVE);
 		}
 	}
-
-	//lights[0].position.Set(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 }
 
 void SceneStealth::UpdateEnemies(const double dt)

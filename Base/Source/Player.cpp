@@ -193,20 +193,7 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 			m_pInv.delItem(slot);
 		}
 		break;
-	case CItem::DISGUISE:
-		{
-			m_bChangeDisguise = true;
-			m_pInv.delItem(slot);
-		}
-		break;
-	case CItem::NOISE:
-		{
-			//Create new noise object and store inside NoiseObject_List
-			CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
-			NoiseObject_List.push_back(nobj);
-			m_pInv.delItem(slot);
-		}
-		break;
+	
 	}
 }
 
@@ -216,10 +203,25 @@ string CPlayer::GetItemUsed(CItem::ITEM_TYPE type)
 	return a;
 }
 
-void TriggerSkillEffect(CItem::ITEM_TYPE type)
+void CPlayer::TriggerSkillEffect(CItem::ITEM_TYPE type)
 {
 	//Fill in the Skill effects here
-	//Such as player stabbing
+	switch(type)
+	{
+	case CItem::DISGUISE:
+		{
+			m_bChangeDisguise = true;
+		}
+		break;
+	case CItem::NOISE:
+		{
+			//Create new noise object and store inside NoiseObject_List
+			CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
+			NoiseObject_List.push_back(nobj);
+		}
+		break;
+	}
+
 }
 
 vector<CNoiseObject *> &CPlayer::GetNoiseObject_List(void)
@@ -279,6 +281,4 @@ void CPlayer::PlayerReset(void)
 	{
 		m_pInv.Inventory[i] = new CItem(CItem::BLANK);
 	}
-
-	 
 }

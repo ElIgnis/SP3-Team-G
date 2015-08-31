@@ -3,7 +3,7 @@
 #   Sentry Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,  rotation1, rotation2, turnSpd				   #
 #   Patrol Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle, numPatrolPoint, (Insert patrol points here(x,y)) #
 ########################################################################################################################################################
-ENEMY_SENTRY, 	140.0, -30.0,0, 	0,1, 	50,30, 	320, 135, 	5
+ENEMY_SENTRY, 	140.0, -30.0,0, 	0,1, 	50,30, 	360, 270,	5
 #Probably wont use for Level 01
 ENEMY_PATROL_RAGE,	60,-30,0,		0,1,	50,30,	1,	60,40
 ENEMY_PATROL, 		-200, 40, 0, 	0, 1,	50,30,	1, 	-315, 40

@@ -8,6 +8,7 @@
 #define InventoryOffset 0.08125f
 
 #define SpeedPowerupModifier 2.f
+#define DisguiseModifier 0.25f
 
 #define ReboundFactor 2.f
 #define MoveSpeed 50.f
@@ -202,8 +203,8 @@ private:
 	float f_FeedbackTimer;
 	bool b_TriggerFBTimer;
 
-	CItem *test;
-	CItem *testes;
+	CItem *Disguise;
+	CItem *Decoy;
 };
 
 #endif
