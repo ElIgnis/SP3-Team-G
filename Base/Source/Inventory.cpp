@@ -75,26 +75,26 @@ bool CInventory::AddItem(CItem::ITEM_TYPE type)
 }
 
 //Check item in the inventory
-bool CInventory::checkItem(int keypress)
+bool CInventory::checkItem(int slot)
 {
-	keypress -= 1;
-	if(Inventory[keypress]->GetItemType() == CItem::BLANK)
+	slot -= 1;
+	if(Inventory[slot]->GetItemType() == CItem::BLANK)
 		return false;
 	else
 		return true;
 }
 
-void CInventory::delItem(int keypress)
+void CInventory::delItem(int slot)
 {
-	keypress -= 1;
-	if(Inventory[keypress]->getItemStack() == 1)
+	slot -= 1;
+	if(Inventory[slot]->getItemStack() == 1)
 	{
-		Inventory[keypress]->SetItemType(CItem::BLANK);
+		Inventory[slot]->SetItemType(CItem::BLANK);
 		m_iHolding-=1;
-		Inventory[keypress]->itemDelStack();
+		Inventory[slot]->itemDelStack();
 	}
 	else
 	{
-		Inventory[keypress]->itemDelStack();
+		Inventory[slot]->itemDelStack();
 	}
 }

@@ -56,7 +56,8 @@ public:
 	Vector3 GetCurrentCP(void);
 	void SetCurrentCP(Vector3 CP);
 
-	void TriggerItemEffect(CItem::ITEM_TYPE type);
+	void TriggerItemEffect(CItem::ITEM_TYPE type, int slot);
+	void TriggerSkillEffect(CItem::ITEM_TYPE type);
 	bool FinishedDisguise(const double dt);
 
 	void SetStunReuseTimer(const float newReuseTimer);
