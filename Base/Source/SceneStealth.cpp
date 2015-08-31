@@ -515,6 +515,13 @@ void SceneStealth::UpdatePlayer(const double dt)
 {
 	Virus->UpdateTimers(dt);
 
+	/*cout << "Player's Pos :" << Virus->pos << endl;
+	cout << "Light's Pos X is :" << lights[0].position.x << endl;
+	cout << "Light's Pos Y is :" << lights[0].position.y << endl;
+	cout << "Light's Pos Z is :" << lights[0].position.z << endl;
+*/
+	lights[0].position.Set(Virus->pos.x, Virus->pos.z, -Virus->pos.y);
+
 	//Only update player when player is not dead
 	if(Virus->GetPlayerState() != CPlayer::DEAD)
 	{
@@ -711,6 +718,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 	}
 
+	//lights[0].position.Set(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
@@ -1762,7 +1770,7 @@ void SceneStealth::RenderGame(void)
 				modelStack.PushMatrix();
 				modelStack.Translate(bul->pos.x, bul->pos.y, bul->pos.z);
 				modelStack.Scale(bul->scale.x, bul->scale.y, bul->scale.z);
-				RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+				RenderMesh(meshList[GEO_BULLET], bLightEnabled);
 				modelStack.PopMatrix();
 			}
 		}
@@ -2004,13 +2012,20 @@ void SceneStealth::RenderHealthbar(void)
 	//Hotbar selection indicator
 	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
     //Player health
-	Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.23, Application::GetWindowHeight() * 0.08, Application::GetWindowWidth() * 0.145, Application::GetWindowHeight() * 0.8975,false,false);
-	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+	for(int i = 0; i < Virus->getLives(); i++)
+	{
+		Render2DMesh(meshList[GEO_HEALTH],false, (Application::GetWindowWidth() * 0.07), Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.9,false,false);
+	}
+
+	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 1.5, Application::GetWindowHeight() * 0.15, (Application::GetWindowWidth() * 0.15) + ((Application::GetWindowWidth() * 0.01) * 4), Application::GetWindowHeight() * 0.9,false,false);
+	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.27, Application::GetWindowHeight() * 0.15, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+
+	//Render2DMesh(meshList[GEO_PLAYER],false, Application::GetWindowWidth() * 0.05, Application::GetWindowHeight() * 0.05, Application::GetWindowWidth() * 0.1, Application::GetWindowHeight() * 0.9,true,false);
 
 	//Health
 	std::stringstream ssH;
 	ssH << 'x' << Virus->getLives();
-	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 3, 12, 53.5);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 3, 11, 54.25);
 }
 void SceneStealth::RenderInventory(void)
 {
@@ -2093,7 +2108,7 @@ void SceneStealth::RenderScore(void)
 	else
 		ssScore << " : " << tempHighScore.GetSeconds();
 
-	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 5, 48);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 5, 45);
 }
 void SceneStealth::RenderDialogBox(void)
 {
@@ -2229,6 +2244,15 @@ void SceneStealth::Render()
 		Vector3 spotDirection_cameraspace = viewStack.Top() * rot * lights[0].spotDirection;
 		glUniform3fv(m_parameters[U_LIGHT0_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
 	}
+	else if(lights[0].type == Light::LIGHT_POINT)
+	{
+		Mtx44 rot;
+		rot.SetToRotation(-rotateScene + 90.f, 1, 0, 0);
+		Position lightPosition_cameraspace = viewStack.Top() * lights[0].position;
+		glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightPosition_cameraspace.x);
+		Vector3 spotDirection_cameraspace = viewStack.Top() *  lights[0].spotDirection;
+		glUniform3fv(m_parameters[U_LIGHT0_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
+	}
 	else
 	{
 		Position lightPosition_cameraspace =  viewStack.Top() * lights[0].position;
@@ -2249,6 +2273,15 @@ void SceneStealth::Render()
 		glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &lightPosition_cameraspace.x);
 		Vector3 spotDirection_cameraspace = viewStack.Top() *  lights[1].spotDirection;
 		glUniform3fv(m_parameters[U_LIGHT1_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
+	}
+	else if(lights[1].type == Light::LIGHT_POINT)
+	{
+		Mtx44 rot;
+		rot.SetToRotation(-rotateScene + 90.f, 1, 0, 0);
+		Position lightPosition_cameraspace = viewStack.Top() * lights[1].position;
+		glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &lightPosition_cameraspace.x);
+		Vector3 pointDirection_cameraspace = viewStack.Top() * rot * lights[1].pointDirection;
+		glUniform3fv(m_parameters[U_LIGHT1_POINTDIRECTION], 1, &pointDirection_cameraspace.x);
 	}
 	else
 	{

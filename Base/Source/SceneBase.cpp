@@ -104,7 +104,7 @@ void SceneBase::Init()
 	lights[0].type = Light::LIGHT_POINT;
 	lights[0].position.Set(0, 0, 10);
 	lights[0].color.Set(1, 1, 1);
-	lights[0].power = 1;
+	lights[0].power = 2;
 	lights[0].kC = 1.f;
 	lights[0].kL = 0.001f;
 	lights[0].kQ = 0.0001f;
@@ -243,6 +243,10 @@ void SceneBase::Init()
 	//CPU/Movable box
 	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("CPU_Box", "OBJ//Box.obj");
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
+
+	//Bullet
+	meshList[GEO_BULLET] = MeshBuilder::GenerateOBJ("Bullet", "OBJ//Bullet.obj");
+	meshList[GEO_BULLET]->textureID = LoadTGA("Image//Bullet.tga");
 
 	//Laser
 	meshList[GEO_LASER] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
