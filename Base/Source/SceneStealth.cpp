@@ -518,13 +518,13 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.x = Virus->dir.x * acc.x;
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
-		if (Application::IsKeyPressed('V'))
-			Virus->TriggerItemEffect(test->GetItemType());
+		//if (Application::IsKeyPressed('V'))
+			//Virus->TriggerSkillEffect(test->GetItemType());
 
 		static bool btest = false;
 		if(Application::IsKeyPressed('B') && btest == false)
 		{
-			Virus->TriggerItemEffect(testes->GetItemType());
+			//Virus->TriggerSkillEffect(testes->GetItemType());
 			btest = true;
 		}
 		else if(!Application::IsKeyPressed('B') && btest == true)
@@ -1005,72 +1005,63 @@ void SceneStealth::UpdateGameKeypress(void)
 	{
 		if(Virus->m_pInv.checkItem(1))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType());
-			Virus->m_pInv.delItem(1);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType(),1);
 		}
 	}
 	if(GetKeyState('2'))
 	{
 		if(Virus->m_pInv.checkItem(2))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType());
-			Virus->m_pInv.delItem(2);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType(),2);
 		}
 	}
 	if(GetKeyState('3'))
 	{
 		if(Virus->m_pInv.checkItem(3))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType());
-			Virus->m_pInv.delItem(3);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType(),3);
 		}
 	}
 	if(GetKeyState('4'))
 	{
 		if(Virus->m_pInv.checkItem(4))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType());
-			Virus->m_pInv.delItem(4);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType(),4);
 		}
 	}
 	if(GetKeyState('5'))
 	{
 		if(Virus->m_pInv.checkItem(5))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType());
-			Virus->m_pInv.delItem(5);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType(),5);
 		}
 	}
 	if(GetKeyState('6'))
 	{
 		if(Virus->m_pInv.checkItem(6))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType());
-			Virus->m_pInv.delItem(6);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType(),6);
 		}
 	}
 	if(GetKeyState('7'))
 	{
 		if(Virus->m_pInv.checkItem(7))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType());
-			Virus->m_pInv.delItem(7);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType(),7);
 		}
 	}
 	if(GetKeyState('8'))
 	{
 		if(Virus->m_pInv.checkItem(8))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType());
-			Virus->m_pInv.delItem(8);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType(),8);
 		}
 	}
 	if(GetKeyState('9'))
 	{
 		if(Virus->m_pInv.checkItem(9))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType());
-			Virus->m_pInv.delItem(9);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType(),9);
 		}
 	}
 	if(GetKeyState('p'))
