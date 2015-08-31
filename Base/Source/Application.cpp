@@ -135,86 +135,132 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyUp('s');
 	}
+	//P key
+	if(IsKeyPressed('P'))
+	{
+		scene->UpdateKeyDown('p');
+	}
+	else if(IsKeyReleased('P'))
+	{
+		scene->UpdateKeyUp('p');
+	}
+
+	static bool delay1 = false;
+	static bool delay2 = false;
+	static bool delay3 = false;
+	static bool delay4 = false;
+	static bool delay5 = false;
+	static bool delay6 = false;
+	static bool delay7 = false;
+	static bool delay8 = false;
+	static bool delay9 = false;
+	scene->UpdateKeyUp('1');
+	scene->UpdateKeyUp('2');
+	scene->UpdateKeyUp('3');
+	scene->UpdateKeyUp('4');
+	scene->UpdateKeyUp('5');
+	scene->UpdateKeyUp('6');
+	scene->UpdateKeyUp('7');
+	scene->UpdateKeyUp('8');
+	scene->UpdateKeyUp('9');
+	
 	//1 key
-	if(IsKeyPressed('1'))
+	if(IsKeyPressed('1') && !delay1)
+	{
+		delay1 = true;
+	}
+	else if(IsKeyReleased('1') && delay1)
 	{
 		scene->UpdateKeyDown('1');
+		delay1 = false;
 	}
-	else if(IsKeyReleased('1'))
-	{
-		scene->UpdateKeyUp('1');
-	}
+
 	//2 key
-	if(IsKeyPressed('2'))
+	if(IsKeyPressed('2') && !delay2)
+	{
+		delay2 = true;
+	}
+	else if(IsKeyReleased('2') && delay2)
 	{
 		scene->UpdateKeyDown('2');
+		delay2 = false;
 	}
-	else if(IsKeyReleased('2'))
-	{
-		scene->UpdateKeyUp('2');
-	}
+
 	//3 key
-	if(IsKeyPressed('3'))
+	if(IsKeyPressed('3') && !delay3)
+	{
+		delay3 = true;
+	}
+	else if(IsKeyReleased('3') && delay3)
 	{
 		scene->UpdateKeyDown('3');
+		delay3 = false;
 	}
-	else if(IsKeyReleased('3'))
-	{
-		scene->UpdateKeyUp('3');
-	}
+
 	//4 key
-	if(IsKeyPressed('4'))
+	if(IsKeyPressed('4') && !delay4)
+	{
+		delay4 = true;
+	}
+	else if(IsKeyReleased('4') && delay4)
 	{
 		scene->UpdateKeyDown('4');
+		delay4 = false;
 	}
-	else if(IsKeyReleased('4'))
-	{
-		scene->UpdateKeyUp('4');
-	}
+
 	//5 key
-	if(IsKeyPressed('5'))
+	if(IsKeyPressed('5') && !delay5)
+	{
+		delay5 = true;
+	}
+	else if(IsKeyReleased('5') && delay5)
 	{
 		scene->UpdateKeyDown('5');
+		delay5 = false;
 	}
-	else if(IsKeyReleased('5'))
-	{
-		scene->UpdateKeyUp('5');
-	}
+
 	//6 key
-	if(IsKeyPressed('6'))
+	if(IsKeyPressed('6') && !delay6)
+	{
+		delay6 = true;
+	}
+	else if(IsKeyReleased('6') && delay6)
 	{
 		scene->UpdateKeyDown('6');
+		delay6 = false;
 	}
-	else if(IsKeyReleased('6'))
-	{
-		scene->UpdateKeyUp('6');
-	}
+
 	//7 key
-	if(IsKeyPressed('7'))
+	if(IsKeyPressed('7') && !delay7)
+	{
+		delay7 = true;
+	}
+	else if(IsKeyReleased('7') && delay7)
 	{
 		scene->UpdateKeyDown('7');
+		delay7 = false;
 	}
-	else if(IsKeyReleased('7'))
+
+	//delay8 key
+	if(IsKeyPressed('8') && !delay8)
 	{
-		scene->UpdateKeyUp('7');
+		delay8 = true;
 	}
-	//8 key
-	if(IsKeyPressed('8'))
+	else if(IsKeyReleased('8') && delay8)
 	{
 		scene->UpdateKeyDown('8');
+		delay8 = false;
 	}
-	else if(IsKeyReleased('8'))
-	{
-		scene->UpdateKeyUp('8');
-	}
+
 	//9 key
-	if(IsKeyPressed('9'))
+	if(IsKeyPressed('9') && !delay9)
+	{
+		delay9 = true;
+	}
+	else if(IsKeyReleased('9') && delay9)
 	{
 		scene->UpdateKeyDown('9');
-	}
-	else if(IsKeyReleased('9'))
-	{
-		scene->UpdateKeyUp('9');
+		delay9 = false;
 	}
 
 	//Up arrow key
@@ -270,13 +316,17 @@ bool Application::GetKeyboardUpdate()
 	}
 
 	//Enter key
-	if(IsKeyPressed(VK_RETURN))
+	static bool b_EntKey = false;
+	scene->UpdateKeyUp(VK_RETURN);
+	if(IsKeyPressed(VK_RETURN) && !b_EntKey)
+	{
+		b_EntKey = true;
+		
+	}
+	if(!IsKeyPressed(VK_RETURN) && b_EntKey)
 	{
 		scene->UpdateKeyDown(VK_RETURN);
-	}
-	if(IsKeyReleased(VK_RETURN))
-	{
-		scene->UpdateKeyUp(VK_RETURN);
+		b_EntKey = false;
 	}
 
 	//Spacebar key

@@ -7,11 +7,14 @@
 #include "Enemy_Patrol.h"
 #include "Enemy_Patrol_Rage.h"
 #include "Enemy_Sentry.h"
+#include "DialogueBox.h"
 #include "Item.h"
 #include <string>
 #include <vector>
 #include <fstream>
 #include <sstream>
+
+#define Num_Levels 4
 
 using std::string;
 using std::vector;
@@ -26,9 +29,8 @@ private:
 	vector<GameObject *> CheckPoint_List;
 	vector<CEnemy *> Enemy_List;
 	vector<CInteractables *> Interactables_List;
-	vector<string>Level_Tokens;
-	vector<string>Level_Tokens2;
-	vector<CEnemy * > Dialogue_List[4];
+	vector<CDialogue_Box * > Dialogue_List;
+	vector<Vector3 *> SpawnPoints_List;
 	char m_cSplit_Char;
 	string m_sLevelData;
 	string m_sLevelData2;
@@ -36,6 +38,7 @@ private:
 	int m_iCurrentStage;
 	bool m_bStageSelection;
 	bool m_bStageCompleted;
+	Vector3 SpawnPos;
 
 public:
 	//Tokens indexing
@@ -85,6 +88,14 @@ public:
 		I_NUM_INDEX,
 	};
 
+	enum SpawnIndex
+	{
+		SPAWN_POSX,
+		SPAWN_POSY,
+		SPAWN_POSZ,
+		SPAWN_INDEX,
+	};
+
 	CLevelHandler(void);
 	~CLevelHandler(void);
 
@@ -101,11 +112,16 @@ public:
 	vector<GameObject *> &GetPowerup_List(void);
 	vector<GameObject *> &GetCheckPoint_List(void);
 	vector<CEnemy *> &GetEnemy_List(void);
+	vector<CDialogue_Box *> &GetDialogue_List(void);
 	vector<CInteractables *> &GetInteractables_List(void);
+	vector<Vector3 *> &GetSpawn_List(void);
 
 	void LoadMap(string newMap);
-	void LoadEnemies(string newMap);
-	void LoadInteractables(string newMap);
+	void LoadSpawnPoints(string newSpawnPoint);
+	void LoadEnemies(string newEnemies);
+	void LoadInteractables(string newInteractables);
+	void LoadDialogue(string newDialogue);
+
 	void Exit(void);
 };
 

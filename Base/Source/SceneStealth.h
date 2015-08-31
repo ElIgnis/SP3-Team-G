@@ -7,6 +7,8 @@
 #define InventoryScale 0.04375f
 #define InventoryOffset 0.08125f
 
+#define SpeedPowerupModifier 2.f
+
 #define ReboundFactor 2.f
 #define MoveSpeed 50.f
 #define MoveSpeedModifier 1.f
@@ -23,6 +25,7 @@
 #include "Menu.h"
 #include "Enemy.h"
 #include "Interactables.h"
+#include "DialogueBox.h"
 #include "Player.h"
 
 using std::vector;
@@ -63,6 +66,7 @@ public:
 
 	//Initialise game variables
 	void InitGame(void);
+	void LoadLevel(const int LevelSelected);
 
 	//Update everything in the game scene here(Not Menu)
 	void UpdateMenu(const double dt);
@@ -73,20 +77,24 @@ public:
 	//Update everything related to enemies(enemy collision to player, structures)
 	void UpdateEnemies(const double dt);
 
+	//Update dialogue boxes
+	void UpdateDialogue(double dt);
+	
 	//Update keypress
 	void UpdateMenuKeypress(void);
 	void UpdateGameKeypress(void);
+	void UpdatePauseKeypress(void);
+	void UpdateDeadKeypress(void);
+	void UpdateLevelTransit(void);
 
 	//Compare scores to see if high score is achieved;
 	void CompareScore(int CurrentLevel);
-	void UpdateNewHighScore(void);
 
 	virtual void UpdateKeyDown(const unsigned char key);
 	virtual void UpdateKeyUp(const unsigned char key);
 	bool GetKeyState(const unsigned char key);
 
 	//Restarts the game(all vars and maps)
-	void Restart(void);
 	void RestartLevel(void);
 	void RestartGame(void);
 
@@ -110,6 +118,9 @@ public:
 	void RenderInventory(void);
 	void RenderScore(void);
 	void RenderDialogBox(void);
+	void RenderPause(void);
+	void RenderDead(void);
+	void RenderLevelTransit(void);
 
 protected:
 
@@ -137,6 +148,8 @@ private:
 
 	//Menu
 	CMenu menu_main;
+	CMenu menu_pause;
+	CMenu menu_dead;
 
 	//Game state
 	GAME_STATE GameState;
@@ -154,8 +167,23 @@ private:
 	//Check to reload all game vars
 	bool b_ReInitGameVars;
 
+	//Enter name at start of game
+	bool b_NameEntered;
+
 	//New High score
-	bool b_NewHighScore;
+	bool b_ShowHSNotice;
+
+	//Loading of next level
+	bool b_LoadNextLevel;
+
+	//Check if all levels completed
+	bool b_GameCompleted;
+
+	//Game pause state
+	bool b_PauseGame;
+
+	//Out of lives state
+	bool b_OutOfLives;
 
 	CItem *test;
 	CItem *testes;

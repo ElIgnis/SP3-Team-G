@@ -14,6 +14,7 @@
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Camera3.cpp" />
+    <ClCompile Include="Source\DialogueBox.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\Enemy_Patrol.cpp" />
     <ClCompile Include="Source\Enemy_Patrol_Rage.cpp" />
@@ -47,6 +48,7 @@
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Camera3.h" />
+    <ClInclude Include="Source\DialogueBox.h" />
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\Enemy_Patrol.h" />
     <ClInclude Include="Source\Enemy_Patrol_Rage.h" />

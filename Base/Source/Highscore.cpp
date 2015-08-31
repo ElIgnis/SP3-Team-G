@@ -146,9 +146,15 @@ void CHighscore::operator=(const CHighscore &AssignTime)
 	this->i_Seconds = AssignTime.i_Seconds;
 }
 
-void CHighscore::Reset(void)
+void CHighscore::ResetRecord(void)
 {
 	this->s_Name = "";
+	this->i_Minutes = 0;
+	this->i_Seconds = 0;
+}
+
+void CHighscore::ResetTimer(void)
+{
 	this->i_Minutes = 0;
 	this->i_Seconds = 0;
 }

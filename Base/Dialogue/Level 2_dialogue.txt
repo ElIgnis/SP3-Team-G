@@ -1,0 +1,14 @@
+/Format
+/1st Line - World position
+/Subsequent Lines - Text
+/Use # to seperate dialogues
+/Do not use # on the first line
+/Use '/ ' to make comments
+-95,0,0
+Some walls can only be unlocked by a switch
+#
+-95,-95,0
+Watch out!
+'enemy name here' can move around freely and will chase 
+after you if they spot you!
+#
