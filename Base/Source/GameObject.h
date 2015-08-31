@@ -30,6 +30,7 @@ public:
 		GO_LASER_MACHINE,
 		GO_ENEMY,
 		GO_LASER,
+		GO_BBTN,
 		GO_ENDPOINT,
 		NUM_GO
 	};
