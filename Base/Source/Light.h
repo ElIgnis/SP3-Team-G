@@ -20,6 +20,7 @@ struct Light
 	float kL;
 	float kQ;
 	Vector3 spotDirection;
+	Vector3 pointDirection;
 	float cosCutoff;
 	float cosInner;
 	float exponent;

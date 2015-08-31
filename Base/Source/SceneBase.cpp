@@ -241,13 +241,21 @@ void SceneBase::Init()
 	meshList[GEO_BOX] = MeshBuilder::GenerateOBJ("CPU_Box", "OBJ//Box.obj");
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
-	//Laser
-	//meshList[GEO_LASER] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
-	//meshList[GEO_LASER]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
+	//Bullet
+	meshList[GEO_BULLET] = MeshBuilder::GenerateOBJ("Bullet", "OBJ//Bullet.obj");
+	meshList[GEO_BULLET]->textureID = LoadTGA("Image//Bullet.tga");
 
-	////Laser Machine
-	//meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser_Machine", "OBJ//Laser_Machine.obj");
-	//meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
+	//Laser
+	meshList[GEO_LASER] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
+	meshList[GEO_LASER]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
+
+	//Laser Machine
+	meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser_Machine", "OBJ//Laser_Machine.obj");
+	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
+
+	//Lever for the walls
+	meshList[GEO_LEVER] = MeshBuilder::GenerateOBJ("Le button", "OBJ//Interactive_btn.obj");
+	meshList[GEO_LEVER]->textureID = LoadTGA("Image//GameObjects//Interactive_btn.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
