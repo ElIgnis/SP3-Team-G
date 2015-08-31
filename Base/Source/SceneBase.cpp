@@ -501,7 +501,8 @@ void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float sizeX, float si
 				{
 					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
 				}
-				mesh->Render();
+				//mesh->Render();
+				RenderMesh(mesh, enableLight);
 				if(mesh->textureID > 0)
 				{
 					glBindTexture(GL_TEXTURE_2D, 0);
