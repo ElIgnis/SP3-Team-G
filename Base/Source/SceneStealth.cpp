@@ -112,6 +112,7 @@ void SceneStealth::InitGame(void)
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->scale.Set(7,7,7);
+	Virus->SetCurrentCP(Vector3(Virus->pos.x, Virus->pos.y, Virus->pos.z));
 	Virus->mass = 1.f;
 	Virus->setLives(3);
 
@@ -859,7 +860,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 						//Bullet kills player if collided
 						if(CheckCollision(bul, Virus, (float)dt))
 						{
-							std::cout<<bul->scale.x<<"HI"<<Virus->scale.x<<std::endl;
 							Virus->SetPlayerState(CPlayer::DEAD);
 							bul->active = false;
 						}
