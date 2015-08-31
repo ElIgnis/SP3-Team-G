@@ -201,8 +201,8 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
-
-			if(distSquared <= combinedRadius)
+			
+			if(distSquared <= combinedRadius * combinedRadius)
 			{
 				return true;
 			}
@@ -862,6 +862,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 						//Bullet kills player if collided
 						if(CheckCollision(bul, Virus, (float)dt))
 						{
+							std::cout<<bul->scale.x<<"HI"<<Virus->scale.x<<std::endl;
 							Virus->SetPlayerState(CPlayer::DEAD);
 							bul->active = false;
 						}
@@ -1862,7 +1863,18 @@ void SceneStealth::RenderGame(void)
 	
 
 	modelStack.PopMatrix();
-
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		modelStack.PushMatrix();
+		modelStack.Rotate(-rotateScene, 1, 0, 0);
+		modelStack.PushMatrix();
+		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -8);
+		modelStack.Scale(7, 7, 1);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		modelStack.PopMatrix();
+	}
 	//Renders elapsed time(score)
 	RenderScore();
 }
