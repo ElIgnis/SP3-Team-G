@@ -515,11 +515,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 {
 	Virus->UpdateTimers(dt);
 
-	cout << "Player's Pos :" << Virus->pos << endl;
+	/*cout << "Player's Pos :" << Virus->pos << endl;
 	cout << "Light's Pos X is :" << lights[0].position.x << endl;
 	cout << "Light's Pos Y is :" << lights[0].position.y << endl;
 	cout << "Light's Pos Z is :" << lights[0].position.z << endl;
-
+*/
 	lights[0].position.Set(Virus->pos.x, Virus->pos.z, -Virus->pos.y);
 
 	//Only update player when player is not dead
@@ -1770,7 +1770,7 @@ void SceneStealth::RenderGame(void)
 				modelStack.PushMatrix();
 				modelStack.Translate(bul->pos.x, bul->pos.y, bul->pos.z);
 				modelStack.Scale(bul->scale.x, bul->scale.y, bul->scale.z);
-				RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
+				RenderMesh(meshList[GEO_BULLET], bLightEnabled);
 				modelStack.PopMatrix();
 			}
 		}
