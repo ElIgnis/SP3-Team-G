@@ -97,6 +97,72 @@ void SceneStealth::Init()
 
 	bLightEnabled = false;
 	rotateAngle = 90;
+
+	InitAudio();
+}
+
+//Initialize game audio here
+int SceneStealth::InitAudio()
+{
+	engine = createIrrKlangDevice(ESOD_AUTO_DETECT,ESEO_MULTI_THREADED|ESEO_LOAD_PLUGINS|ESEO_USE_3D_BUFFERS);
+	engine->setSoundVolume(1.0f);
+
+	//Menu sounds here
+	sound[MENU_BGM] = engine->play2D("../Base/Audio/Menu_bgm.mp3", true, true);
+	sound[MENU_BGM]->setVolume(1.0f);
+
+	sound[MENU_SELECT] = engine->play2D("../Base/Audio/Menu_select.mp3", true, true);
+	sound[MENU_SELECT]->setVolume(1.0f);
+
+	sound[MENU_HIGHSCORE] = engine->play2D("../Base/Audio/Menu_highscore.wav", true, true);
+	sound[MENU_HIGHSCORE]->setVolume(1.0f);
+
+	//Level things here
+	sound[LEVEL_WIN] = engine->play2D("../Base/Audio/Level_win.mp3", true, true);
+	sound[LEVEL_WIN]->setVolume(1.0f);
+
+	sound[LEVEL_LOSE] = engine->play2D("../Base/Audio/Level_lose.wav", true, true);
+	sound[LEVEL_LOSE]->setVolume(1.0f);
+
+	sound[LEVEL_BUTTON] = engine->play2D("../Base/Audio/Level_button.wav", true, true);
+	sound[LEVEL_BUTTON]->setVolume(1.0f);
+
+	sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.wav", true, true);
+	sound[LEVEL_CHECKPOINT]->setVolume(1.0f);
+
+	//Enemy sounds here
+	sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.wav", true, true);
+	sound[ENEMY_ALERT]->setVolume(1.0f);
+	
+	sound[ENEMY_SHOOT] = engine->play2D("../Base/Audio/Enemy_shoot.mp3", true, true);
+	sound[ENEMY_SHOOT]->setVolume(1.0f);
+	
+	sound[ENEMY_BULLET_WALL] = engine->play2D("../Base/Audio/Enemy_shoot_hit_wall.wav", true, true);
+	sound[ENEMY_BULLET_WALL]->setVolume(1.0f);
+	
+	sound[ENEMY_STUNNED] = engine->play2D("../Base/Audio/Enemy_stunned.wav", true, true);
+	sound[ENEMY_STUNNED]->setVolume(1.0f);
+
+	//Player Sounds here
+	sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", true, true);
+	sound[PLAYER_DMG]->setVolume(1.0f);
+	
+	sound[PLAYER_PICKUP] = engine->play2D("../Base/Audio/Player_pickup.wav", true, true);
+	sound[PLAYER_PICKUP]->setVolume(1.0f);
+	
+	sound[PLAYER_HEALTH] = engine->play2D("../Base/Audio/Player_health.wav", true, true);
+	sound[PLAYER_HEALTH]->setVolume(1.0f);
+	
+	sound[PLAYER_DISGUISE] = engine->play2D("../Base/Audio/Player_disguise.wav", true, true);
+	sound[PLAYER_DISGUISE]->setVolume(1.0f);
+	
+	sound[PLAYER_SPEED] = engine->play2D("../Base/Audio/Player_speed.wav", true, true);
+	sound[PLAYER_SPEED]->setVolume(1.0f);
+	
+	sound[PLAYER_DECOY] = engine->play2D("../Base/Audio/Player_decoy.wav", true, true);
+	sound[PLAYER_DECOY]->setVolume(1.0f);
+
+	return 0;
 }
 
 void SceneStealth::InitGame(void)
@@ -409,7 +475,7 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
-	
+	UpdateAudio();
 	//Let player input name
 	if(!b_NameEntered)
 	{
@@ -510,6 +576,30 @@ void SceneStealth::Update(double dt)
 	if(Application::IsKeyPressed('J'))
 		std::cout<<Virus->pos<<std::endl;
 	
+}
+
+void SceneStealth::UpdateAudio()
+{
+	sound[MENU_BGM]->setVolume(0.1);
+	if(GameState != STATE_MENU)
+	{
+		sound[MENU_BGM]->setIsPaused(true);
+	}
+	else
+	{
+		sound[MENU_BGM]->setIsPaused(false);
+		if(GetKeyState(VK_UP) || GetKeyState(VK_DOWN))
+		{
+			sound[MENU_SELECT]->setIsPaused(false);
+		}
+		else
+			sound[MENU_SELECT]->setIsPaused(true);
+	}
+	//float multMusic = 0.1f;
+	//Vector3 viewMusic = 0.0f;
+	//viewMusic = (camera.target + camera.position);
+	//engine->setListenerPosition(vec3df(multMusic * viewMusic.x, multMusic * viewMusic.y, multMusic * viewMusic.z), vec3df(1, 1, 1));
+	engine->update();
 }
 
 void SceneStealth::UpdatePlayer(const double dt)
@@ -929,9 +1019,13 @@ void SceneStealth::UpdateMenuKeypress(void)
 	if(!LvlHandler.GetStageSelection())
 	{
 		if(GetKeyState(VK_UP) && !GetKeyState(VK_DOWN))
+		{
 			menu_main.UpdateSelection(true);
+		}
 		if(GetKeyState(VK_DOWN) && !GetKeyState(VK_UP))
+		{
 			menu_main.UpdateSelection(false);
+		}
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 0)//Play
 		{
 			//Initialise vars if not done
@@ -2368,6 +2462,9 @@ void SceneStealth::Exit()
 	//Clean up Level handler pointers
 	LvlHandler.Exit();
 
+	//Drop the engine for sound
+	engine->drop();
+	
 	//Clean up Menu 
 	while(menu_main.m_menuList.size() > 0)
 	{
