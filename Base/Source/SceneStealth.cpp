@@ -507,6 +507,9 @@ void SceneStealth::UpdatePlayer(const double dt)
 	cout << "Player's Pos :" << Virus->pos << endl;
 	cout << "Light's Pos X is :" << lights[0].position.x << endl;
 	cout << "Light's Pos Y is :" << lights[0].position.y << endl;
+	cout << "Light's Pos Z is :" << lights[0].position.z << endl;
+
+	lights[0].position.Set(Virus->pos.x, Virus->pos.z, -Virus->pos.y);
 
 	//Only update player when player is not dead
 	if(Virus->GetPlayerState() != CPlayer::DEAD)
@@ -704,7 +707,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 	}
 
-	lights[0].position.Set(Virus->pos.x, Virus->pos.y, Virus->pos.z);
+	//lights[0].position.Set(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
@@ -2221,9 +2224,9 @@ void SceneStealth::Render()
 		Mtx44 rot;
 		rot.SetToRotation(-rotateScene + 90.f, 1, 0, 0);
 		Position lightPosition_cameraspace = viewStack.Top() * lights[0].position;
-		glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightPosition_cameraspace.y);
-		Vector3 pointDirection_cameraspace = viewStack.Top() * rot * lights[0].pointDirection;
-		glUniform3fv(m_parameters[U_LIGHT0_POINTDIRECTION], 1, &pointDirection_cameraspace.y);
+		glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightPosition_cameraspace.x);
+		Vector3 spotDirection_cameraspace = viewStack.Top() *  lights[0].spotDirection;
+		glUniform3fv(m_parameters[U_LIGHT0_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
 	}
 	else
 	{
