@@ -1897,7 +1897,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1905,13 +1905,13 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 		{
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
 			if(LvlHandler.GetCurrentStage() == 1)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 1.5, 40, 45);
 			else if(LvlHandler.GetCurrentStage() == 2)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 1.5, 40, 45);
 			else if(LvlHandler.GetCurrentStage() == 3)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 1.5, 40, 45);
 			else if(LvlHandler.GetCurrentStage() == 4)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 1.5, 40, 45);
 		}
 		break;
 	case 2: //Option 3 for Highscore
@@ -1931,7 +1931,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
 				else
 					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
-				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 40.f - i * 4);
 			}
 		}
 		break;
@@ -1941,7 +1941,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[3]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1951,7 +1951,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[4]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1961,7 +1961,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[5]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
