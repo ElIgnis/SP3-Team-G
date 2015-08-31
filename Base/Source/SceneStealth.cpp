@@ -546,8 +546,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 			Virus->TriggerSkillEffect(Decoy->GetItemType());
 		
 
-		bool b_boxColCheck = false;
-		bool b_ColCheck = false;
+		static bool b_boxColCheck = false;
+		static bool b_ColCheck = false;
 		//Check BOX collision with the walls
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
@@ -626,11 +626,20 @@ void SceneStealth::UpdatePlayer(const double dt)
 				if(CheckCollision(Virus,go,dt))
 				{
 					b_ColCheck = true;
+					//Kills player
 					if(go->type == GameObject::GO_LASER)
 						Virus->SetPlayerState(CPlayer::DEAD);
 				}
 				if(GetKeyState('e'))
+				{
 					go->CheckBonusInteraction(Virus->pos);
+
+					//Warps player
+					if(go->type == GameObject::GO_TELEPORTER)
+					{
+						Virus->pos = go->GetSecondaryPosition();
+					}
+				}
 			}
 		}
 		if(!b_ColCheck)
@@ -1574,8 +1583,6 @@ void SceneStealth::RenderGO(GameObject *go)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
-			modelStack.Rotate(angle, 0, 0 ,1);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
 			modelStack.PopMatrix();
@@ -1585,10 +1592,17 @@ void SceneStealth::RenderGO(GameObject *go)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
-			modelStack.Rotate(angle, 0, 0 ,1);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
+			modelStack.PopMatrix();
+		}
+		break;
+	case GameObject::GO_TELEPORTER:
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+			RenderMesh(meshList[GEO_TELEPORTER], bLightEnabled);
 			modelStack.PopMatrix();
 		}
 		break;
@@ -1792,6 +1806,7 @@ void SceneStealth::RenderGame(void)
 		RenderMesh(meshList[GEO_BOX], bLightEnabled);
 	modelStack.PopMatrix();
 
+	//Render noise objects
 	for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 	{
 		CNoiseObject *nobj = (CNoiseObject *)*it;
@@ -1832,10 +1847,10 @@ void SceneStealth::RenderGame(void)
 		if(go->type == GameObject::GO_LEVER)
 			RenderMesh(meshList[GEO_LEVER], bLightEnabled);
 		//Render laser switch
-		if(go->type == GameObject::GO_LASER)
+		else if(go->type == GameObject::GO_LASER)
 			RenderMesh(meshList[GEO_LEVER], bLightEnabled);
 		//Render the Box Button
-		if(go->type == GameObject::GO_BBTN)
+		else if(go->type == GameObject::GO_BBTN)
 			RenderMesh(meshList[GEO_BBTN], bLightEnabled);
 		modelStack.PopMatrix();
 	}

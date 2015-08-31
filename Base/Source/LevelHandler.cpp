@@ -244,7 +244,7 @@ void CLevelHandler::LoadInteractables(string newInteractables)
 					, stof(Interactables_Tokens.at(I_ACTIVATE_POSZ))));
 				Interactables_List.push_back(in);
 			}
-			if(Interactables_Tokens.at(GO_TYPE) == "GO_LASER")
+			else if(Interactables_Tokens.at(GO_TYPE) == "GO_LASER")
 			{
 				CInteractables *in = new CLaser( 
 					Vector3(stof(Interactables_Tokens.at(I_POSX))
@@ -263,9 +263,28 @@ void CLevelHandler::LoadInteractables(string newInteractables)
 					, stof(Interactables_Tokens.at(I_ACTIVATE_POSZ))));
 				Interactables_List.push_back(in);
 			}
-			if(Interactables_Tokens.at(GO_TYPE) == "GO_BBTN")
+			else if(Interactables_Tokens.at(GO_TYPE) == "GO_BBTN")
 			{
 				CInteractables *in = new CBBtn( 
+					Vector3(stof(Interactables_Tokens.at(I_POSX))
+					, stof(Interactables_Tokens.at(I_POSY))
+					, stof(Interactables_Tokens.at(I_POSZ )))
+					//normal
+					, Vector3(stof(Interactables_Tokens.at(I_NORMALX))
+					, stof(Interactables_Tokens.at(I_NORMALY)))
+					//scale
+					, Vector3(stof(Interactables_Tokens.at(I_SCALEX))
+					, stof(Interactables_Tokens.at(I_SCALEY))
+					, stof(Interactables_Tokens.at(I_SCALEZ)))
+					//Activation position
+					,Vector3(stof(Interactables_Tokens.at(I_ACTIVATE_POSX))
+					, stof(Interactables_Tokens.at(I_ACTIVATE_POSY))
+					, stof(Interactables_Tokens.at(I_ACTIVATE_POSZ))));
+				Interactables_List.push_back(in);
+			}
+			else if(Interactables_Tokens.at(GO_TYPE) == "GO_TELEPORTER")
+			{
+				CInteractables *in = new CTeleporter( 
 					Vector3(stof(Interactables_Tokens.at(I_POSX))
 					, stof(Interactables_Tokens.at(I_POSY))
 					, stof(Interactables_Tokens.at(I_POSZ )))

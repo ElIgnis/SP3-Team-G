@@ -5,6 +5,7 @@
 #include "Lever.h"
 #include "Laser.h"
 #include "BBtn.h"
+#include "Teleporter.h"
 #include "Enemy_Patrol.h"
 #include "Enemy_Patrol_Rage.h"
 #include "Enemy_Sentry.h"
