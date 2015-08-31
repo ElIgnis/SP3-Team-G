@@ -174,7 +174,7 @@ void SceneBase::Init()
 	}
 
 	//Text
-	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
+	meshList[GEO_TEXT]->textureID = LoadTGA("Image//PixelMix.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
 	//Game Objects
@@ -256,6 +256,10 @@ void SceneBase::Init()
 	//Lever for the walls
 	meshList[GEO_LEVER] = MeshBuilder::GenerateOBJ("Le button", "OBJ//Interactive_btn.obj");
 	meshList[GEO_LEVER]->textureID = LoadTGA("Image//GameObjects//Interactive_btn.tga");
+
+	//Box Button for the walls
+	meshList[GEO_BBTN] = MeshBuilder::GenerateOBJ("Le floor button", "OBJ//BBtn.obj");
+	meshList[GEO_BBTN]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
@@ -509,7 +513,8 @@ void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float sizeX, float si
 				{
 					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
 				}
-				mesh->Render();
+				//mesh->Render();
+				RenderMesh(mesh, enableLight);
 				if(mesh->textureID > 0)
 				{
 					glBindTexture(GL_TEXTURE_2D, 0);

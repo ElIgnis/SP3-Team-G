@@ -20,7 +20,7 @@ public:
 	unsigned int getHold(void);
 
 	bool AddItem(CItem::ITEM_TYPE type);
-	bool checkItem(int keypress);
-	void delItem(int keypress);
+	bool checkItem(int slot);
+	void delItem(int slot);
 };
 

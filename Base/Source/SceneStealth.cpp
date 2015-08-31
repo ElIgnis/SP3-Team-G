@@ -15,6 +15,9 @@ SceneStealth::SceneStealth()
 	, b_ShowHSNotice(false)
 	, b_LoadNextLevel(false)
 	, b_GameCompleted(false)
+	, m_fCheckpointRot(0.f)
+	, m_fCheckpointHeight(5.f)
+	, m_bCheckpointDir(true)
 {
 }
 
@@ -256,6 +259,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		}
 		break;
 	case GameObject::GO_LEVER:
+	case GameObject::GO_BBTN:
 	case GameObject::GO_POWERUP_INVIS:
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
@@ -424,7 +428,7 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
-
+			//cout << Virus->pos.x << " " << Virus->pos.y << endl;
 			//Update game if not dead and paused
 			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
@@ -434,6 +438,7 @@ void SceneStealth::Update(double dt)
 				UpdateEnemies(dt);
 				UpdatePlayerScore(dt);
 				UpdateDialogue(dt);
+				UpdateCheckpointDisplacement(dt);
 			}
 			//Update paused menu
 			else if(b_PauseGame)
@@ -517,19 +522,20 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.x = Virus->dir.x * acc.x;
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
-		if (Application::IsKeyPressed('V'))
-			Virus->TriggerItemEffect(test->GetItemType());
+		//if (Application::IsKeyPressed('V'))
+			//Virus->TriggerSkillEffect(test->GetItemType());
 
 		static bool btest = false;
 		if(Application::IsKeyPressed('B') && btest == false)
 		{
-			Virus->TriggerItemEffect(testes->GetItemType());
+			//Virus->TriggerSkillEffect(testes->GetItemType());
 			btest = true;
 		}
 		else if(!Application::IsKeyPressed('B') && btest == true)
 			btest = false;
 
 		bool b_boxColCheck = false;
+		bool b_ColCheck = false;
 		//Check BOX collision with the walls
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
@@ -549,10 +555,21 @@ void SceneStealth::UpdatePlayer(const double dt)
 						}
 					}
 				}
+				for(std::vector<CInteractables  *>::iterator it2 = LvlHandler.GetInteractables_List().begin(); it2 != LvlHandler.GetInteractables_List().end(); ++it2)
+				{
+					CInteractables *go2 = (CInteractables *)*it2;
+					//Check Collision between Box and Box Button
+					if(go2->active && go2->type == GameObject::GO_BBTN)
+					{
+						if(CheckCollision(go,go2,dt))
+						{
+							b_ColCheck = true;
+						}
+						go2->CheckBonusInteraction(go->pos);
+					}
+				}
 			}
 		}
-
-		bool b_ColCheck = false;
 
 		//Check player collision with structure
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
@@ -592,7 +609,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
 			CInteractables *go = (CInteractables *)* it;
-			if(go->active)
+			if(go->active && (go->type == GameObject::GO_LEVER || go->type == GameObject::GO_BBTN))
 			{
 				if(CheckCollision(Virus,go,dt))
 				{
@@ -600,7 +617,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					if(go->type == GameObject::GO_LASER)
 						Virus->SetPlayerState(CPlayer::DEAD);
 				}
-				if(Application::IsKeyPressed(VK_RETURN))
+				if(Application::IsKeyPressed('E'))
 					go->CheckBonusInteraction(Virus->pos);
 			}
 		}
@@ -656,6 +673,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				if(CheckCollision(Virus,go,dt))
 				{
+					for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetCheckPoint_List().begin(); it2 != LvlHandler.GetCheckPoint_List().end(); ++it2)
+					{
+						GameObject *go2 = (GameObject *)*it2;
+						go2->active = false;
+					}
 					Virus->SetCurrentCP(go->pos);
 					go->active = true;
 					break;
@@ -862,6 +884,19 @@ void SceneStealth::UpdateDialogue(const double dt)
 	}
 }
 
+void SceneStealth::UpdateCheckpointDisplacement(const double dt)
+{
+	m_fCheckpointRot += dt * 100;
+	if(m_fCheckpointRot > 360)
+		m_fCheckpointRot = 0.f;
+	if(m_bCheckpointDir)
+		m_fCheckpointHeight += dt * 10;
+	else
+		m_fCheckpointHeight -= dt * 10;
+	if(m_fCheckpointHeight > 20 || m_fCheckpointHeight < 5)
+		m_bCheckpointDir = !m_bCheckpointDir;
+}
+
 void SceneStealth::UpdateMenu(const double dt)
 {
 	menu_main.Update(dt);
@@ -975,72 +1010,63 @@ void SceneStealth::UpdateGameKeypress(void)
 	{
 		if(Virus->m_pInv.checkItem(1))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType());
-			Virus->m_pInv.delItem(1);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType(),1);
 		}
 	}
 	if(GetKeyState('2'))
 	{
 		if(Virus->m_pInv.checkItem(2))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType());
-			Virus->m_pInv.delItem(2);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType(),2);
 		}
 	}
 	if(GetKeyState('3'))
 	{
 		if(Virus->m_pInv.checkItem(3))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType());
-			Virus->m_pInv.delItem(3);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType(),3);
 		}
 	}
 	if(GetKeyState('4'))
 	{
 		if(Virus->m_pInv.checkItem(4))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType());
-			Virus->m_pInv.delItem(4);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType(),4);
 		}
 	}
 	if(GetKeyState('5'))
 	{
 		if(Virus->m_pInv.checkItem(5))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType());
-			Virus->m_pInv.delItem(5);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType(),5);
 		}
 	}
 	if(GetKeyState('6'))
 	{
 		if(Virus->m_pInv.checkItem(6))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType());
-			Virus->m_pInv.delItem(6);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType(),6);
 		}
 	}
 	if(GetKeyState('7'))
 	{
 		if(Virus->m_pInv.checkItem(7))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType());
-			Virus->m_pInv.delItem(7);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType(),7);
 		}
 	}
 	if(GetKeyState('8'))
 	{
 		if(Virus->m_pInv.checkItem(8))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType());
-			Virus->m_pInv.delItem(8);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType(),8);
 		}
 	}
 	if(GetKeyState('9'))
 	{
 		if(Virus->m_pInv.checkItem(9))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType());
-			Virus->m_pInv.delItem(9);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType(),9);
 		}
 	}
 	if(GetKeyState('p'))
@@ -1543,6 +1569,17 @@ void SceneStealth::RenderGO(GameObject *go)
 			modelStack.PopMatrix();
 		}
 		break;
+	case GameObject::GO_BBTN:
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
+			modelStack.Rotate(angle, 0, 0 ,1);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
+			modelStack.PopMatrix();
+		}
+		break;
 	case GameObject::GO_BOX:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1587,7 +1624,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		break;
 	case GameObject::GO_CHECKPOINT:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if(!go->active)
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		else
+		{
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + m_fCheckpointHeight);
+			modelStack.Rotate(m_fCheckpointRot, 0,0,1);
+		}
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_CHECKPOINT], bLightEnabled);
 		modelStack.PopMatrix();
@@ -1706,6 +1749,9 @@ void SceneStealth::RenderGame(void)
 		//Render laser switch
 		if(go->type == GameObject::GO_LASER)
 			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		//Render the Box Button
+		if(go->type == GameObject::GO_BBTN)
+			RenderMesh(meshList[GEO_BBTN], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 
@@ -1956,7 +2002,7 @@ void SceneStealth::RenderHealthbar(void)
 	//Health
 	std::stringstream ssH;
 	ssH << 'x' << Virus->getLives();
-	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 5, 12, 53.5);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 3, 12, 53.5);
 }
 void SceneStealth::RenderInventory(void)
 {

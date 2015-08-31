@@ -135,6 +135,9 @@
     <ClCompile Include="Source\DialogueBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BBtn.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="Source\DialogueBox.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BBtn.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
