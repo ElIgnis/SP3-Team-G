@@ -227,7 +227,7 @@ void SceneBase::Init()
 
 	//Player indicator
 	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
-	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//Indicator_Blue2.tga");
+	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//ConeIndicator.tga");
 	
 	//Hiding Spot
 	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
@@ -242,12 +242,12 @@ void SceneBase::Init()
 	meshList[GEO_BOX]->textureID = LoadTGA("Image//Box.tga");
 
 	//Laser
-	meshList[GEO_LASER] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
-	meshList[GEO_LASER]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
+	//meshList[GEO_LASER] = MeshBuilder::GenerateOBJ("Laser", "OBJ//Laser.obj");
+	//meshList[GEO_LASER]->textureID = LoadTGA("Image//GameObjects//Laser_Tex.tga");
 
-	//Laser Machine
-	meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser_Machine", "OBJ//Laser_Machine.obj");
-	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
+	////Laser Machine
+	//meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser_Machine", "OBJ//Laser_Machine.obj");
+	//meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
