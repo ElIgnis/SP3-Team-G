@@ -37,7 +37,7 @@ private:
 	string m_sLevelData2;
 	int m_iObjLine;
 	int m_iCurrentStage;
-	bool m_bStageSelection;
+	bool m_bLevelSelection;
 	bool m_bStageCompleted;
 	Vector3 SpawnPos;
 

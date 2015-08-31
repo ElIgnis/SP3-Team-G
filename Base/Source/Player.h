@@ -73,4 +73,7 @@ public:
 	bool m_bIsHiding;
 
 	void PlayerReset(void);
+
+	//Gets string of item used
+	string GetItemUsed(CItem::ITEM_TYPE type);
 };

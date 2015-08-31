@@ -15,6 +15,8 @@ SceneStealth::SceneStealth()
 	, b_ShowHSNotice(false)
 	, b_LoadNextLevel(false)
 	, b_GameCompleted(false)
+	, f_FeedbackTimer(0.f)
+	, b_TriggerFBTimer(false)
 	, m_fCheckpointRot(0.f)
 	, m_fCheckpointHeight(5.f)
 	, m_bCheckpointDir(true)
@@ -55,7 +57,7 @@ void SceneStealth::Init()
 	m = new CMenuItem("Instructions", "Instructions.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Controls guide", "ControlsGuide.txt");
+	m = new CMenuItem("Controls", "ControlsGuide.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
 	m = new CMenuItem("Exit", "Exit.txt");
@@ -428,7 +430,7 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
-			//cout << Virus->pos.x << " " << Virus->pos.y << endl;
+			
 			//Update game if not dead and paused
 			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
@@ -438,7 +440,15 @@ void SceneStealth::Update(double dt)
 				UpdateEnemies(dt);
 				UpdatePlayerScore(dt);
 				UpdateDialogue(dt);
+				if(b_TriggerFBTimer)
+					f_FeedbackTimer += dt;
+				if(f_FeedbackTimer > DisplayTimer)
+				{
+					f_FeedbackTimer = 0.f;
+					b_TriggerFBTimer = false;
+				}
 				UpdateCheckpointDisplacement(dt);
+				lights[0].position.Set(Virus->pos.x, Virus->pos.z, -Virus->pos.y);
 			}
 			//Update paused menu
 			else if(b_PauseGame)
@@ -498,11 +508,19 @@ void SceneStealth::Update(double dt)
 	}
 	if(Application::IsKeyPressed('J'))
 		std::cout<<Virus->pos<<std::endl;
+	
 }
 
 void SceneStealth::UpdatePlayer(const double dt)
 {
 	Virus->UpdateTimers(dt);
+
+	/*cout << "Player's Pos :" << Virus->pos << endl;
+	cout << "Light's Pos X is :" << lights[0].position.x << endl;
+	cout << "Light's Pos Y is :" << lights[0].position.y << endl;
+	cout << "Light's Pos Z is :" << lights[0].position.z << endl;
+*/
+	lights[0].position.Set(Virus->pos.x, Virus->pos.z, -Virus->pos.y);
 
 	//Only update player when player is not dead
 	if(Virus->GetPlayerState() != CPlayer::DEAD)
@@ -605,7 +623,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
 			CInteractables *go = (CInteractables *)* it;
-			if(go->active && (go->type == GameObject::GO_LEVER || go->type == GameObject::GO_BBTN))
+			if(go->active)
 			{
 				if(CheckCollision(Virus,go,dt))
 				{
@@ -613,7 +631,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					if(go->type == GameObject::GO_LASER)
 						Virus->SetPlayerState(CPlayer::DEAD);
 				}
-				if(Application::IsKeyPressed('E'))
+				if(GetKeyState('e'))
 					go->CheckBonusInteraction(Virus->pos);
 			}
 		}
@@ -700,6 +718,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		}
 	}
 
+	//lights[0].position.Set(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
@@ -1681,7 +1700,7 @@ void SceneStealth::RenderGame(void)
 	//modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(0.f, -10.f, 0.f);
+	modelStack.Translate(0.f, -5.f, 0.f);
 	modelStack.Rotate(-90.f, 1, 0, 0);
 	modelStack.Scale(1000.f, 1000.f, 1.f);
 	RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
@@ -1689,6 +1708,75 @@ void SceneStealth::RenderGame(void)
 	
 	modelStack.PushMatrix();
 	modelStack.Rotate(-rotateScene, 1, 0, 0);
+
+
+	//Render enemies here
+	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
+	{
+		CEnemy *go = (CEnemy  *)*it;
+		if(go->active)
+		{
+			//theta = Math::RadianToDegree(atan2(go->dir.y, go->dir.x));
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+			modelStack.Rotate(go->dir.z, 0, 0, 1);
+			switch(go->e_type)
+			{
+			case CEnemy::ENEMY_SENTRY:
+					RenderMesh(meshList[GEO_FIREWALL], bLightEnabled);
+				break;
+			case CEnemy::ENEMY_PATROL:
+					RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
+				break;
+			case CEnemy::ENEMY_PATROL_RAGE:
+					RenderMesh(meshList[GEO_ANTIVIRUS_INVERTED], bLightEnabled);
+				break;
+			}
+			modelStack.PopMatrix();
+			//Enemy alert indicator
+			if(go->GetDetectedStatus())
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(go->dir.z, 0, 0, 1);
+				RenderMesh(meshList[GEO_ALERT], bLightEnabled);
+				modelStack.PopMatrix();
+			}
+			else if(go->GetTrackingStatus())
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(go->dir.z, 0, 0, 1);
+				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
+				modelStack.PopMatrix();
+			}
+			glDisable(GL_DEPTH_TEST);
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, 0);
+			modelStack.Rotate(go->dir.z - 90.f, 0, 0, 1);
+			modelStack.Scale(go->GetDetectionRange().x , go->GetDetectionRange().y, go->GetDetectionRange().z);
+			if(go->GetState() != CEnemy::STATE_ALERT && go->GetState() != CEnemy::STATE_ATTACK)
+				RenderMesh(meshList[GEO_CONE_YELLOW], bLightEnabled);
+			else
+				RenderMesh(meshList[GEO_CONE_RED], bLightEnabled);
+			modelStack.PopMatrix();
+			glEnable(GL_DEPTH_TEST);
+		}
+		for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
+		{
+			GameObject *bul = (GameObject  *)*it2;
+			if(bul->active)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(bul->pos.x, bul->pos.y, bul->pos.z);
+				modelStack.Scale(bul->scale.x, bul->scale.y, bul->scale.z);
+				RenderMesh(meshList[GEO_BULLET], bLightEnabled);
+				modelStack.PopMatrix();
+			}
+		}
+	}
+
 
 	//Render player
 	float theta;
@@ -1737,14 +1825,14 @@ void SceneStealth::RenderGame(void)
 		if(go->active)
 			RenderGO(go);
 		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
-		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
+		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z+5);
 		modelStack.Scale(5, 5, 5);
 		//Render lever switch
 		if(go->type == GameObject::GO_LEVER)
 			RenderMesh(meshList[GEO_LEVER], bLightEnabled);
 		//Render laser switch
 		if(go->type == GameObject::GO_LASER)
-			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+			RenderMesh(meshList[GEO_LEVER], bLightEnabled);
 		//Render the Box Button
 		if(go->type == GameObject::GO_BBTN)
 			RenderMesh(meshList[GEO_BBTN], bLightEnabled);
@@ -1768,66 +1856,7 @@ void SceneStealth::RenderGame(void)
 			RenderGO(go);
 	}
 
-	//Render enemies here
-	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
-	{
-		CEnemy *go = (CEnemy  *)*it;
-		if(go->active)
-		{
-			//theta = Math::RadianToDegree(atan2(go->dir.y, go->dir.x));
-			modelStack.PushMatrix();
-			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-			modelStack.Rotate(go->dir.z, 0, 0, 1);
-			switch(go->e_type)
-			{
-			case CEnemy::ENEMY_SENTRY:
-					RenderMesh(meshList[GEO_FIREWALL], bLightEnabled);
-				break;
-			case CEnemy::ENEMY_PATROL:
-					RenderMesh(meshList[GEO_ANTIVIRUS], bLightEnabled);
-				break;
-			case CEnemy::ENEMY_PATROL_RAGE:
-					RenderMesh(meshList[GEO_ANTIVIRUS_INVERTED], bLightEnabled);
-				break;
-			}
-			modelStack.PopMatrix();
-			//Enemy alert indicator
-			if(go->GetDetectedStatus())
-			{
-				modelStack.PushMatrix();
-				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
-				modelStack.Rotate(go->dir.z, 0, 0, 1);
-				RenderMesh(meshList[GEO_ALERT], bLightEnabled);
-				modelStack.PopMatrix();
-			}
-			else if(go->GetTrackingStatus())
-			{
-				modelStack.PushMatrix();
-				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
-				modelStack.Rotate(go->dir.z, 0, 0, 1);
-				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
-				modelStack.PopMatrix();
-			}
-			/*modelStack.PushMatrix();
-			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-			modelStack.Scale(go->GetDetectionRange().x, go->GetDetectionRange().y, go->GetDetectionRange().z);
-			RenderMesh(meshList[GEO_PLAYER_INDICATOR], bLightEnabled);
-			modelStack.PopMatrix();*/
-		}
-		for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
-		{
-			GameObject *bul = (GameObject  *)*it2;
-			if(bul->active)
-			{
-				modelStack.PushMatrix();
-				modelStack.Translate(bul->pos.x, bul->pos.y, bul->pos.z);
-				modelStack.Scale(bul->scale.x, bul->scale.y, bul->scale.z);
-				RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
-				modelStack.PopMatrix();
-			}
-		}
-	}
+	
 
 	modelStack.PopMatrix();
 	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
@@ -1901,21 +1930,20 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
 	case 1: //Option 2 for Level Select
 		{
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
-			if(LvlHandler.GetCurrentStage() == 1)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 2)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 3, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 3)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 3, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 4)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 3, 40, 45);
+			std::stringstream ssDesc;
+			ssDesc << "Current Level: " << LvlHandler.GetCurrentStage();
+			if(!LvlHandler.GetStageSelection())
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable level selection", Color(0, 1, 0), 1.5, 40, 45);
+			else
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll through levels", Color(0, 1, 0), 1.5, 40, 45);
+			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 41);
 		}
 		break;
 	case 2: //Option 3 for Highscore
@@ -1935,7 +1963,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
 				else
 					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
-				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 45.f - i * 4);
 			}
 		}
 		break;
@@ -1945,7 +1973,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[3]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1955,7 +1983,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[4]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1965,7 +1993,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[5]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1996,13 +2024,20 @@ void SceneStealth::RenderHealthbar(void)
 	//Hotbar selection indicator
 	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
     //Player health
-	Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.23, Application::GetWindowHeight() * 0.08, Application::GetWindowWidth() * 0.145, Application::GetWindowHeight() * 0.8975,false,false);
-	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+	for(int i = 0; i < Virus->getLives(); i++)
+	{
+		Render2DMesh(meshList[GEO_HEALTH],false, (Application::GetWindowWidth() * 0.07), Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.9,false,false);
+	}
+
+	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 1.5, Application::GetWindowHeight() * 0.15, (Application::GetWindowWidth() * 0.15) + ((Application::GetWindowWidth() * 0.01) * 4), Application::GetWindowHeight() * 0.9,false,false);
+	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.27, Application::GetWindowHeight() * 0.15, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+
+	//Render2DMesh(meshList[GEO_PLAYER],false, Application::GetWindowWidth() * 0.05, Application::GetWindowHeight() * 0.05, Application::GetWindowWidth() * 0.1, Application::GetWindowHeight() * 0.9,true,false);
 
 	//Health
 	std::stringstream ssH;
 	ssH << 'x' << Virus->getLives();
-	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 3, 12, 53.5);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 3, 11, 54.25);
 }
 void SceneStealth::RenderInventory(void)
 {
@@ -2066,6 +2101,11 @@ void SceneStealth::RenderInventory(void)
 			}
 		}
 	}
+	//Text feedback
+	if(b_TriggerFBTimer)
+		RenderTextOnScreen(meshList[GEO_TEXT], ssFeedback.str(), Color(1, 1, 1), 5.f, 20, 10);
+	else
+		ssFeedback.str("");
 }
 void SceneStealth::RenderScore(void)
 {
@@ -2080,7 +2120,7 @@ void SceneStealth::RenderScore(void)
 	else
 		ssScore << " : " << tempHighScore.GetSeconds();
 
-	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 5, 48);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 5, 45);
 }
 void SceneStealth::RenderDialogBox(void)
 {
@@ -2204,6 +2244,15 @@ void SceneStealth::Render()
 		Vector3 spotDirection_cameraspace = viewStack.Top() * rot * lights[0].spotDirection;
 		glUniform3fv(m_parameters[U_LIGHT0_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
 	}
+	else if(lights[0].type == Light::LIGHT_POINT)
+	{
+		Mtx44 rot;
+		rot.SetToRotation(-rotateScene + 90.f, 1, 0, 0);
+		Position lightPosition_cameraspace = viewStack.Top() * lights[0].position;
+		glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightPosition_cameraspace.x);
+		Vector3 spotDirection_cameraspace = viewStack.Top() *  lights[0].spotDirection;
+		glUniform3fv(m_parameters[U_LIGHT0_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
+	}
 	else
 	{
 		Position lightPosition_cameraspace =  viewStack.Top() * lights[0].position;
@@ -2212,18 +2261,27 @@ void SceneStealth::Render()
 
 	if(lights[1].type == Light::LIGHT_DIRECTIONAL)
 	{
+		Mtx44 rot;
+		rot.SetToRotation(90.f, 0, 1, 0);
 		Vector3 lightDir(lights[1].position.x, lights[1].position.y, lights[1].position.z);
-		Vector3 lightDirection_cameraspace = viewStack.Top() * lightDir;
+		Vector3 lightDirection_cameraspace = viewStack.Top() * rot * lightDir;
 		glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &lightDirection_cameraspace.x);
 	}
 	else if(lights[1].type == Light::LIGHT_SPOT)
+	{
+		Position lightPosition_cameraspace = viewStack.Top() * lights[1].position;
+		glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &lightPosition_cameraspace.x);
+		Vector3 spotDirection_cameraspace = viewStack.Top() *  lights[1].spotDirection;
+		glUniform3fv(m_parameters[U_LIGHT1_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
+	}
+	else if(lights[1].type == Light::LIGHT_POINT)
 	{
 		Mtx44 rot;
 		rot.SetToRotation(-rotateScene + 90.f, 1, 0, 0);
 		Position lightPosition_cameraspace = viewStack.Top() * lights[1].position;
 		glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &lightPosition_cameraspace.x);
-		Vector3 spotDirection_cameraspace = viewStack.Top() * rot * lights[1].spotDirection;
-		glUniform3fv(m_parameters[U_LIGHT1_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
+		Vector3 pointDirection_cameraspace = viewStack.Top() * rot * lights[1].pointDirection;
+		glUniform3fv(m_parameters[U_LIGHT1_POINTDIRECTION], 1, &pointDirection_cameraspace.x);
 	}
 	else
 	{
