@@ -13,6 +13,8 @@
 #define MoveSpeed 50.f
 #define MoveSpeedModifier 1.f
 
+#define DisplayTimer 2.f
+
 #define NumberOfKeys 255
 
 #include <vector>
@@ -73,9 +75,11 @@ public:
 
 	//Update everything related to player(player collision to structures, powerups, player movement..)
 	void UpdatePlayer(const double dt);
+	//Updates player score by time
 	void UpdatePlayerScore(const double dt);
 	//Update everything related to enemies(enemy collision to player, structures)
 	void UpdateEnemies(const double dt);
+
 
 	//Update dialogue boxes
 	void UpdateDialogue(double dt);
@@ -192,6 +196,11 @@ private:
 
 	//Out of lives state
 	bool b_OutOfLives;
+
+	//Text feedback
+	std::stringstream ssFeedback;
+	float f_FeedbackTimer;
+	bool b_TriggerFBTimer;
 
 	CItem *test;
 	CItem *testes;

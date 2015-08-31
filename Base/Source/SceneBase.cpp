@@ -116,7 +116,7 @@ void SceneBase::Init()
 	lights[1].type = Light::LIGHT_DIRECTIONAL;
 	lights[1].position.Set(0, 0, 10);
 	lights[1].color.Set(1, 1, 1);
-	lights[1].power = 1;
+	lights[1].power = 5;
 	lights[1].kC = 1.f;
 	lights[1].kL = 0.001f;
 	lights[1].kQ = 0.0001f;
@@ -225,9 +225,12 @@ void SceneBase::Init()
 	meshList[GEO_POWERUP_INVISIBLE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Invisibility.obj");
 	meshList[GEO_POWERUP_INVISIBLE]->textureID = LoadTGA("Image//GameObjects/Powerups/Invisibility.tga");
 
-	//Player indicator
-	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
-	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//ConeIndicator.tga");
+	//Yellow Cone
+	meshList[GEO_CONE_YELLOW] = MeshBuilder::GenerateQuad("Yellow_Cone", Color(1, 0, 0), 2.f);
+	meshList[GEO_CONE_YELLOW]->textureID = LoadTGA("Image//Cone_Yellow.tga");
+	//Red Cone
+	meshList[GEO_CONE_RED] = MeshBuilder::GenerateQuad("Red_Cone", Color(1, 0, 0), 2.f);
+	meshList[GEO_CONE_RED]->textureID = LoadTGA("Image//Cone_Red.tga");
 	
 	//Hiding Spot
 	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);

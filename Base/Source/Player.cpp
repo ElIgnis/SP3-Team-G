@@ -176,6 +176,7 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 		}
 		break;
 	case CItem::FREEZE:
+		ActivatePowerup(type, 3.f);
 		{
 			m_pInv.delItem(slot);
 		}
@@ -207,6 +208,12 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 		}
 		break;
 	}
+}
+
+string CPlayer::GetItemUsed(CItem::ITEM_TYPE type)
+{
+	string a = "";
+	return a;
 }
 
 void TriggerSkillEffect(CItem::ITEM_TYPE type)
