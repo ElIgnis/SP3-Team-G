@@ -15,6 +15,9 @@ SceneStealth::SceneStealth()
 	, b_ShowHSNotice(false)
 	, b_LoadNextLevel(false)
 	, b_GameCompleted(false)
+	, m_fCheckpointRot(0.f)
+	, m_fCheckpointHeight(5.f)
+	, m_bCheckpointDir(true)
 {
 }
 
@@ -435,6 +438,7 @@ void SceneStealth::Update(double dt)
 				UpdateEnemies(dt);
 				UpdatePlayerScore(dt);
 				UpdateDialogue(dt);
+				UpdateCheckpointDisplacement(dt);
 			}
 			//Update paused menu
 			else if(b_PauseGame)
@@ -563,7 +567,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 
-
 		//Check player collision with structure
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
@@ -666,6 +669,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				if(CheckCollision(Virus,go,dt))
 				{
+					for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetCheckPoint_List().begin(); it2 != LvlHandler.GetCheckPoint_List().end(); ++it2)
+					{
+						GameObject *go2 = (GameObject *)*it2;
+						go2->active = false;
+					}
 					Virus->SetCurrentCP(go->pos);
 					go->active = true;
 					break;
@@ -869,6 +877,19 @@ void SceneStealth::UpdateDialogue(const double dt)
 		CDialogue_Box *db = (CDialogue_Box *)*it;
 		db->Update(dt, Virus);
 	}
+}
+
+void SceneStealth::UpdateCheckpointDisplacement(const double dt)
+{
+	m_fCheckpointRot += dt * 100;
+	if(m_fCheckpointRot > 360)
+		m_fCheckpointRot = 0.f;
+	if(m_bCheckpointDir)
+		m_fCheckpointHeight += dt * 10;
+	else
+		m_fCheckpointHeight -= dt * 10;
+	if(m_fCheckpointHeight > 20 || m_fCheckpointHeight < 5)
+		m_bCheckpointDir = !m_bCheckpointDir;
 }
 
 void SceneStealth::UpdateMenu(const double dt)
@@ -1607,7 +1628,13 @@ void SceneStealth::RenderGO(GameObject *go)
 		break;
 	case GameObject::GO_CHECKPOINT:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if(!go->active)
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		else
+		{
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + m_fCheckpointHeight);
+			modelStack.Rotate(m_fCheckpointRot, 0,0,1);
+		}
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_CHECKPOINT], bLightEnabled);
 		modelStack.PopMatrix();
