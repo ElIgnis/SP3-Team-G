@@ -57,7 +57,7 @@ void SceneStealth::Init()
 	m = new CMenuItem("Instructions", "Instructions.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Controls guide", "ControlsGuide.txt");
+	m = new CMenuItem("Controls", "ControlsGuide.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
 	m = new CMenuItem("Exit", "Exit.txt");
@@ -1917,14 +1917,13 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 	case 1: //Option 2 for Level Select
 		{
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
-			if(LvlHandler.GetCurrentStage() == 1)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 1.5, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 2)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 1.5, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 3)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 1.5, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 4)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 1.5, 40, 45);
+			std::stringstream ssDesc;
+			ssDesc << "Current Level: " << LvlHandler.GetCurrentStage();
+			if(!LvlHandler.GetStageSelection())
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable level selection", Color(0, 1, 0), 1.5, 40, 45);
+			else
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll through levels", Color(0, 1, 0), 1.5, 40, 45);
+			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 41);
 		}
 		break;
 	case 2: //Option 3 for Highscore
@@ -1944,7 +1943,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
 				else
 					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
-				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 40.f - i * 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 45.f - i * 4);
 			}
 		}
 		break;

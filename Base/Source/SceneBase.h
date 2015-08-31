@@ -77,7 +77,6 @@ public:
 		GEO_QUAD,
 		GEO_BACKGROUND,
 		GEO_BALL2,
-
 		//Game Objects
 		//Walls & Floors
 		GEO_WALL_GREEN,

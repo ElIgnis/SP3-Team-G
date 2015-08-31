@@ -15,7 +15,7 @@ CLevelHandler::CLevelHandler(void)
 	, m_sLevelData2("")
 	, m_iObjLine(0)
 	, m_iCurrentStage(1)
-	, m_bStageSelection(false)
+	, m_bLevelSelection(false)
 	, m_bStageCompleted(false)
 {
 }
@@ -372,11 +372,11 @@ vector<Vector3 *> &CLevelHandler::GetSpawn_List(void)
 
 void CLevelHandler::SetStageSelection(const bool newStageSelect)
 {
-	this->m_bStageSelection = newStageSelect;
+	this->m_bLevelSelection = newStageSelect;
 }
 bool CLevelHandler::GetStageSelection(void)
 {
-	return m_bStageSelection;
+	return m_bLevelSelection;
 }
 
 void CLevelHandler::SetCurrentStage(const int newCurrentStage)
