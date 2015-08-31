@@ -1,9 +1,14 @@
 #include "MenuItem.h"
 
+#define MAXSIZE 4.f
+#define MINSIZE 3.f
+static const Color UNSELECTED_COLOR(0.8, 1.0, 0.2);
+static const Color SELECTED_COLOR(1.0, 0.8, 0.0);
+
 CMenuItem::CMenuItem()
 	: pos(1,1,1)
 	, colour(0.8, 1.0, 0.2)
-	, f_size(5)
+	, f_size(MINSIZE)
 	, b_IsGrowing(false)
 	, b_IsShrinking(false)
 	, b_IsMax(false)
@@ -15,7 +20,7 @@ CMenuItem::CMenuItem()
 
 CMenuItem::CMenuItem(std::string text)
 	: colour(0.8, 1.0, 0.2)
-	, f_size(5)
+	, f_size(MINSIZE)
 	, b_IsGrowing(false)
 	, b_IsShrinking(false)
 	, b_IsMax(false)
@@ -29,7 +34,7 @@ CMenuItem::CMenuItem(std::string text)
 
 CMenuItem::CMenuItem(std::string text, std::string textFile)
 	: colour(0.8, 1.0, 0.2)
-	, f_size(5)
+	, f_size(MINSIZE)
 	, b_IsGrowing(false)
 	, b_IsShrinking(false)
 	, b_IsMax(false)
@@ -62,11 +67,6 @@ void CMenuItem::SetIs_Selected(const bool b_IsSelected)
 {
 	this->b_IsSelected = b_IsSelected;
 }
-
-static const float MAXSIZE = 6.5f;
-static const float MINSIZE = 5.f;
-static const Color UNSELECTED_COLOR(0.8, 1.0, 0.2);
-static const Color SELECTED_COLOR(1.0, 0.8, 0.0);
 
 void CMenuItem::Update(double dt)
 {

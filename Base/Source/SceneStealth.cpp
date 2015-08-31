@@ -1999,7 +1999,7 @@ void SceneStealth::RenderHealthbar(void)
 	//Health
 	std::stringstream ssH;
 	ssH << 'x' << Virus->getLives();
-	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 5, 12, 53.5);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 3, 12, 53.5);
 }
 void SceneStealth::RenderInventory(void)
 {
