@@ -860,7 +860,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 							bul->active = false;
 
 						//Bullet kills player if collided
-						if(CheckCollision (bul, Virus, (float)dt))
+						if(CheckCollision(bul, Virus, (float)dt))
 						{
 							Virus->SetPlayerState(CPlayer::DEAD);
 							bul->active = false;
@@ -1733,6 +1733,7 @@ void SceneStealth::RenderGame(void)
 				break;
 			}
 			modelStack.PopMatrix();
+
 			//Enemy alert indicator
 			if(go->GetDetectedStatus())
 			{
@@ -1750,6 +1751,8 @@ void SceneStealth::RenderGame(void)
 				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
 				modelStack.PopMatrix();
 			}
+
+			//Enemy cone detection
 			glDisable(GL_DEPTH_TEST);
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, 0);
@@ -1762,6 +1765,7 @@ void SceneStealth::RenderGame(void)
 			modelStack.PopMatrix();
 			glEnable(GL_DEPTH_TEST);
 		}
+		//Render bullet list
 		for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
 		{
 			GameObject *bul = (GameObject  *)*it2;
@@ -1824,7 +1828,7 @@ void SceneStealth::RenderGame(void)
 		if(go->active)
 			RenderGO(go);
 		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
-		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z+5);
+		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
 		modelStack.Scale(5, 5, 5);
 		//Render lever switch
 		if(go->type == GameObject::GO_LEVER)
@@ -1995,6 +1999,7 @@ void SceneStealth::RenderUI(void)
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
 
+	glDisable(GL_DEPTH_TEST);
 	//Renders healthbar and current lives
 	RenderHealthbar();
 	//Renders inventory and items in it
@@ -2003,6 +2008,7 @@ void SceneStealth::RenderUI(void)
 	RenderScore();
 	//Render dialogues in scene
 	RenderDialogBox();
+	glEnable(GL_DEPTH_TEST);
 }
 
 void SceneStealth::RenderHealthbar(void)
@@ -2112,18 +2118,7 @@ void SceneStealth::RenderScore(void)
 }
 void SceneStealth::RenderDialogBox(void)
 {
-	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
-	{
-		CDialogue_Box *db = (CDialogue_Box *)*it;
-		modelStack.PushMatrix();
-		modelStack.Rotate(-rotateScene, 1, 0, 0);
-		modelStack.PushMatrix();
-		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -8);
-		modelStack.Scale(7, 7, 1);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
-		modelStack.PopMatrix();
-		modelStack.PopMatrix();
-	}
+	//Render dialogue message
 	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
 	{
 		CDialogue_Box *db = (CDialogue_Box *)*it;
@@ -2137,6 +2132,20 @@ void SceneStealth::RenderDialogBox(void)
 			}
 			break;
 		}
+	}
+
+	//Render trigger area for dialogue box
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		modelStack.PushMatrix();
+		modelStack.Rotate(-rotateScene, 1, 0, 0);
+		modelStack.PushMatrix();
+		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -5);
+		modelStack.Scale(7, 7, 1);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		modelStack.PopMatrix();
 	}
 	/*for(int i = 0; i < Virus->getLives(); i++)
 	{
