@@ -144,6 +144,15 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyUp('p');
 	}
+	//E key
+	if(IsKeyPressed('E'))
+	{
+		scene->UpdateKeyDown('e');
+	}
+	else if(IsKeyReleased('E'))
+	{
+		scene->UpdateKeyUp('e');
+	}
 
 	static bool delay1 = false;
 	static bool delay2 = false;

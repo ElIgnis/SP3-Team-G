@@ -116,7 +116,7 @@ void SceneBase::Init()
 	lights[1].type = Light::LIGHT_DIRECTIONAL;
 	lights[1].position.Set(0, 0, 10);
 	lights[1].color.Set(1, 1, 1);
-	lights[1].power = 1;
+	lights[1].power = 5;
 	lights[1].kC = 1.f;
 	lights[1].kL = 0.001f;
 	lights[1].kQ = 0.0001f;
@@ -225,9 +225,12 @@ void SceneBase::Init()
 	meshList[GEO_POWERUP_INVISIBLE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Invisibility.obj");
 	meshList[GEO_POWERUP_INVISIBLE]->textureID = LoadTGA("Image//GameObjects/Powerups/Invisibility.tga");
 
-	//Player indicator
-	meshList[GEO_PLAYER_INDICATOR] = MeshBuilder::GenerateQuad("Player_Indicator", Color(1, 0, 0), 2.f);
-	meshList[GEO_PLAYER_INDICATOR]->textureID = LoadTGA("Image//Indicator_Blue2.tga");
+	//Yellow Cone
+	meshList[GEO_CONE_YELLOW] = MeshBuilder::GenerateQuad("Yellow_Cone", Color(1, 0, 0), 2.f);
+	meshList[GEO_CONE_YELLOW]->textureID = LoadTGA("Image//Cone_Yellow.tga");
+	//Red Cone
+	meshList[GEO_CONE_RED] = MeshBuilder::GenerateQuad("Red_Cone", Color(1, 0, 0), 2.f);
+	meshList[GEO_CONE_RED]->textureID = LoadTGA("Image//Cone_Red.tga");
 	
 	//Hiding Spot
 	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
@@ -248,6 +251,14 @@ void SceneBase::Init()
 	//Laser Machine
 	meshList[GEO_LASER_MACHINE] = MeshBuilder::GenerateOBJ("Laser_Machine", "OBJ//Laser_Machine.obj");
 	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
+
+	//Lever for the walls
+	meshList[GEO_LEVER] = MeshBuilder::GenerateOBJ("Le button", "OBJ//Interactive_btn.obj");
+	meshList[GEO_LEVER]->textureID = LoadTGA("Image//GameObjects//Interactive_btn.tga");
+
+	//Box Button for the walls
+	meshList[GEO_BBTN] = MeshBuilder::GenerateOBJ("Le floor button", "OBJ//BBtn.obj");
+	meshList[GEO_BBTN]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
@@ -501,7 +512,8 @@ void SceneBase::Render2DMesh(Mesh *mesh, bool enableLight, float sizeX, float si
 				{
 					glUniform1i(m_parameters[U_COLOR_TEXTURE_ENABLED], 0);
 				}
-				mesh->Render();
+				//mesh->Render();
+				RenderMesh(mesh, enableLight);
 				if(mesh->textureID > 0)
 				{
 					glBindTexture(GL_TEXTURE_2D, 0);

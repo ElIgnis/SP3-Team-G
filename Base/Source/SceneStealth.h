@@ -83,6 +83,9 @@ public:
 
 	//Update dialogue boxes
 	void UpdateDialogue(double dt);
+
+	//Update checkpoint movement
+	void UpdateCheckpointDisplacement(const double dt);
 	
 	//Update keypress
 	void UpdateMenuKeypress(void);
@@ -149,6 +152,11 @@ private:
 
 	//Scene rotation
 	float rotateScene;
+
+	//Checkpoint rotation
+	float m_fCheckpointRot;
+	float m_fCheckpointHeight;
+	bool m_bCheckpointDir;
 
 	//Menu
 	CMenu menu_main;
