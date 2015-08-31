@@ -256,6 +256,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		}
 		break;
 	case GameObject::GO_LEVER:
+	case GameObject::GO_BBTN:
 	case GameObject::GO_POWERUP_INVIS:
 	case GameObject::GO_POWERUP_FREEZE:
 	case GameObject::GO_POWERUP_SPEED:
@@ -424,7 +425,7 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
-
+			//cout << Virus->pos.x << " " << Virus->pos.y << endl;
 			//Update game if not dead and paused
 			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
@@ -526,6 +527,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			btest = false;
 
 		bool b_boxColCheck = false;
+		bool b_ColCheck = false;
 		//Check BOX collision with the walls
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
@@ -545,10 +547,22 @@ void SceneStealth::UpdatePlayer(const double dt)
 						}
 					}
 				}
+				for(std::vector<CInteractables  *>::iterator it2 = LvlHandler.GetInteractables_List().begin(); it2 != LvlHandler.GetInteractables_List().end(); ++it2)
+				{
+					CInteractables *go2 = (CInteractables *)*it2;
+					//Check Collision between Box and Box Button
+					if(go2->active && go2->type == GameObject::GO_BBTN)
+					{
+						if(CheckCollision(go,go2,dt))
+						{
+							b_ColCheck = true;
+						}
+						go2->CheckBonusInteraction(go->pos);
+					}
+				}
 			}
 		}
 
-		bool b_ColCheck = false;
 
 		//Check player collision with structure
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
@@ -588,7 +602,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
 			CInteractables *go = (CInteractables *)* it;
-			if(go->active)
+			if(go->active && (go->type == GameObject::GO_LEVER || go->type == GameObject::GO_BBTN))
 			{
 				if(CheckCollision(Virus,go,dt))
 				{
@@ -596,7 +610,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					if(go->type == GameObject::GO_LASER)
 						Virus->SetPlayerState(CPlayer::DEAD);
 				}
-				if(Application::IsKeyPressed(VK_RETURN))
+				if(Application::IsKeyPressed('E'))
 					go->CheckBonusInteraction(Virus->pos);
 			}
 		}
@@ -1538,6 +1552,17 @@ void SceneStealth::RenderGO(GameObject *go)
 			modelStack.PopMatrix();
 		}
 		break;
+	case GameObject::GO_BBTN:
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
+			modelStack.Rotate(angle, 0, 0 ,1);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
+			modelStack.PopMatrix();
+		}
+		break;
 	case GameObject::GO_BOX:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -1697,10 +1722,13 @@ void SceneStealth::RenderGame(void)
 		modelStack.Scale(5, 5, 5);
 		//Render lever switch
 		if(go->type == GameObject::GO_LEVER)
-			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+			RenderMesh(meshList[GEO_LEVER], bLightEnabled);
 		//Render laser switch
 		if(go->type == GameObject::GO_LASER)
 			RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		//Render the Box Button
+		if(go->type == GameObject::GO_BBTN)
+			RenderMesh(meshList[GEO_BBTN], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 
