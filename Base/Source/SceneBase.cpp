@@ -174,7 +174,7 @@ void SceneBase::Init()
 	}
 
 	//Text
-	meshList[GEO_TEXT]->textureID = LoadTGA("Image//Font.tga");
+	meshList[GEO_TEXT]->textureID = LoadTGA("Image//PixelMix.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
 	//Game Objects

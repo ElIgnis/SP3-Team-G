@@ -160,31 +160,53 @@ bool CPlayer::FinishedDisguise(const double dt)
 		return false;
 }
 
-void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type)
+void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 {
 	switch(type)
 	{
 	case CItem::HEALTH:
-		add1Life();
+		{
+			if(m_pLives != 3)
+			{
+				add1Life();
+				m_pInv.delItem(slot);
+			}
+			else
+				break;
+		}
 		break;
 	case CItem::FREEZE:
 		ActivatePowerup(type, 3.f);
+		{
+			m_pInv.delItem(slot);
+		}
 		break;
 	case CItem::SPEED:
-		ActivatePowerup(type, 3.f);
+		{
+			ActivatePowerup(type, 3.f);
+			m_pInv.delItem(slot);
+		}
 		break;
 	case CItem::INVIS:
-		ActivatePowerup(type, 3.f);
+		{
+			ActivatePowerup(type, 3.f);
+			m_pInv.delItem(slot);
+		}
 		break;
 	case CItem::DISGUISE:
-		m_bChangeDisguise = true;
+		{
+			m_bChangeDisguise = true;
+			m_pInv.delItem(slot);
+		}
 		break;
 	case CItem::NOISE:
-		//Create new noise object and store inside NoiseObject_List
-		CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
-		NoiseObject_List.push_back(nobj);
+		{
+			//Create new noise object and store inside NoiseObject_List
+			CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
+			NoiseObject_List.push_back(nobj);
+			m_pInv.delItem(slot);
+		}
 		break;
-
 	}
 }
 
@@ -192,6 +214,12 @@ string CPlayer::GetItemUsed(CItem::ITEM_TYPE type)
 {
 	string a = "";
 	return a;
+}
+
+void TriggerSkillEffect(CItem::ITEM_TYPE type)
+{
+	//Fill in the Skill effects here
+	//Such as player stabbing
 }
 
 vector<CNoiseObject *> &CPlayer::GetNoiseObject_List(void)

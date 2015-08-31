@@ -506,8 +506,8 @@ void SceneStealth::Update(double dt)
 			break;
 		}
 	}
-	//if(Application::IsKeyPressed('J'))
-		//std::cout<<Virus->pos<<std::endl;
+	if(Application::IsKeyPressed('J'))
+		std::cout<<Virus->pos<<std::endl;
 	
 }
 
@@ -529,13 +529,13 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.x = Virus->dir.x * acc.x;
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
-		if (Application::IsKeyPressed('V'))
-			Virus->TriggerItemEffect(test->GetItemType());
+		//if (Application::IsKeyPressed('V'))
+			//Virus->TriggerSkillEffect(test->GetItemType());
 
 		static bool btest = false;
 		if(Application::IsKeyPressed('B') && btest == false)
 		{
-			Virus->TriggerItemEffect(testes->GetItemType());
+			//Virus->TriggerSkillEffect(testes->GetItemType());
 			btest = true;
 		}
 		else if(!Application::IsKeyPressed('B') && btest == true)
@@ -1016,75 +1016,63 @@ void SceneStealth::UpdateGameKeypress(void)
 	{
 		if(Virus->m_pInv.checkItem(1))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType());
-			Virus->m_pInv.delItem(1);
-			b_TriggerFBTimer = true;
-			f_FeedbackTimer = 0.f;
-			ssFeedback << "Lives +1";
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[1-1]->GetItemType(),1);
 		}
 	}
 	if(GetKeyState('2'))
 	{
 		if(Virus->m_pInv.checkItem(2))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType());
-			Virus->m_pInv.delItem(2);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[2-1]->GetItemType(),2);
 		}
 	}
 	if(GetKeyState('3'))
 	{
 		if(Virus->m_pInv.checkItem(3))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType());
-			Virus->m_pInv.delItem(3);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[3-1]->GetItemType(),3);
 		}
 	}
 	if(GetKeyState('4'))
 	{
 		if(Virus->m_pInv.checkItem(4))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType());
-			Virus->m_pInv.delItem(4);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[4-1]->GetItemType(),4);
 		}
 	}
 	if(GetKeyState('5'))
 	{
 		if(Virus->m_pInv.checkItem(5))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType());
-			Virus->m_pInv.delItem(5);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[5-1]->GetItemType(),5);
 		}
 	}
 	if(GetKeyState('6'))
 	{
 		if(Virus->m_pInv.checkItem(6))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType());
-			Virus->m_pInv.delItem(6);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[6-1]->GetItemType(),6);
 		}
 	}
 	if(GetKeyState('7'))
 	{
 		if(Virus->m_pInv.checkItem(7))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType());
-			Virus->m_pInv.delItem(7);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[7-1]->GetItemType(),7);
 		}
 	}
 	if(GetKeyState('8'))
 	{
 		if(Virus->m_pInv.checkItem(8))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType());
-			Virus->m_pInv.delItem(8);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[8-1]->GetItemType(),8);
 		}
 	}
 	if(GetKeyState('9'))
 	{
 		if(Virus->m_pInv.checkItem(9))
 		{
-			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType());
-			Virus->m_pInv.delItem(9);
+			Virus->TriggerItemEffect(Virus->m_pInv.Inventory[9-1]->GetItemType(),9);
 		}
 	}
 	if(GetKeyState('p'))
@@ -1922,7 +1910,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1930,13 +1918,13 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 		{
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
 			if(LvlHandler.GetCurrentStage() == 1)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 1.5, 40, 45);
 			else if(LvlHandler.GetCurrentStage() == 2)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 1.5, 40, 45);
 			else if(LvlHandler.GetCurrentStage() == 3)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 1.5, 40, 45);
 			else if(LvlHandler.GetCurrentStage() == 4)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 3, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 1.5, 40, 45);
 		}
 		break;
 	case 2: //Option 3 for Highscore
@@ -1956,7 +1944,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
 				else
 					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
-				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 3.f, 40.f, 40.f - i * 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 40.f - i * 4);
 			}
 		}
 		break;
@@ -1966,7 +1954,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[3]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1976,7 +1964,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[4]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -1986,7 +1974,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[5]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 3, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
 			}
 		}
 		break;
@@ -2023,7 +2011,7 @@ void SceneStealth::RenderHealthbar(void)
 	//Health
 	std::stringstream ssH;
 	ssH << 'x' << Virus->getLives();
-	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 5, 12, 53.5);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssH.str(), Color(0, 0, 0), 3, 12, 53.5);
 }
 void SceneStealth::RenderInventory(void)
 {

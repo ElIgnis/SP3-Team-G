@@ -1,4 +1,4 @@
-abc,50,5
-abc,20,0
-winner,20,52
+test,0,7
+abcde,0,6
+fuckdace,0,21
 abcd,22,15
