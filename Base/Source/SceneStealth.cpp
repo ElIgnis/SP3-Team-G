@@ -725,7 +725,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					go->CheckBonusInteraction(Virus->pos);
 
 					//Warps player
-					if(go->type == GameObject::GO_TELEPORTER)
+					if(go->type == GameObject::GO_TELEPORTER )
 					{
 						Virus->pos = go->GetSecondaryPosition();
 					}
@@ -929,7 +929,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 			}
 
 			//Updates enemies
-			go->Update(dt);
+			if(!Virus->GetPowerupStatus(CItem::FREEZE))
+				go->Update(dt);
 
 			//Update bullets of sentry enemies
 			if(go->e_type == CEnemy::ENEMY_SENTRY)
@@ -1915,7 +1916,9 @@ void SceneStealth::RenderGame(void)
 	modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 	modelStack.Scale(Virus->scale.x, Virus->scale.y, Virus->scale.z);
 	modelStack.Rotate(theta, 0, 0, 1);
-	if(Virus->GetPlayerState() != CPlayer::DISGUISE)
+	if(Virus->GetPowerupStatus(CItem::INVIS))
+		RenderMesh(meshList[GEO_PLAYER_INVIS], bLightEnabled);
+	else if(Virus->GetPlayerState() != CPlayer::DISGUISE)
 		RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
 	else
 		RenderMesh(meshList[GEO_BOX], bLightEnabled);
@@ -2157,14 +2160,14 @@ void SceneStealth::RenderUI(void)
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
 
 	glDisable(GL_DEPTH_TEST);
+	//Renders elapsed time(score)
+	RenderScore();
 	//Render dialogues in scene
 	RenderDialogBox();
 	//Renders healthbar and current lives
 	RenderHealthbar();
 	//Renders inventory and items in it
 	RenderInventory();
-	//Renders elapsed time(score)
-	RenderScore();
 	glEnable(GL_DEPTH_TEST);
 }
 
