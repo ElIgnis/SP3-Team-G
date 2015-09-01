@@ -256,11 +256,11 @@ void SceneBase::Init()
 	meshList[GEO_LASER_MACHINE]->textureID = LoadTGA("Image//GameObjects//Laser_Machine_Tex.tga");
 
 	//Lever for the walls
-	meshList[GEO_LEVER] = MeshBuilder::GenerateOBJ("Le button", "OBJ//Interactive_btn.obj");
+	meshList[GEO_LEVER] = MeshBuilder::GenerateOBJ("Lever_Switch", "OBJ//Interactive_btn.obj");
 	meshList[GEO_LEVER]->textureID = LoadTGA("Image//GameObjects//Interactive_btn.tga");
 
 	//Box Button for the walls
-	meshList[GEO_BBTN] = MeshBuilder::GenerateOBJ("Le floor button", "OBJ//BBtn.obj");
+	meshList[GEO_BBTN] = MeshBuilder::GenerateOBJ("Floor_Button", "OBJ//BBtn.obj");
 	meshList[GEO_BBTN]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Teleporter
