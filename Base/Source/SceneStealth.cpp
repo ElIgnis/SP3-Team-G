@@ -20,6 +20,7 @@ SceneStealth::SceneStealth()
 	, m_fItemRot(0.f)
 	, m_fCheckpointHeight(5.f)
 	, m_bCheckpointDir(true)
+	, b_ShowFPS(false)
 {
 }
 
@@ -336,6 +337,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 	case GameObject::GO_BOX:
 	case GameObject::GO_LASER_MACHINE:
 	case GameObject::GO_LASER:
+	case GameObject::GO_TELEPORTER:
 	case GameObject::GO_ENDPOINT:
 		{
 			//|(w0 - b1).N| < r + h / 2
@@ -475,7 +477,16 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
+
+	//Audio
 	UpdateAudio();
+
+	//FPS
+	if(GetKeyState(VK_F1))
+		b_ShowFPS = true;
+	if(!GetKeyState(VK_F1))
+		b_ShowFPS = false;
+
 	//Let player input name
 	if(!b_NameEntered)
 	{
@@ -713,13 +724,22 @@ void SceneStealth::UpdatePlayer(const double dt)
 			CInteractables *go = (CInteractables *)* it;
 			if(go->active)
 			{
+				go->CheckDisplayInfo(Virus->pos);
+
 				if(CheckCollision(Virus,go,dt))
 				{
-					b_ColCheck = true;
-					//Kills player
-					if(go->type == GameObject::GO_LASER)
+					switch(go->type)
+					{
+					case GameObject::GO_LEVER:
+					case GameObject::GO_BBTN:
+						b_ColCheck = true;
+						break;
+					case GameObject::GO_LASER:
 						Virus->SetPlayerState(CPlayer::DEAD);
+						break;
+					}
 				}
+
 				if(GetKeyState('e'))
 				{
 					//Warps player
@@ -741,7 +761,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			else if(Virus->GetPlayerState() == CPlayer::DISGUISE)
 				Virus->pos += Virus->vel * DisguiseModifier * dt;
 			else
-				Virus->pos += Virus->vel * dt;
+				Virus->pos += Virus->vel * MoveSpeedModifier * dt;
 		}
 
 		//Check player collision with powerups
@@ -1985,8 +2005,20 @@ void SceneStealth::RenderGame(void)
 	for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 	{
 		CInteractables *go = (CInteractables *)* it;
+		
+		//Display info
+		if(go->GetDisplayInfo())
+		{
+			std::stringstream ssInfo;
+			ssInfo << "Press 'e' to interact";
+			RenderTextOnScreen(meshList[GEO_TEXT], ssInfo.str(), Color(0, 1, 0), 2, 25, 20);//fps
+		}
+
+		//Render objects
 		if(go->active)
 			RenderGO(go);
+
+		//Render objects at secondary position
 		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
 		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
 		modelStack.Scale(5, 5, 5);
@@ -2155,9 +2187,12 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 void SceneStealth::RenderUI(void)
 {
 	//Render FPS
-	std::stringstream ssFPS;
-	ssFPS << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
+	if(b_ShowFPS)
+	{
+		std::stringstream ssFPS;
+		ssFPS << "FPS:" << fps;
+		RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
+	}
 
 	glDisable(GL_DEPTH_TEST);
 	//Render dialogues in scene
@@ -2274,7 +2309,7 @@ void SceneStealth::RenderScore(void)
 	else
 		ssScore << " : " << tempHighScore.GetSeconds();
 
-	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 5, 45);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 45, 56);
 }
 void SceneStealth::RenderDialogBox(void)
 {

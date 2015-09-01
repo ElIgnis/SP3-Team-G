@@ -12,7 +12,7 @@
 
 #define ReboundFactor 2.f
 #define MoveSpeed 50.f
-#define MoveSpeedModifier 1.f
+#define MoveSpeedModifier 0.75f
 
 #define DisplayTimer 2.f
 
@@ -234,6 +234,7 @@ private:
 	std::stringstream ssFeedback;
 	float f_FeedbackTimer;
 	bool b_TriggerFBTimer;
+	bool b_ShowFPS;
 
 	CItem *Disguise;
 	CItem *Decoy;

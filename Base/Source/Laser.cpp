@@ -1,9 +1,6 @@
 #include "Laser.h"
 
-#define Interaction_range 10.f
-
 CLaser::CLaser() 
-	: activationPos(0,0,0)
 {
 }
 
@@ -36,4 +33,21 @@ Vector3 CLaser::GetSecondaryPosition(Vector3 &playerPos)
 {
 	if((playerPos - activationPos).Length() < Interaction_range)
 		return activationPos;
+}
+
+void CLaser::CheckDisplayInfo(Vector3 &playerPos)
+{
+	if((playerPos - activationPos).Length() < Interaction_range)
+	{
+		this->m_bDisplayInfo = true;
+	}
+	else
+	{
+		this->m_bDisplayInfo = false;
+	}
+}
+
+bool CLaser::GetDisplayInfo(void)
+{
+	return m_bDisplayInfo;
 }

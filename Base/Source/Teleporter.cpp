@@ -1,9 +1,6 @@
 #include "Teleporter.h"
 
-#define Interaction_range 10.f
-
 CTeleporter::CTeleporter() 
-	: activationPos(0,0,0)
 {
 }
 
@@ -37,4 +34,21 @@ Vector3 CTeleporter::GetSecondaryPosition(Vector3 &playerPos)
 		return activationPos;
 	else
 		return playerPos;
+}
+
+bool CTeleporter::GetDisplayInfo(void)
+{
+	return m_bDisplayInfo;
+}
+
+void CTeleporter::CheckDisplayInfo(Vector3 &playerPos)
+{
+	if((playerPos - pos).Length() < Interaction_range)
+	{
+		this->m_bDisplayInfo = true;
+	}
+	else
+	{
+		this->m_bDisplayInfo = false;
+	}
 }

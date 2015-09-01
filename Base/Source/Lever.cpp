@@ -1,9 +1,6 @@
 #include "Lever.h"
 
-#define Interaction_range 10.f
-
 CLever::CLever() 
-	: activationPos(0,0,0)
 {
 }
 
@@ -36,4 +33,21 @@ Vector3 CLever::GetSecondaryPosition(Vector3 &playerPos)
 {
 	if((playerPos - activationPos).Length() < Interaction_range)
 		return activationPos;
+}
+
+void CLever::CheckDisplayInfo(Vector3 &playerPos)
+{
+	if((playerPos - activationPos).Length() < Interaction_range)
+	{
+		this->m_bDisplayInfo = true;
+	}
+	else
+	{
+		this->m_bDisplayInfo = false;
+	}
+}
+
+bool CLever::GetDisplayInfo(void)
+{
+	return m_bDisplayInfo;
 }

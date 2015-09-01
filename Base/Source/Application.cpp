@@ -163,7 +163,7 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyUp('v');
 	}
-	//V key
+	//B key
 	static bool b_VKey = false;
 	scene->UpdateKeyUp('b');
 	if(IsKeyPressed('B') && !b_VKey)
@@ -174,6 +174,16 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyDown('b');
 		b_VKey = false;
+	}
+
+	//V key
+	if(IsKeyPressed(VK_F1))
+	{
+		scene->UpdateKeyDown(VK_F1);
+	}
+	else if(IsKeyReleased(VK_F1))
+	{
+		scene->UpdateKeyUp(VK_F1);
 	}
 
 	static bool delay1 = false;

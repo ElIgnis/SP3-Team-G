@@ -1,9 +1,6 @@
 #include "BBtn.h"
 
-#define Interaction_range 10.f
-
 CBBtn::CBBtn()
-	: activationPos(0,0,0)
 {
 }
 
@@ -36,4 +33,13 @@ Vector3 CBBtn::GetSecondaryPosition(Vector3 &playerPos)
 {
 	if((playerPos - activationPos).Length() < Interaction_range)
 		return activationPos;
+}
+
+void CBBtn::CheckDisplayInfo(Vector3 &playerPos)
+{
+}
+
+bool CBBtn::GetDisplayInfo(void)
+{
+	return false;
 }
