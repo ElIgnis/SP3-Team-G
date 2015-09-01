@@ -31,3 +31,9 @@ Vector3 CLever::GetSecondaryPosition(void)
 {
 	return activationPos;
 }
+
+Vector3 CLever::GetSecondaryPosition(Vector3 &playerPos)
+{
+	if((playerPos - activationPos).Length() < Interaction_range)
+		return activationPos;
+}

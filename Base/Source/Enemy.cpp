@@ -89,7 +89,7 @@ bool CEnemy::GetDetectedStatus(void)
 
 bool CEnemy::GetSpottedStatus(void)
 {
-	if(state == STATE_ALERT || state == STATE_ATTACK)
+	if(state == STATE_ALERT || state == STATE_ATTACK || state == STATE_STUNNED)
 		return true;
 	return false;
 }

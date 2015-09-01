@@ -3,11 +3,11 @@
 ###################
 #   Sentry Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,  rotation1, rotation2, turnSpd  #
 #   Patrol Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,num of patrol points, (Insert patrol points here(x,y)) #
-ENEMY_PATROL, 	-40, -125, 0, 	0, 1,	60,10, 	1, 	-40, -199
+ENEMY_PATROL, 	-40, -125, 0, 	0, 1,	60,30, 	1, 	-40, -199
 ENEMY_PATROL, 	80, -123, 0,	0, 1,	60,30, 	2, 	80, -202,160,-202
-ENEMY_PATROL, 	80, -83, 0, 	0, 1,	60,10, 	3, 	158, -83,158,-35,90,-35
-ENEMY_PATROL, 	90, -20, 0, 	0, 1,	60,10, 	3, 	158, -20,158,35,90,35
-ENEMY_SENTRY, 	192, -85, 0, 	0, 1,	60,20, 	180, 90, 1
-ENEMY_SENTRY, 	230, -120, 0, 	0, 1,	60,20, 	180, 90, 1
-ENEMY_SENTRY, 	260, 50, 0, 	0, 1,	60,20, 	270, 180, 2
+ENEMY_PATROL_RAGE, 	80, -83, 0, 	0, 1,	60,30, 	3, 	158, -83,158,-35,90,-35
+ENEMY_PATROL, 	90, -20, 0, 	0, 1,	60,30, 	3, 	158, -20,158,35,90,35
+ENEMY_SENTRY, 	192, -85, 0, 	0, 1,	60,30, 	180, 90, 1
+ENEMY_SENTRY, 	230, -120, 0, 	0, 1,	60,30, 	180, 90, 1
+ENEMY_SENTRY, 	260, 50, 0, 	0, 1,	60,30, 	270, 180, 2
 ENEMY_SENTRY, 	30, -80, 0, 	0, 1,	50,30, 	450, 270, 2.5

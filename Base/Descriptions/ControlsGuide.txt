@@ -4,8 +4,8 @@
 ------------Controls------------
  Movement:
    'W' - Moves the character UP
-   'S' - Moves the character Left
-   'A' - Moves the character Down
+   'A' - Moves the character Left
+   'S' - Moves the character Down
    'D' - Moves the character Right
  Interactions:
    'Spacebar' - Stun enemies around player

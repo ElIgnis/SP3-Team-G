@@ -86,6 +86,7 @@ public:
 		GEO_FLOOR_LEVEL1,
 		//Moving things
 		GEO_PLAYER,
+		GEO_PLAYER_INVIS,
 		GEO_ALERT,
 		GEO_TRACK,
 		GEO_FIREWALL,
