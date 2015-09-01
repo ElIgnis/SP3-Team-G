@@ -670,10 +670,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
 			CInteractables *go = (CInteractables *)* it;
+
+			go->CheckDisplayInfo(Virus->pos);
+
 			if(go->active)
 			{
-				go->CheckDisplayInfo(Virus->pos);
-
 				if(CheckCollision(Virus,go,dt))
 				{
 					switch(go->type)
@@ -1975,7 +1976,7 @@ void SceneStealth::RenderGame(void)
 		{
 			std::stringstream ssInfo;
 			ssInfo << "Press 'e' to interact";
-			RenderTextOnScreen(meshList[GEO_TEXT], ssInfo.str(), Color(0, 1, 0), 2, 25, 20);//fps
+			RenderTextOnScreen(meshList[GEO_TEXT], ssInfo.str(), Color(1, 1, 1), 2, 25, 20);//fps
 		}
 
 		//Render objects
