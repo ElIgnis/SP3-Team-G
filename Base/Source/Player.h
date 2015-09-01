@@ -35,6 +35,12 @@ private:
 
 	float m_fRespawnTimer;
 
+	//Player stun indicator duration
+	bool m_bShowIndicatorStun;
+	bool m_bShowIndicatorHealth;
+	float m_fIndicatorStunDur;
+	float m_fIndicatorHealthDur;
+
 public:
 	CPlayer(void);
 	CPlayer(Vector3 pos);
@@ -62,6 +68,11 @@ public:
 
 	void SetStunReuseTimer(const float newReuseTimer);
 	float GetStunReuseTimer(void);
+
+	bool GetShowIndicatorStun(void);
+	bool GetShowIndicatorHealth(void);
+	void SetIndicatorStunDur(float);
+	void SetIndicatorHealthDur(float);
 
 	void SetRespawnTimer(const float newRespawnTimer);
 	float GetRespawnTimer(void);

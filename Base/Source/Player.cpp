@@ -8,6 +8,10 @@ CPlayer::CPlayer(void)
 	, m_bUsedStun(false)
 	, m_fStunReuseTimer(0.f)
 	, m_fRespawnTimer(2.f)
+	, m_bShowIndicatorStun(false)
+	, m_bShowIndicatorHealth(false)
+	, m_fIndicatorStunDur(0.f)
+	, m_fIndicatorHealthDur(0.f)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
@@ -93,6 +97,19 @@ void CPlayer::UpdateTimers(const double dt)
 			}
 		}
 	}
+
+	if(m_bShowIndicatorHealth)
+	{
+		m_fIndicatorHealthDur -= dt;
+		if(m_fIndicatorHealthDur < 0.f)
+			m_bShowIndicatorHealth = false;
+	}
+	if(m_bShowIndicatorStun)
+	{
+		m_fIndicatorStunDur -= dt;
+		if(m_fIndicatorStunDur < 0.f)
+			m_bShowIndicatorStun = false;
+	}
 }
 
 unsigned int CPlayer::getLives(void)
@@ -108,6 +125,7 @@ void CPlayer::setLives(unsigned int L)
 void CPlayer::add1Life(void)
 {
 	this->m_pLives += 1;
+	this->SetIndicatorHealthDur(2.f);
 }
 
 void CPlayer::Minus1Life(void)
@@ -238,6 +256,28 @@ void CPlayer::SetStunReuseTimer(const float newReuseTimer)
 float CPlayer::GetStunReuseTimer(void)
 {
 	return m_fStunReuseTimer;
+}
+
+bool CPlayer::GetShowIndicatorStun(void)
+{
+	return m_bShowIndicatorStun;
+}
+
+bool CPlayer::GetShowIndicatorHealth(void)
+{
+	return m_bShowIndicatorHealth;
+}
+
+void CPlayer::SetIndicatorStunDur(float f)
+{
+	this->m_fIndicatorStunDur = f;
+	m_bShowIndicatorStun = true;
+}
+
+void CPlayer::SetIndicatorHealthDur(float f)
+{
+	this->m_fIndicatorHealthDur = f;
+	m_bShowIndicatorHealth = true;
 }
 
 void CPlayer::SetRespawnTimer(const float newRespawnTimer)

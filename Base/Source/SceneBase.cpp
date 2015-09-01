@@ -262,8 +262,8 @@ void SceneBase::Init()
 	meshList[GEO_BBTN]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Teleporter
-	meshList[GEO_TELEPORTER] = MeshBuilder::GenerateOBJ("Teleporter", "OBJ//Teleporter.obj");
-	meshList[GEO_TELEPORTER]->textureID = LoadTGA("Image//GameObjects//Teleporter.tga");
+	/*meshList[GEO_TELEPORTER] = MeshBuilder::GenerateOBJ("Teleporter", "OBJ//Teleporter.obj");
+	meshList[GEO_TELEPORTER]->textureID = LoadTGA("Image//GameObjects//Teleporter.tga");*/
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
@@ -293,6 +293,17 @@ void SceneBase::Init()
 	//Health UI
 	meshList[GEO_HEALTH] = MeshBuilder::GenerateQuad("HealthUI", Color(0, 1, 0), 1.f);
 
+	//Status effect indicators
+	meshList[GEO_INDICATOR_SPEED] = MeshBuilder::GenerateOBJ("Le speed", "OBJ//Status_indicators/Speed_indicator.obj");
+	meshList[GEO_INDICATOR_SPEED]->textureID = LoadTGA("Image//red.tga");
+	meshList[GEO_INDICATOR_ENEMY_FREEZE] = MeshBuilder::GenerateOBJ("Le freeze", "OBJ//Status_indicators/Frozen_indicator.obj");
+	meshList[GEO_INDICATOR_ENEMY_FREEZE]->textureID = LoadTGA("Image//GameObjects/Powerups/TimeFreeze.tga");
+	meshList[GEO_INDICATOR_ENEMY_STUN] = MeshBuilder::GenerateOBJ("Le freeze", "OBJ//Status_indicators/Enemy_stunned_indicator.obj");
+	meshList[GEO_INDICATOR_ENEMY_STUN]->textureID = LoadTGA("Image//Stunned.tga");
+	meshList[GEO_INDICATOR_PLAYER_STUN] = MeshBuilder::GenerateOBJ("Le freeze", "OBJ//Status_indicators/Lightning_indicator.obj");
+	meshList[GEO_INDICATOR_PLAYER_STUN]->textureID = LoadTGA("Image//Stunned.tga");
+	meshList[GEO_INDICATOR_PLAYER_HEALTH] = MeshBuilder::GenerateOBJ("Le freeze", "OBJ//Status_indicators/Healing_indicator.obj");
+	meshList[GEO_INDICATOR_PLAYER_HEALTH]->textureID = LoadTGA("Image//red.tga");
 	bLightEnabled = true;
 }
 

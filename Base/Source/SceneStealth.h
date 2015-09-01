@@ -187,7 +187,7 @@ private:
 	float rotateScene;
 
 	//Checkpoint rotation
-	float m_fCheckpointRot;
+	float m_fItemRot;
 	float m_fCheckpointHeight;
 	bool m_bCheckpointDir;
 
