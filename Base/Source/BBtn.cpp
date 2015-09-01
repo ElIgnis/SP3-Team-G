@@ -31,3 +31,9 @@ Vector3 CBBtn::GetSecondaryPosition(void)
 {
 	return activationPos;
 }
+
+Vector3 CBBtn::GetSecondaryPosition(Vector3 &playerPos)
+{
+	if((playerPos - activationPos).Length() < Interaction_range)
+		return activationPos;
+}

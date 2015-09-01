@@ -11,6 +11,7 @@ public:
 
 	virtual void CheckBonusInteraction(Vector3 playerPos);
 	virtual Vector3 GetSecondaryPosition(void);
+	virtual Vector3 GetSecondaryPosition(Vector3 &playerPos);
 };
 
 #endif

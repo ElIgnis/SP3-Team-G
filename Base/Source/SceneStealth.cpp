@@ -178,7 +178,6 @@ void SceneStealth::InitGame(void)
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->scale.Set(7,7,7);
-	Virus->SetCurrentCP(Vector3(Virus->pos.x, Virus->pos.y, Virus->pos.z));
 	Virus->mass = 1.f;
 	Virus->setLives(3);
 
@@ -213,6 +212,7 @@ void SceneStealth::LoadLevel(const int LevelSelected)
 
 	//Initializing the player spawn points based on level
 	Virus->pos = Vector3(*(LvlHandler.GetSpawn_List().at(LevelSelected-1)));
+	Virus->SetCurrentCP(Vector3(Virus->pos.x, Virus->pos.y, Virus->pos.z));
 }
 
 void SceneStealth::CompareScore(int CurrentLevel)
@@ -722,12 +722,14 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 				if(GetKeyState('e'))
 				{
-					go->CheckBonusInteraction(Virus->pos);
-
 					//Warps player
 					if(go->type == GameObject::GO_TELEPORTER)
 					{
-						Virus->pos = go->GetSecondaryPosition();
+						Virus->pos = go->GetSecondaryPosition(Virus->pos);
+					}
+					else
+					{
+						go->CheckBonusInteraction(Virus->pos);
 					}
 				}
 			}
@@ -803,7 +805,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 	if (Virus->GetPlayerState() == CPlayer::DEAD && Virus->GetRespawnTimer() < 0.f)
 	{
 		//Out of lives
-		if(Virus->getLives() < 1)
+		if(Virus->getLives() < 2)
 		{	
 			b_OutOfLives = true;
 		}
@@ -1019,6 +1021,7 @@ void SceneStealth::UpdateMenuKeypress(void)
 		}
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 0)//Play
 		{
+			
 			//Initialise vars if not done
 			if(b_ReInitGameVars)
 			{
@@ -1882,7 +1885,7 @@ void SceneStealth::RenderGame(void)
 			//Enemy cone detection
 			glDisable(GL_DEPTH_TEST);
 			modelStack.PushMatrix();
-			modelStack.Translate(go->pos.x, go->pos.y, 0);
+			modelStack.Translate(go->pos.x, go->pos.y, -5);
 			modelStack.Rotate(go->dir.z - 90.f, 0, 0, 1);
 			modelStack.Scale(go->GetDetectionRange().x , go->GetDetectionRange().y, go->GetDetectionRange().z);
 			if(go->GetState() != CEnemy::STATE_ALERT && go->GetState() != CEnemy::STATE_ATTACK)
