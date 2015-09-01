@@ -58,14 +58,14 @@ void CEnemy_Sentry::Update(const double dt)
 			rotation.SetToRotation(-m_fCurrentRot, 0, 0, 1);
 			normal = rotation * Vector3(0, 1, 0);
 			normal.Normalize();
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x)) + 180.f;
 		}
 		break;
 	case STATE_ATTACK:
 		{
 			trackingPos = player_position;
 			normal = (player_position - pos).Normalized();
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x)) + 180.f;
 			if(m_fShootCD < 0.f)
 			{
 				GameObject *go = FetchBullet();
@@ -89,7 +89,7 @@ void CEnemy_Sentry::Update(const double dt)
 		{
 			m_bTracking = true;
 			normal = (trackingPos - pos).Normalized();
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x)) + 180.f;
 			state = STATE_WAIT;
 			m_fWaitTime = Sentry_waitTime_track;
 		}
@@ -119,6 +119,10 @@ void CEnemy_Sentry::Update(const double dt)
 	default:
 		break;
 	}
+	if(dir.z >= 360.f)
+		dir.z = 0.f;
+	else if(dir.z < 0)
+		dir.z = 360.f;
 }
 
 GameObject* CEnemy_Sentry::FetchBullet(void)

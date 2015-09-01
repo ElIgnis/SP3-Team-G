@@ -7,6 +7,13 @@ CMenu::CMenu()
 
 CMenu::~CMenu()
 {
+	//Clean up bullet list
+	while(m_menuList.size() > 0)
+	{
+		CMenuItem *go = m_menuList.back();
+		delete go;
+		m_menuList.pop_back();
+	}
 }
 
 void CMenu::SpaceOptions(const float topPos, const float botPos, const float xPos)

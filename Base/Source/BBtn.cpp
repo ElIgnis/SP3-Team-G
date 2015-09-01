@@ -33,6 +33,8 @@ Vector3 CBBtn::GetSecondaryPosition(Vector3 &playerPos)
 {
 	if((playerPos - activationPos).Length() < Interaction_range)
 		return activationPos;
+	else
+		return Vector3();
 }
 
 void CBBtn::CheckDisplayInfo(Vector3 &playerPos)

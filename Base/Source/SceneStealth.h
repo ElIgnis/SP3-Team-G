@@ -139,6 +139,7 @@ public:
 
 	//Render game
 	void RenderGame(void);
+	void RenderEnvironment(void);
 	//Render menu items
 	void RenderMenu(void);
 	//Render Menu Description
