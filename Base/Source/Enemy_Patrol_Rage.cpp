@@ -82,7 +82,7 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 	case STATE_ATTACK:
 		{
 			trackingPos = player_position;
-			m_fChargeTime -= dt;
+			m_fChargeTime -= (float)dt;
 			if(m_bCharge)
 			{
 				normal = (player_position - pos).Normalized();

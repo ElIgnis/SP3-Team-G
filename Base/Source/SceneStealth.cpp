@@ -72,21 +72,21 @@ void SceneStealth::Init()
 
 	//Pause menu
 	CMenuItem *m2;
-	m = new CMenuItem("Continue", "Play.txt");m->ReadDescription();
-	menu_pause.m_menuList.push_back(m);
-	m = new CMenuItem("Restart", "Play.txt");m->ReadDescription();
-	menu_pause.m_menuList.push_back(m);
-	m = new CMenuItem("Exit", "Play.txt");m->ReadDescription();
-	menu_pause.m_menuList.push_back(m);
+	m2 = new CMenuItem("Continue", "Play.txt");
+	menu_pause.m_menuList.push_back(m2);
+	m2 = new CMenuItem("Restart", "Play.txt");
+	menu_pause.m_menuList.push_back(m2);
+	m2 = new CMenuItem("Exit", "Play.txt");m->ReadDescription();
+	menu_pause.m_menuList.push_back(m2);
 	menu_pause.m_menuList[0]->SetIs_Selected(true);
 	menu_pause.SpaceOptions(35,15, 5); //Space out menu options equally
 
 	//Dead menu
 	CMenuItem *m3;
-	m = new CMenuItem("Restart Level");
-	menu_dead.m_menuList.push_back(m);
-	m = new CMenuItem("Return to menu");
-	menu_dead.m_menuList.push_back(m);
+	m3 = new CMenuItem("Restart Level");
+	menu_dead.m_menuList.push_back(m3);
+	m3 = new CMenuItem("Return to menu");
+	menu_dead.m_menuList.push_back(m3);
 	menu_dead.m_menuList[0]->SetIs_Selected(true);
 	menu_dead.SpaceOptions(35,15, 5); //Space out menu options equally
 
@@ -240,10 +240,10 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 			if(go1->type == GameObject::GO_BOX && go2->type == GameObject::GO_WALL)
 			{
 				float combinedDistX = (go2->pos.x - (go1->pos.x + go1->vel.x * dt)) * (go2->pos.x - (go1->pos.x + go1->vel.x * dt));
-				float combinedWidthX = (go1->scale.x * 0.5 + go2->scale.x * 0.5) * (go1->scale.x * 0.5 + go2->scale.x * 0.5);
+				float combinedWidthX = (go1->scale.x * 0.5f + go2->scale.x * 0.5f) * (go1->scale.x * 0.5f + go2->scale.x * 0.5f);
 
 				float combinedDistY = (go2->pos.y - (go1->pos.y + go1->vel.y * dt)) * (go2->pos.y - (go1->pos.y + go1->vel.y * dt));
-				float combinedWidthY = (go1->scale.y * 0.5 + go2->scale.y * 0.5) * (go1->scale.y * 0.5 + go2->scale.y * 0.5);
+				float combinedWidthY = (go1->scale.y * 0.5f + go2->scale.y * 0.5f) * (go1->scale.y * 0.5f + go2->scale.y * 0.5f);
 
 				if(combinedDistX < combinedWidthX && combinedDistY < combinedWidthY)
 				{
@@ -460,7 +460,7 @@ void SceneStealth::Update(double dt)
 				UpdatePlayerScore(dt);
 				UpdateDialogue(dt);
 				if(b_TriggerFBTimer)
-					f_FeedbackTimer += dt;
+					f_FeedbackTimer += (float)dt;
 				if(f_FeedbackTimer > DisplayTimer)
 				{
 					f_FeedbackTimer = 0.f;
@@ -605,7 +605,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					if(go2->active && go2->type == GameObject::GO_WALL || go2->type == GameObject::GO_LASER_MACHINE)
 					{
 						go->vel = Virus->vel;
-						if(CheckCollision(go,go2,dt))
+						if(CheckCollision(go,go2,(float)dt))
 						{
 							b_boxColCheck = true;
 						}
@@ -618,7 +618,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					//Check Collision between Box and Box Button
 					if(go2->active && go2->type == GameObject::GO_BBTN)
 					{
-						if(CheckCollision(go,go2,dt))
+						if(CheckCollision(go,go2,(float)dt))
 						{
 							b_ColCheck = true;
 						}
@@ -638,7 +638,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				if(go->type == GameObject::GO_WALL)
 					go->phasing = false;
-				if(CheckCollision(Virus,go,dt))
+				if(CheckCollision(Virus,go,(float)dt))
 				{
 					switch(go->type)
 					{
@@ -650,7 +650,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
-						CollisionResponse(Virus,go,dt);
+						CollisionResponse(Virus,go,(float)dt);
 						else
 							b_ColCheck = true;
 						break;
@@ -670,12 +670,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
 			CInteractables *go = (CInteractables *)* it;
-
-			go->CheckDisplayInfo(Virus->pos);
-
 			if(go->active)
 			{
-				if(CheckCollision(Virus,go,dt))
+				go->CheckDisplayInfo(Virus->pos);
+
+				if(CheckCollision(Virus,go,(float)dt))
 				{
 					switch(go->type)
 					{
@@ -709,11 +708,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 		if(!b_ColCheck)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
-				Virus->pos += Virus->vel * SpeedPowerupModifier * dt;
+				Virus->pos += Virus->vel * SpeedPowerupModifier * (float)dt;
 			else if(Virus->GetPlayerState() == CPlayer::DISGUISE)
-				Virus->pos += Virus->vel * DisguiseModifier * dt;
+				Virus->pos += Virus->vel * DisguiseModifier * (float)dt;
 			else
-				Virus->pos += Virus->vel * MoveSpeedModifier * dt;
+				Virus->pos += Virus->vel * MoveSpeedModifier * (float)dt;
 		}
 
 		//Check player collision with powerups
@@ -723,7 +722,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			if(go->active)
 			{
 				//Conversion of GOs into items to inventory
-				if(CheckCollision(Virus,go,dt))
+				if(CheckCollision(Virus,go,(float)dt))
 				{
 					//Conversion of GOs into items to inventory
 					switch(go->type)
@@ -758,7 +757,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			//Only check for active game objects
 			if(!go->active)
 			{
-				if(CheckCollision(Virus,go,dt))
+				if(CheckCollision(Virus,go,(float)dt))
 				{
 					sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.wav", false, false);
 					for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetCheckPoint_List().begin(); it2 != LvlHandler.GetCheckPoint_List().end(); ++it2)
@@ -806,7 +805,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 			go->PlayerCurrentPosition(Virus->pos);
 
 			//Set player state to dead on collision with any enemy
-			if(CheckCollision(go, Virus, dt) && Virus->GetPlayerState() == CPlayer::ALIVE)
+			if(CheckCollision(go, Virus, (float)dt) && Virus->GetPlayerState() == CPlayer::ALIVE)
 			{
 				sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
 				Virus->SetPlayerState(CPlayer::DEAD);
@@ -904,7 +903,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					}
 				}
 				if(b_ColCheck2)
-					go->pos += go->vel * 0.4; 
+					go->pos += go->vel * 0.4f; 
 				else
 					go->pos += go->vel;
 			}
@@ -973,13 +972,13 @@ void SceneStealth::UpdateDialogue(const double dt)
 
 void SceneStealth::UpdateCheckpointDisplacement(const double dt)
 {
-	m_fItemRot += dt * 100;
+	m_fItemRot += (float)dt * 100;
 	if(m_fItemRot > 360)
 		m_fItemRot = 0.f;
 	if(m_bCheckpointDir)
-		m_fCheckpointHeight += dt * 10;
+		m_fCheckpointHeight += (float)dt * 10;
 	else
-		m_fCheckpointHeight -= dt * 10;
+		m_fCheckpointHeight -= (float)dt * 10;
 	if(m_fCheckpointHeight > 20 || m_fCheckpointHeight < 5)
 		m_bCheckpointDir = !m_bCheckpointDir;
 }
@@ -1596,7 +1595,7 @@ void SceneStealth::ProcessNameInput(void)
 	if(GetKeyState(VK_RETURN))
 	{
 		std::stringstream name;
-		for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
+		for(unsigned i = 0; i < tempHighScore.GetNameString().size(); ++i)
 		{
 			name << tempHighScore.GetNameString().at(i);
 		}
@@ -1976,7 +1975,7 @@ void SceneStealth::RenderGame(void)
 		{
 			std::stringstream ssInfo;
 			ssInfo << "Press 'e' to interact";
-			RenderTextOnScreen(meshList[GEO_TEXT], ssInfo.str(), Color(1, 1, 1), 2, 25, 20);//fps
+			RenderTextOnScreen(meshList[GEO_TEXT], ssInfo.str(), Color(0, 1, 0), 2, 25, 20);//fps
 		}
 
 		//Render objects
@@ -2050,7 +2049,7 @@ void SceneStealth::RenderMenu(void)
 	{
 		//Entering Highscore codes here
 		std::ostringstream HighScoreName;
-		for(int i = 0; i < tempHighScore.GetNameString().size(); ++i)
+		for(unsigned i = 0; i < tempHighScore.GetNameString().size(); ++i)
 		{
 			HighScoreName << tempHighScore.GetNameString()[i];
 		}
@@ -2079,7 +2078,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 1.5, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 1.5f, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2122,7 +2121,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[3]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5f, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2132,7 +2131,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[4]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5f, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2142,7 +2141,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[5]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 45 - j * 2.5);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0.f, 1.f, 0.f), 1.5f, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2174,17 +2173,17 @@ void SceneStealth::RenderUI(void)
 void SceneStealth::RenderHealthbar(void)
 {
 	//Hotbar for items
-	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * 0.5,false,false);
+	Render2DMesh(meshList[GEO_HOTBAR],false, Application::GetWindowWidth() * 0.07f, Application::GetWindowHeight() * 0.75f, Application::GetWindowWidth() * 0.95f, Application::GetWindowHeight() * 0.5f,false,false);
 	//Hotbar selection indicator
-	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.75, Application::GetWindowWidth() * 0.9, Application::GetWindowHeight() * 0.5,false,false);
+	Render2DMesh(meshList[GEO_HOTSEL],false, Application::GetWindowWidth() * 0.07f, Application::GetWindowHeight() * 0.75f, Application::GetWindowWidth() * 0.9f, Application::GetWindowHeight() * 0.5f,false,false);
     //Player health
-	for(int i = 0; i < Virus->getLives(); i++)
+	for(unsigned int i = 0; i < Virus->getLives(); i++)
 	{
-		Render2DMesh(meshList[GEO_HEALTH],false, (Application::GetWindowWidth() * 0.07), Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.9,false,false);
+		Render2DMesh(meshList[GEO_HEALTH],false, (Application::GetWindowWidth() * 0.07f), Application::GetWindowHeight() * 0.08f, (Application::GetWindowWidth() * 0.07f) + ((Application::GetWindowWidth() * 0.075f) *i ), Application::GetWindowHeight() * 0.9f,false,false);
 	}
 
 	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 1.5, Application::GetWindowHeight() * 0.15, (Application::GetWindowWidth() * 0.15) + ((Application::GetWindowWidth() * 0.01) * 4), Application::GetWindowHeight() * 0.9,false,false);
-	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.27, Application::GetWindowHeight() * 0.15, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
+	Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * 0.27f, Application::GetWindowHeight() * 0.15f, Application::GetWindowWidth() * 0.15f, Application::GetWindowHeight() * 0.9f,false,false);
 
 	//Render2DMesh(meshList[GEO_PLAYER],false, Application::GetWindowWidth() * 0.05, Application::GetWindowHeight() * 0.05, Application::GetWindowWidth() * 0.1, Application::GetWindowHeight() * 0.9,true,false);
 
@@ -2204,46 +2203,46 @@ void SceneStealth::RenderInventory(void)
 			{
 			case 2:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_HEALTH],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95f, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x' <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5f, 77.5f, 8.75f + (i * 5.25f));//Inventory holding
 				}
 				break;
 				//Render Freeze
 			case 3:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_FREEZE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95f, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1.f, 1.f, 1.f), 3.5f, 77.5f, 8.75f + (i * 5.25f));//Inventory holding
 				}
 				break;
 				//Render SPEED
 			case 4:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_SPEED],false,  Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95f, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1.f, 1.f, 1.f), 3.5f, 77.5f, 8.75f + (i * 5.25f));//Inventory holding
 				}
 				break;
 				//Render NOISE
 			case 5:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_NOISE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95f, Application::GetWindowHeight() * InventoryUp + (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5f, 77.5f, 8.75f + (i * 5.25f));//Inventory holding
 				}
 				break;
 				//Render Invisibility
 			case 6:
 				{
-					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95, Application::GetWindowHeight() * InventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
+					Render2DMesh(meshList[GEO_POWERUP_INVISIBLE],false, Application::GetWindowWidth() * InventoryScale, Application::GetWindowHeight() * InventoryScale, Application::GetWindowWidth() * 0.95f, Application::GetWindowHeight() * InventoryUp +  (i * (InventoryOffset * Application::GetWindowHeight())),false,false);
 					std::stringstream ssInv;
 					ssInv << 'x'  <<  Virus->m_pInv.Inventory[i]->getItemStack();
-					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1, 1, 1), 3.5, 77.5, 8.75 + (i * 5.25));//Inventory holding
+					RenderTextOnScreen(meshList[GEO_TEXT], ssInv.str(), Color(1.f, 1.f, 1.f), 3.5f, 77.5f, 8.75f + (i * 5.25f));//Inventory holding
 				}
 				break;
 				//Render Disguise
@@ -2284,11 +2283,11 @@ void SceneStealth::RenderDialogBox(void)
 		CDialogue_Box *db = (CDialogue_Box *)*it;
 		if(db->GetDisplay())
 		{
-			Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * db->GetScale().x, Application::GetWindowHeight() * db->GetScale().y, Application::GetWindowWidth() * 0.5, Application::GetWindowHeight() * 0.5,false,false);
+			Render2DMesh(meshList[GEO_DIALOGUE_BOX],false, Application::GetWindowWidth() * db->GetScale().x, Application::GetWindowHeight() * db->GetScale().y, Application::GetWindowWidth() * 0.5f, Application::GetWindowHeight() * 0.5f,false,false);
 			if(db->GetTextDisplay())
 			{
-				for(int i = 0; i < db->Text_List.size(); ++i)
-					RenderTextOnScreen(meshList[GEO_TEXT], db->Text_List[i],Color(0.8,1,0.8),3,15, 48 - (2.5 * i));
+				for(unsigned i = 0; i < db->Text_List.size(); ++i)
+					RenderTextOnScreen(meshList[GEO_TEXT], db->Text_List[i],Color(0.8f,1.f,0.8f),3.f,15.f, 48.f - (2.5f * i));
 			}
 			break;
 		}

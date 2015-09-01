@@ -71,7 +71,7 @@ void CEnemy_Sentry::Update(const double dt)
 				GameObject *go = FetchBullet();
 				go->mass = 5.f;
 				go->pos = this->pos;
-				go->vel = this->normal * Bullet_Spd * dt;
+				go->vel = this->normal * Bullet_Spd * (float)dt;
 				go->scale.Set(Bullet_Size,Bullet_Size,Bullet_Size);
 				m_fShootCD = 1.f;
 				ISound * sound =  engine->play2D("../Base/Audio/Enemy_shoot.mp3", false, false);
@@ -80,7 +80,7 @@ void CEnemy_Sentry::Update(const double dt)
 					sound->setIsPaused(false);
 				}
 			}
-			m_fShootCD -= 1.f * dt;
+			m_fShootCD -= 1.f *(float) dt;
 			if(!m_bIsDetected)
 				state = STATE_TRACK;
 		}

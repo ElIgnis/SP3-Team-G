@@ -39,7 +39,7 @@ void CDialogue_Box::Update(double dt, GameObject *player)
 
 	if(m_bOpening && !m_bMaxSize)
 	{
-		scale.x += dt * 2;
+		scale.x += (float)dt * 2.f;
 		m_bMinSize = false;
 		if(scale.x > MaxScale)
 		{
@@ -49,7 +49,7 @@ void CDialogue_Box::Update(double dt, GameObject *player)
 	}
 	else if(!m_bOpening && !m_bMinSize)
 	{
-		scale.x -= dt * 2;
+		scale.x -= (float)dt * 2.f;
 		m_bMaxSize = false;
 		if(scale.x < MinScale)
 		{

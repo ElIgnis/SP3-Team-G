@@ -5,7 +5,7 @@ CInventory::CInventory(void)
 	: m_iHolding(0)
 	, m_iSize(9)
 {
-	for(int i = 0; i < m_iSize; ++i)
+	for(unsigned int i = 0; i < m_iSize; ++i)
 	{
 		Inventory[i] = new CItem(CItem::BLANK);
 	}
@@ -13,7 +13,7 @@ CInventory::CInventory(void)
 
 CInventory::~CInventory(void)
 {
-	for(int i = 0; i < m_iSize; ++i)
+	for(unsigned int i = 0; i < m_iSize; ++i)
 	{
 		delete Inventory[i];
 	}
@@ -52,7 +52,7 @@ bool CInventory::AddItem(CItem::ITEM_TYPE type)
 		//If the inventory is not and full and not empty
 		else
 		{
-			for(int i = 0; i < m_iHolding; i+=1)
+			for(unsigned int i = 0; i < m_iHolding; i+=1)
 			{
 				//Checks for an existing item in the inventory
 				if(Inventory[i]->GetItemType() == type)
@@ -72,6 +72,7 @@ bool CInventory::AddItem(CItem::ITEM_TYPE type)
 			}
 		}
 	}
+	return false;
 }
 
 //Check item in the inventory
