@@ -802,6 +802,11 @@ void SceneStealth::UpdateEnemies(const double dt)
 					//Stunning enemies within range
 					if((go->pos - Virus->pos).LengthSquared() < 1000)
 					{
+						ISound * sound = engine->play2D("../Base/Audio/Enemy_stunned.wav", false, false);
+						if(sound)
+						{
+							sound->setIsPaused(false);
+						}
 						go->SetState(CEnemy::STATE_STUNNED);
 						go->vel.SetZero();
 						//Set Delay
@@ -2250,7 +2255,7 @@ void SceneStealth::RenderDialogBox(void)
 			if(db->GetTextDisplay())
 			{
 				for(int i = 0; i < db->Text_List.size(); ++i)
-					RenderTextOnScreen(meshList[GEO_TEXT], db->Text_List[i],Color(1,0,0),3,15, 48 - (2.5 * i));
+					RenderTextOnScreen(meshList[GEO_TEXT], db->Text_List[i],Color(0.8,1,0.8),3,15, 48 - (2.5 * i));
 			}
 			break;
 		}

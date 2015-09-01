@@ -88,7 +88,14 @@ void CPlayer::UpdateTimers(const double dt)
 		{
 			NoiseObject_List[i]->SetCountdownTime(NoiseObject_List[i]->GetCountdownTime() - (float)dt);
 			if(NoiseObject_List[i]->GetCountdownTime() < 0.f)
+			{
 				NoiseObject_List[i]->SetActive();
+				ISound * sound = engine->play2D("../Base/Audio/Player_decoy.wav", false, true);
+				if(sound)
+				{
+					sound->setIsPaused(false);
+				}
+			}
 		}
 		else
 		{
@@ -218,6 +225,11 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 		break;
 	case CItem::INVIS:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Player_disguise.wav", false, true);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			ActivatePowerup(type, 3.f);
 			m_pInv.delItem(slot);
 		}
@@ -249,11 +261,6 @@ void CPlayer::TriggerSkillEffect(CItem::ITEM_TYPE type)
 		break;
 	case CItem::NOISE:
 		{
-			ISound * sound = engine->play2D("../Base/Audio/Player_decoy.wav", false, true);
-			if(sound)
-			{
-				sound->setIsPaused(false);
-			}
 			//Create new noise object and store inside NoiseObject_List
 			CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
 			NoiseObject_List.push_back(nobj);

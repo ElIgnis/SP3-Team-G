@@ -107,11 +107,6 @@ void CEnemy_Sentry::Update(const double dt)
 	case STATE_STUNNED:
 		{
 			//Countdown timer until enemy is unstunned
-			ISound * sound = engine->play2D("../Base/Audio/Enemy_stunned.wav", false, false);
-			if(sound)
-			{
-				sound->setIsPaused(false);
-			}
 			m_fStunRecover += (float)dt;
 			if(m_fStunRecover > StunDuration)
 			{
