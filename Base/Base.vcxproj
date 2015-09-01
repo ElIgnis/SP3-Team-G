@@ -21,6 +21,7 @@
     <ClCompile Include="Source\Enemy_Patrol_Rage.cpp" />
     <ClCompile Include="Source\Enemy_Sentry.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
+    <ClCompile Include="Source\GGAudio.cpp" />
     <ClCompile Include="Source\Highscore.cpp" />
     <ClCompile Include="Source\HighscoreList.cpp" />
     <ClCompile Include="Source\Interactables.cpp" />

@@ -1,5 +1,7 @@
 #include "Player.h"
 
+extern ISoundEngine* engine;
+
 CPlayer::CPlayer(void)
 	: m_pLives(3)
 	, m_fDisguiseCDTimer(0.f)
@@ -185,6 +187,11 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 		{
 			if(m_pLives != 3)
 			{
+				ISound * sound =  engine->play2D("../Base/Audio/Player_health.wav", false, true);
+				if(sound)
+				{
+					sound->setIsPaused(false);
+				}
 				add1Life();
 				m_pInv.delItem(slot);
 			}
@@ -200,6 +207,11 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 		break;
 	case CItem::SPEED:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Player_speed.wav", false, true);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			ActivatePowerup(type, 3.f);
 			m_pInv.delItem(slot);
 		}
@@ -227,11 +239,21 @@ void CPlayer::TriggerSkillEffect(CItem::ITEM_TYPE type)
 	{
 	case CItem::DISGUISE:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Player_disguise.wav", false, true);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			m_bChangeDisguise = true;
 		}
 		break;
 	case CItem::NOISE:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Player_decoy.wav", false, true);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			//Create new noise object and store inside NoiseObject_List
 			CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
 			NoiseObject_List.push_back(nobj);

@@ -1,5 +1,7 @@
 #include "Enemy_Patrol.h"
 
+extern ISoundEngine* engine;
+
 #define Patrol_moveSpd 15.f
 #define Chase_moveSpd 20.f
 #define Enraged_moveSpd 55.f
@@ -107,6 +109,11 @@ void CEnemy_Patrol::Update(const double dt)
 		break;
 	case STATE_STUNNED:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Enemy_stunned.wav", false, false);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			//Countdown timer until enemy is unstunned
 			m_fStunRecover += (float)dt;
 			if(m_fStunRecover > StunDuration)

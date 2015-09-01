@@ -31,10 +31,6 @@
 #include "DialogueBox.h"
 #include "Player.h"
 
-#include <irrKlang.h>
-#pragma comment(lib, "irrKlang.lib")
-using namespace irrklang;
-
 using std::vector;
 using std::string;
 using std::getline;
@@ -161,7 +157,8 @@ public:
 
 	//Sound
 	int InitAudio();
-	void UpdateAudio();
+	int UpdateAudio();
+	int ExitAudio();
 protected:
 
 	//Physics
@@ -239,7 +236,6 @@ private:
 	CItem *Decoy;
 
 	//Sound
-	ISoundEngine* engine;
 	ISound* sound[SOUND_TOTAL];
 };
 

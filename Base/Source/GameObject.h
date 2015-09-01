@@ -4,6 +4,10 @@
 #include "Vector3.h"
 #include <string>
 
+#include <irrKlang.h>
+#pragma comment(lib, "irrKlang.lib")
+using namespace irrklang;
+
 using std::string;
 
 class GameObject

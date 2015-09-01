@@ -1,5 +1,7 @@
 #include "Enemy_Sentry.h"
 
+extern ISoundEngine* engine;
+
 #define Scan_turnSpd 1.f
 #define Bullet_Size 2.f
 #define Bullet_Spd 60.f
@@ -72,6 +74,11 @@ void CEnemy_Sentry::Update(const double dt)
 				go->vel = this->normal * Bullet_Spd * dt;
 				go->scale.Set(Bullet_Size,Bullet_Size,Bullet_Size);
 				m_fShootCD = 1.f;
+				ISound * sound =  engine->play2D("../Base/Audio/Enemy_shoot.mp3", false, false);
+				if(sound)
+				{
+					sound->setIsPaused(false);
+				}
 			}
 			m_fShootCD -= 1.f * dt;
 			if(!m_bIsDetected)
@@ -100,6 +107,11 @@ void CEnemy_Sentry::Update(const double dt)
 	case STATE_STUNNED:
 		{
 			//Countdown timer until enemy is unstunned
+			ISound * sound = engine->play2D("../Base/Audio/Enemy_stunned.wav", false, false);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			m_fStunRecover += (float)dt;
 			if(m_fStunRecover > StunDuration)
 			{
