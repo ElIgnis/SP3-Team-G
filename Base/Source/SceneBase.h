@@ -16,9 +16,6 @@
 #include <fstream>
 #include <istream>
 
-#include "irrKlang.h"
-
-using namespace irrklang;
 using std::ifstream;
 
 class SceneBase : public Scene
@@ -162,10 +159,6 @@ protected:
 	int count;
 
 	int textWidth[256];
-
-	//Sound
-	ISoundEngine * engine;
-	ISound *Sound;
 };
 
 #endif

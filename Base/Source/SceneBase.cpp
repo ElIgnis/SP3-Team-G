@@ -9,8 +9,6 @@
 #include <sstream>
 
 SceneBase::SceneBase()
-	:engine(NULL)
-	,Sound(NULL)
 {
 }
 
@@ -295,11 +293,6 @@ void SceneBase::Init()
 	//Health UI
 	meshList[GEO_HEALTH] = MeshBuilder::GenerateQuad("HealthUI", Color(0, 1, 0), 1.f);
 
-	//Sound
-	engine = createIrrKlangDevice();
-	if(!engine)
-		return;
-
 	bLightEnabled = true;
 }
 
@@ -561,11 +554,6 @@ void SceneBase::Exit()
 		if(meshList[i])
 			delete meshList[i];
 	}
-	if(Sound)
-	{
-		Sound->drop();
-	}
-	engine->drop();
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
