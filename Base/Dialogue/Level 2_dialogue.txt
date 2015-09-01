@@ -5,7 +5,7 @@
 /Do not use # on the first line
 /Use '/ ' to make comments
 -95,0,0
-Some walls can only be unlocked by a switch
+Some walls can only be unlocked later in the level
 #
 -95,-95,0
 Watch out!
