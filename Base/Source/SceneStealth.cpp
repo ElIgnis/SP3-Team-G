@@ -373,6 +373,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 
 			if(distSquared <= combinedRadius * combinedRadius)
 			{
+				Virus->m_bIsHiding = true;
 				return true;
 			}
 			return false;
@@ -638,10 +639,12 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 		static bool b_boxColCheck = false;
 		static bool b_ColCheck = false;
+
 		//Check BOX collision with the walls
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(go->active && go->type == GameObject::GO_BOX)
 			{
@@ -660,6 +663,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				for(std::vector<CInteractables  *>::iterator it2 = LvlHandler.GetInteractables_List().begin(); it2 != LvlHandler.GetInteractables_List().end(); ++it2)
 				{
 					CInteractables *go2 = (CInteractables *)*it2;
+
 					//Check Collision between Box and Box Button
 					if(go2->active && go2->type == GameObject::GO_BBTN)
 					{
@@ -677,6 +681,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(go->active)
 			{
@@ -707,6 +712,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
+
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -716,6 +722,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				if(CheckCollision(Virus,go,dt))
 				{
 					b_ColCheck = true;
+
 					//Kills player
 					if(go->type == GameObject::GO_LASER)
 						Virus->SetPlayerState(CPlayer::DEAD);
@@ -775,12 +782,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 
-		Virus->m_bIsHiding = false;
-
 		//Check Player Collision with CheckPoints
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(!go->active)
 			{
@@ -843,6 +849,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 			//		go2->vel = go->vel;
 			//	}
 			//}
+
 			//Stunning enemies
 			if(GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
@@ -872,6 +879,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 						go->SetTrackingPos(nobj->GetPosition());
 					}
 				}
+
 				//For enemy to track player last position for patrol algorithm
 				go->PlayerCurrentPosition(Virus->pos);
 
@@ -909,8 +917,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 				}
 				else
 					go->SetIsDetected(false);
-
-				
 
 				//Check enemy collision with structures
 				bool b_ColCheck2 = false;
@@ -978,12 +984,13 @@ void SceneStealth::UpdateEnemies(const double dt)
 							}
 						}
 						if(!b_ColCheck1)
-							bul->pos += bul->vel;//If no collision, update bullet pos
+							bul->pos += bul->vel; //If no collision, update bullet pos
 					}
 				}
 			}
 		}
 	}
+	Virus->m_bIsHiding = false;
 }
 
 void SceneStealth::UpdateDialogue(const double dt)

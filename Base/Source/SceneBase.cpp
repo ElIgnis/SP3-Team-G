@@ -230,7 +230,7 @@ void SceneBase::Init()
 	meshList[GEO_CONE_RED]->textureID = LoadTGA("Image//Cone_Red.tga");
 	
 	//Hiding Spot
-	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
+	meshList[GEO_HOLE] = MeshBuilder::GenerateOBJ("Hole", "OBJ//Hole.obj");
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
 
 	//CheckPoint for Respawn
