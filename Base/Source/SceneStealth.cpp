@@ -636,8 +636,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 			Virus->TriggerSkillEffect(Decoy->GetItemType());
 		
 
-		static bool b_boxColCheck = false;
-		static bool b_ColCheck = false;
+		 bool b_boxColCheck = false;
+		 bool b_ColCheck = false;
 		//Check BOX collision with the walls
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
@@ -1679,6 +1679,8 @@ void SceneStealth::RenderGO(GameObject *go)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
+			modelStack.Rotate(angle, 0, 0, 1);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
 			modelStack.PopMatrix();
@@ -1688,19 +1690,19 @@ void SceneStealth::RenderGO(GameObject *go)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
+			modelStack.Rotate(angle, 0, 0, 1);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
 			modelStack.PopMatrix();
 		}
 		break;
 	case GameObject::GO_TELEPORTER:
-		{
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			RenderMesh(meshList[GEO_TELEPORTER], bLightEnabled);
 			modelStack.PopMatrix();
-		}
 		break;
 	case GameObject::GO_BOX:
 		modelStack.PushMatrix();
@@ -1812,10 +1814,22 @@ void SceneStealth::RenderGame(void)
 	modelStack.Scale(1000.f, 1000.f, 1.f);
 	RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
 	modelStack.PopMatrix();
+
 	
 	modelStack.PushMatrix();
 	modelStack.Rotate(-rotateScene, 1, 0, 0);
 
+	//Render trigger area for dialogue box
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		modelStack.PushMatrix();
+		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -5);
+		modelStack.Scale(7, 7, 1);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+	}
+	
 
 	//Render enemies here
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
@@ -2016,18 +2030,7 @@ void SceneStealth::RenderGame(void)
 	
 
 	modelStack.PopMatrix();
-	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
-	{
-		CDialogue_Box *db = (CDialogue_Box *)*it;
-		modelStack.PushMatrix();
-		modelStack.Rotate(-rotateScene, 1, 0, 0);
-		modelStack.PushMatrix();
-		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -8);
-		modelStack.Scale(7, 7, 1);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
-		modelStack.PopMatrix();
-		modelStack.PopMatrix();
-	}
+	
 	//Renders elapsed time(score)
 	RenderScore();
 }
@@ -2165,14 +2168,14 @@ void SceneStealth::RenderUI(void)
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
 
 	glDisable(GL_DEPTH_TEST);
+	//Render dialogues in scene
+	RenderDialogBox();
 	//Renders healthbar and current lives
 	RenderHealthbar();
 	//Renders inventory and items in it
 	RenderInventory();
 	//Renders elapsed time(score)
 	RenderScore();
-	//Render dialogues in scene
-	RenderDialogBox();
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -2298,26 +2301,6 @@ void SceneStealth::RenderDialogBox(void)
 			break;
 		}
 	}
-
-	//Render trigger area for dialogue box
-	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
-	{
-		CDialogue_Box *db = (CDialogue_Box *)*it;
-		modelStack.PushMatrix();
-		modelStack.Rotate(-rotateScene, 1, 0, 0);
-		modelStack.PushMatrix();
-		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -5);
-		modelStack.Scale(7, 7, 1);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
-		modelStack.PopMatrix();
-		modelStack.PopMatrix();
-	}
-	/*for(int i = 0; i < Virus->getLives(); i++)
-	{
-		Render2DMesh(meshList[GEO_HEALTH],false, Application::GetWindowWidth() * 0.07, Application::GetWindowHeight() * 0.08, (Application::GetWindowWidth() * 0.07) + ((Application::GetWindowWidth() * 0.075) *i ), Application::GetWindowHeight() * 0.8975,false,false);
-	}*/
-
-	//Render2DMesh(meshList[GEO_HEALTHUI],false, Application::GetWindowWidth() * InventoryUp * 5, Application::GetWindowHeight() * 0.5, Application::GetWindowWidth() * 0.15, Application::GetWindowHeight() * 0.9,false,false);
 }
 void SceneStealth::RenderPause(void)
 {
