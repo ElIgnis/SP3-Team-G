@@ -856,7 +856,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 					if((go->pos - Virus->pos).LengthSquared() < 1000)
 					{
 						go->SetState(CEnemy::STATE_STUNNED);
-						Virus->SetIndicatorStunDur(2.f);
 					}
 				}
 			}
@@ -1941,7 +1940,7 @@ void SceneStealth::RenderGame(void)
 		RenderMesh(meshList[GEO_INDICATOR_SPEED], bLightEnabled);
 		modelStack.PopMatrix();
 	}
-	if(Virus->GetShowIndicatorStun())
+	if(Virus->GetStunReuseTimer() <= 0.f)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z + 5.f);
