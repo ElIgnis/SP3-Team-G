@@ -31,6 +31,7 @@ public:
 		GO_ENEMY,
 		GO_LASER,
 		GO_BBTN,
+		GO_TELEPORTER,
 		GO_ENDPOINT,
 		NUM_GO
 	};

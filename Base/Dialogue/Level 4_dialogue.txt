@@ -1,0 +1,10 @@
+/Format
+/1st Line - World position
+/Subsequent Lines - Text
+/Use # to seperate dialogues
+/Do not use # on the first line
+/Use '/ ' to make comments
+20,-30,0
+You can use a teleporter 
+to move across areas
+#

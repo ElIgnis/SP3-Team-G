@@ -25,8 +25,8 @@ SceneStealth::SceneStealth()
 
 SceneStealth::~SceneStealth()
 {
-	delete test;
-	delete testes;
+	delete Disguise;
+	delete Decoy;
 }
 
 void SceneStealth::Init()
@@ -57,7 +57,7 @@ void SceneStealth::Init()
 	m = new CMenuItem("Instructions", "Instructions.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Controls guide", "ControlsGuide.txt");
+	m = new CMenuItem("Controls", "ControlsGuide.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
 	m = new CMenuItem("Exit", "Exit.txt");
@@ -97,6 +97,72 @@ void SceneStealth::Init()
 
 	bLightEnabled = false;
 	rotateAngle = 90;
+
+	InitAudio();
+}
+
+//Initialize game audio here
+int SceneStealth::InitAudio()
+{
+	engine = createIrrKlangDevice(ESOD_AUTO_DETECT,ESEO_MULTI_THREADED|ESEO_LOAD_PLUGINS|ESEO_USE_3D_BUFFERS);
+	engine->setSoundVolume(1.0f);
+
+	//Menu sounds here
+	sound[MENU_BGM] = engine->play2D("../Base/Audio/Menu_bgm.mp3", true, true);
+	sound[MENU_BGM]->setVolume(1.0f);
+
+	sound[MENU_SELECT] = engine->play2D("../Base/Audio/Menu_select.mp3", true, true);
+	sound[MENU_SELECT]->setVolume(1.0f);
+
+	sound[MENU_HIGHSCORE] = engine->play2D("../Base/Audio/Menu_highscore.wav", true, true);
+	sound[MENU_HIGHSCORE]->setVolume(1.0f);
+
+	//Level things here
+	sound[LEVEL_WIN] = engine->play2D("../Base/Audio/Level_win.mp3", true, true);
+	sound[LEVEL_WIN]->setVolume(1.0f);
+
+	sound[LEVEL_LOSE] = engine->play2D("../Base/Audio/Level_lose.wav", true, true);
+	sound[LEVEL_LOSE]->setVolume(1.0f);
+
+	sound[LEVEL_BUTTON] = engine->play2D("../Base/Audio/Level_button.wav", true, true);
+	sound[LEVEL_BUTTON]->setVolume(1.0f);
+
+	sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.wav", true, true);
+	sound[LEVEL_CHECKPOINT]->setVolume(1.0f);
+
+	//Enemy sounds here
+	sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.wav", true, true);
+	sound[ENEMY_ALERT]->setVolume(1.0f);
+	
+	sound[ENEMY_SHOOT] = engine->play2D("../Base/Audio/Enemy_shoot.mp3", true, true);
+	sound[ENEMY_SHOOT]->setVolume(1.0f);
+	
+	sound[ENEMY_BULLET_WALL] = engine->play2D("../Base/Audio/Enemy_shoot_hit_wall.wav", true, true);
+	sound[ENEMY_BULLET_WALL]->setVolume(1.0f);
+	
+	sound[ENEMY_STUNNED] = engine->play2D("../Base/Audio/Enemy_stunned.wav", true, true);
+	sound[ENEMY_STUNNED]->setVolume(1.0f);
+
+	//Player Sounds here
+	sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", true, true);
+	sound[PLAYER_DMG]->setVolume(1.0f);
+	
+	sound[PLAYER_PICKUP] = engine->play2D("../Base/Audio/Player_pickup.wav", true, true);
+	sound[PLAYER_PICKUP]->setVolume(1.0f);
+	
+	sound[PLAYER_HEALTH] = engine->play2D("../Base/Audio/Player_health.wav", true, true);
+	sound[PLAYER_HEALTH]->setVolume(1.0f);
+	
+	sound[PLAYER_DISGUISE] = engine->play2D("../Base/Audio/Player_disguise.wav", true, true);
+	sound[PLAYER_DISGUISE]->setVolume(1.0f);
+	
+	sound[PLAYER_SPEED] = engine->play2D("../Base/Audio/Player_speed.wav", true, true);
+	sound[PLAYER_SPEED]->setVolume(1.0f);
+	
+	sound[PLAYER_DECOY] = engine->play2D("../Base/Audio/Player_decoy.wav", true, true);
+	sound[PLAYER_DECOY]->setVolume(1.0f);
+
+	return 0;
 }
 
 void SceneStealth::InitGame(void)
@@ -112,11 +178,12 @@ void SceneStealth::InitGame(void)
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->scale.Set(7,7,7);
+	Virus->SetCurrentCP(Vector3(Virus->pos.x, Virus->pos.y, Virus->pos.z));
 	Virus->mass = 1.f;
 	Virus->setLives(3);
 
-	test = new CItem(CItem::DISGUISE);
-	testes = new CItem(CItem::NOISE);
+	Disguise = new CItem(CItem::DISGUISE);
+	Decoy = new CItem(CItem::NOISE);
 }
 
 void SceneStealth::LoadLevel(const int LevelSelected)
@@ -201,8 +268,8 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 		{
 			float distSquared = (go2->pos - go1->pos).LengthSquared();
 			float combinedRadius = go1->scale.x + go2->scale.x;
-
-			if(distSquared <= combinedRadius)
+			
+			if(distSquared <= combinedRadius * combinedRadius)
 			{
 				return true;
 			}
@@ -408,7 +475,7 @@ void SceneStealth::CollisionResponse(GameObject *go1, GameObject *go2, float dt)
 void SceneStealth::Update(double dt)
 {
 	SceneBase::Update(dt);
-	
+	UpdateAudio();
 	//Let player input name
 	if(!b_NameEntered)
 	{
@@ -511,6 +578,30 @@ void SceneStealth::Update(double dt)
 	
 }
 
+void SceneStealth::UpdateAudio()
+{
+	sound[MENU_BGM]->setVolume(0.1);
+	if(GameState != STATE_MENU)
+	{
+		sound[MENU_BGM]->setIsPaused(true);
+	}
+	else
+	{
+		sound[MENU_BGM]->setIsPaused(false);
+		if(GetKeyState(VK_UP) || GetKeyState(VK_DOWN))
+		{
+			sound[MENU_SELECT]->setIsPaused(false);
+		}
+		else
+			sound[MENU_SELECT]->setIsPaused(true);
+	}
+	//float multMusic = 0.1f;
+	//Vector3 viewMusic = 0.0f;
+	//viewMusic = (camera.target + camera.position);
+	//engine->setListenerPosition(vec3df(multMusic * viewMusic.x, multMusic * viewMusic.y, multMusic * viewMusic.z), vec3df(1, 1, 1));
+	engine->update();
+}
+
 void SceneStealth::UpdatePlayer(const double dt)
 {
 	Virus->UpdateTimers(dt);
@@ -536,20 +627,17 @@ void SceneStealth::UpdatePlayer(const double dt)
 		Virus->vel.x = Virus->dir.x * acc.x;
 		Virus->vel.y =  Virus->dir.y * acc.y;
 
-		//if (Application::IsKeyPressed('V'))
-			//Virus->TriggerSkillEffect(test->GetItemType());
+		//Apply disguise
+		if(GetKeyState('v'))
+			Virus->TriggerSkillEffect(Disguise->GetItemType());
 
-		static bool btest = false;
-		if(Application::IsKeyPressed('B') && btest == false)
-		{
-			//Virus->TriggerSkillEffect(testes->GetItemType());
-			btest = true;
-		}
-		else if(!Application::IsKeyPressed('B') && btest == true)
-			btest = false;
+		//Use Decoy
+		if(GetKeyState('b'))
+			Virus->TriggerSkillEffect(Decoy->GetItemType());
+		
 
-		bool b_boxColCheck = false;
-		bool b_ColCheck = false;
+		static bool b_boxColCheck = false;
+		static bool b_ColCheck = false;
 		//Check BOX collision with the walls
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
@@ -628,17 +716,28 @@ void SceneStealth::UpdatePlayer(const double dt)
 				if(CheckCollision(Virus,go,dt))
 				{
 					b_ColCheck = true;
+					//Kills player
 					if(go->type == GameObject::GO_LASER)
 						Virus->SetPlayerState(CPlayer::DEAD);
 				}
 				if(GetKeyState('e'))
+				{
 					go->CheckBonusInteraction(Virus->pos);
+
+					//Warps player
+					if(go->type == GameObject::GO_TELEPORTER)
+					{
+						Virus->pos = go->GetSecondaryPosition();
+					}
+				}
 			}
 		}
 		if(!b_ColCheck)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
 				Virus->pos += Virus->vel * SpeedPowerupModifier * dt;
+			else if(Virus->GetPlayerState() == CPlayer::DISGUISE)
+				Virus->pos += Virus->vel * DisguiseModifier * dt;
 			else
 				Virus->pos += Virus->vel * dt;
 		}
@@ -717,8 +816,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 			Virus->SetPlayerState(CPlayer::ALIVE);
 		}
 	}
-
-	//lights[0].position.Set(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 }
 
 void SceneStealth::UpdateEnemies(const double dt)
@@ -860,7 +957,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 							bul->active = false;
 
 						//Bullet kills player if collided
-						if(CheckCollision (bul, Virus, (float)dt))
+						if(CheckCollision(bul, Virus, (float)dt))
 						{
 							Virus->SetPlayerState(CPlayer::DEAD);
 							bul->active = false;
@@ -922,9 +1019,13 @@ void SceneStealth::UpdateMenuKeypress(void)
 	if(!LvlHandler.GetStageSelection())
 	{
 		if(GetKeyState(VK_UP) && !GetKeyState(VK_DOWN))
+		{
 			menu_main.UpdateSelection(true);
+		}
 		if(GetKeyState(VK_DOWN) && !GetKeyState(VK_UP))
+		{
 			menu_main.UpdateSelection(false);
+		}
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 0)//Play
 		{
 			//Initialise vars if not done
@@ -1576,8 +1677,6 @@ void SceneStealth::RenderGO(GameObject *go)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
-			modelStack.Rotate(angle, 0, 0 ,1);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
 			modelStack.PopMatrix();
@@ -1587,10 +1686,17 @@ void SceneStealth::RenderGO(GameObject *go)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-			float angle = Math::RadianToDegree(atan2(go->normal.y, go->normal.x));
-			modelStack.Rotate(angle, 0, 0 ,1);
 			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			RenderMesh(meshList[GEO_BINARYWALL], bLightEnabled);
+			modelStack.PopMatrix();
+		}
+		break;
+	case GameObject::GO_TELEPORTER:
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+			RenderMesh(meshList[GEO_TELEPORTER], bLightEnabled);
 			modelStack.PopMatrix();
 		}
 		break;
@@ -1733,6 +1839,7 @@ void SceneStealth::RenderGame(void)
 				break;
 			}
 			modelStack.PopMatrix();
+
 			//Enemy alert indicator
 			if(go->GetDetectedStatus())
 			{
@@ -1750,6 +1857,8 @@ void SceneStealth::RenderGame(void)
 				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
 				modelStack.PopMatrix();
 			}
+
+			//Enemy cone detection
 			glDisable(GL_DEPTH_TEST);
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, 0);
@@ -1762,6 +1871,7 @@ void SceneStealth::RenderGame(void)
 			modelStack.PopMatrix();
 			glEnable(GL_DEPTH_TEST);
 		}
+		//Render bullet list
 		for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
 		{
 			GameObject *bul = (GameObject  *)*it2;
@@ -1790,6 +1900,7 @@ void SceneStealth::RenderGame(void)
 		RenderMesh(meshList[GEO_BOX], bLightEnabled);
 	modelStack.PopMatrix();
 
+	//Render noise objects
 	for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
 	{
 		CNoiseObject *nobj = (CNoiseObject *)*it;
@@ -1824,16 +1935,16 @@ void SceneStealth::RenderGame(void)
 		if(go->active)
 			RenderGO(go);
 		modelStack.PushMatrix();//RENDER SECONDARY ITEM - MOVE TO SEPERATE FUNCTION
-		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z+5);
+		modelStack.Translate(go->GetSecondaryPosition().x, go->GetSecondaryPosition().y, go->GetSecondaryPosition().z);
 		modelStack.Scale(5, 5, 5);
 		//Render lever switch
 		if(go->type == GameObject::GO_LEVER)
 			RenderMesh(meshList[GEO_LEVER], bLightEnabled);
 		//Render laser switch
-		if(go->type == GameObject::GO_LASER)
+		else if(go->type == GameObject::GO_LASER)
 			RenderMesh(meshList[GEO_LEVER], bLightEnabled);
 		//Render the Box Button
-		if(go->type == GameObject::GO_BBTN)
+		else if(go->type == GameObject::GO_BBTN)
 			RenderMesh(meshList[GEO_BBTN], bLightEnabled);
 		modelStack.PopMatrix();
 	}
@@ -1858,7 +1969,18 @@ void SceneStealth::RenderGame(void)
 	
 
 	modelStack.PopMatrix();
-
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		modelStack.PushMatrix();
+		modelStack.Rotate(-rotateScene, 1, 0, 0);
+		modelStack.PushMatrix();
+		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -8);
+		modelStack.Scale(7, 7, 1);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		modelStack.PopMatrix();
+	}
 	//Renders elapsed time(score)
 	RenderScore();
 }
@@ -1925,14 +2047,13 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 	case 1: //Option 2 for Level Select
 		{
 			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
-			if(LvlHandler.GetCurrentStage() == 1)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 1", Color(0, 1, 0), 1.5, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 2)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 2", Color(0, 1, 0), 1.5, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 3)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 3", Color(0, 1, 0), 1.5, 40, 45);
-			else if(LvlHandler.GetCurrentStage() == 4)
-				RenderTextOnScreen(meshList[GEO_TEXT], "Level 4", Color(0, 1, 0), 1.5, 40, 45);
+			std::stringstream ssDesc;
+			ssDesc << "Current Level: " << LvlHandler.GetCurrentStage();
+			if(!LvlHandler.GetStageSelection())
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable level selection", Color(0, 1, 0), 1.5, 40, 45);
+			else
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll through levels", Color(0, 1, 0), 1.5, 40, 45);
+			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 41);
 		}
 		break;
 	case 2: //Option 3 for Highscore
@@ -1952,7 +2073,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
 				else
 					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
-				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 40.f - i * 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 45.f - i * 4);
 			}
 		}
 		break;
@@ -1996,6 +2117,7 @@ void SceneStealth::RenderUI(void)
 	ssFPS << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
 
+	glDisable(GL_DEPTH_TEST);
 	//Renders healthbar and current lives
 	RenderHealthbar();
 	//Renders inventory and items in it
@@ -2004,6 +2126,7 @@ void SceneStealth::RenderUI(void)
 	RenderScore();
 	//Render dialogues in scene
 	RenderDialogBox();
+	glEnable(GL_DEPTH_TEST);
 }
 
 void SceneStealth::RenderHealthbar(void)
@@ -2113,18 +2236,7 @@ void SceneStealth::RenderScore(void)
 }
 void SceneStealth::RenderDialogBox(void)
 {
-	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
-	{
-		CDialogue_Box *db = (CDialogue_Box *)*it;
-		modelStack.PushMatrix();
-		modelStack.Rotate(-rotateScene, 1, 0, 0);
-		modelStack.PushMatrix();
-		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -8);
-		modelStack.Scale(7, 7, 1);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
-		modelStack.PopMatrix();
-		modelStack.PopMatrix();
-	}
+	//Render dialogue message
 	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
 	{
 		CDialogue_Box *db = (CDialogue_Box *)*it;
@@ -2138,6 +2250,20 @@ void SceneStealth::RenderDialogBox(void)
 			}
 			break;
 		}
+	}
+
+	//Render trigger area for dialogue box
+	for(std::vector<CDialogue_Box *>::iterator it = LvlHandler.GetDialogue_List().begin(); it != LvlHandler.GetDialogue_List().end(); ++it)
+	{
+		CDialogue_Box *db = (CDialogue_Box *)*it;
+		modelStack.PushMatrix();
+		modelStack.Rotate(-rotateScene, 1, 0, 0);
+		modelStack.PushMatrix();
+		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -5);
+		modelStack.Scale(7, 7, 1);
+		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.PopMatrix();
+		modelStack.PopMatrix();
 	}
 	/*for(int i = 0; i < Virus->getLives(); i++)
 	{
@@ -2336,6 +2462,9 @@ void SceneStealth::Exit()
 	//Clean up Level handler pointers
 	LvlHandler.Exit();
 
+	//Drop the engine for sound
+	engine->drop();
+	
 	//Clean up Menu 
 	while(menu_main.m_menuList.size() > 0)
 	{

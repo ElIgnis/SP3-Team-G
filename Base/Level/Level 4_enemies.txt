@@ -3,7 +3,25 @@
 #   Sentry Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle,  rotation1, rotation2, turnSpd				   #
 #   Patrol Enemy Format - Enemy type, posX, posY, posZ, normX, normY, detectionrange, detectionangle, numPatrolPoint, (Insert patrol points here(x,y)) #
 ########################################################################################################################################################
-ENEMY_SENTRY, 	140.0, -30.0,0, 	0,1, 	50,30, 	320, 135, 	5
-#Probably wont use for Level 01
-ENEMY_PATROL_RAGE,	10,-50,0,		0,1,	50,30,	4,	50,-50,	50,45,	10,45,	10,-50
+ENEMY_SENTRY, 	135.0, -30.0,0, 	0,1, 	50,30, 	360, 270,	5
+#Right Segment
+ENEMY_PATROL_RAGE,	60,-30,0,		0,1,	20,30,	1,	60,40
 ENEMY_PATROL, 		-200, 40, 0, 	0, 1,	50,30,	1, 	-315, 40
+#Left Segment Bottom
+ENEMY_PATROL, 		-160, 50, 0, 	0, 1,	50,30,	1, 	-160, 0
+ENEMY_PATROL, 		-70, -35, 0, 	0, 1,	50,30,	1, 	-130, -35
+#Left Segment Middle
+ENEMY_PATROL_RAGE,	-305, 125,0,	0,1,	50,30,	1,	-205,125
+ENEMY_PATROL_RAGE,	-205, 95,0,		0,1,	50,30,	1,	-305,95
+ENEMY_SENTRY, 	-125.0, 115,0, 		0,1, 	50,30, 	0, 0,	1
+#Left Segment Top Right
+ENEMY_SENTRY, 	-100.0, 240,0, 		0,1, 	50,30, 	0, 0,	1.5
+ENEMY_SENTRY, 	-75.0, 315,0, 		0,1, 	50,30, 	360, 270,	5
+ENEMY_SENTRY, 	-75.0, 380,0, 		0,1, 	50,30, 	270, 180,	8
+ENEMY_SENTRY, 	-140.0, 315,0, 		0,1, 	50,30, 	90, 0,	10
+#Left Segment Top Left
+ENEMY_SENTRY, 	-300.0, 350,0, 		0,1, 	50,30, 	0, 0,	1.0
+ENEMY_SENTRY, 	-300.0, 250,0, 		0,1, 	50,30, 	0, 0,	0.5
+ENEMY_SENTRY, 	-200.0, 350,0, 		0,1, 	50,30, 	0, 0,	0.5
+ENEMY_SENTRY, 	-200.0, 250,0, 		0,1, 	50,30, 	0, 0,	1.0
+ENEMY_PATROL_RAGE,	-250, 350,0,	0,1,	50,30,	1,	-250,200

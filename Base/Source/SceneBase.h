@@ -16,9 +16,6 @@
 #include <fstream>
 #include <istream>
 
-#include "irrKlang.h"
-
-using namespace irrklang;
 using std::ifstream;
 
 class SceneBase : public Scene
@@ -79,7 +76,6 @@ public:
 		GEO_QUAD,
 		GEO_BACKGROUND,
 		GEO_BALL2,
-
 		//Game Objects
 		//Walls & Floors
 		GEO_WALL_GREEN,
@@ -113,6 +109,7 @@ public:
 		GEO_LASER,
 		GEO_LEVER,
 		GEO_BBTN,
+		GEO_TELEPORTER,
 		//UI
 		GEO_HOTBAR,
 		GEO_HOTSEL,
@@ -162,10 +159,6 @@ protected:
 	int count;
 
 	int textWidth[256];
-
-	//Sound
-	ISoundEngine * engine;
-	ISound *Sound;
 };
 
 #endif

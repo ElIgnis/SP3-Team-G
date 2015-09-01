@@ -9,8 +9,6 @@
 #include <sstream>
 
 SceneBase::SceneBase()
-	:engine(NULL)
-	,Sound(NULL)
 {
 }
 
@@ -174,14 +172,13 @@ void SceneBase::Init()
 	}
 
 	//Text
-	meshList[GEO_TEXT]->textureID = LoadTGA("Image//PixelMix.tga");
+	meshList[GEO_TEXT]->textureID = LoadTGA("Image//RetroComputer.tga");
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
 	//Game Objects
 	//Wall
 	meshList[GEO_WALL_GREEN] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
 	meshList[GEO_WALL_GREEN]->textureID = LoadTGA("Image//GameObjects/Walls/wall_green.tga");
-	//meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
 	meshList[GEO_WALL_BLUE] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
 	meshList[GEO_WALL_BLUE]->textureID = LoadTGA("Image//GameObjects/Walls/wall_blue.tga");
 	meshList[GEO_BINARYWALL] = MeshBuilder::GenerateOBJ("GEO_BinaryWall", "OBJ//cube.obj");
@@ -264,6 +261,10 @@ void SceneBase::Init()
 	meshList[GEO_BBTN] = MeshBuilder::GenerateOBJ("Le floor button", "OBJ//BBtn.obj");
 	meshList[GEO_BBTN]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
+	//Teleporter
+	meshList[GEO_TELEPORTER] = MeshBuilder::GenerateOBJ("Teleporter", "OBJ//Teleporter.obj");
+	meshList[GEO_TELEPORTER]->textureID = LoadTGA("Image//GameObjects//Teleporter.tga");
+
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL1]->textureID = LoadTGA("Image//Level1_Floor.tga");
@@ -291,11 +292,6 @@ void SceneBase::Init()
 
 	//Health UI
 	meshList[GEO_HEALTH] = MeshBuilder::GenerateQuad("HealthUI", Color(0, 1, 0), 1.f);
-
-	//Sound
-	engine = createIrrKlangDevice();
-	if(!engine)
-		return;
 
 	bLightEnabled = true;
 }
@@ -558,11 +554,6 @@ void SceneBase::Exit()
 		if(meshList[i])
 			delete meshList[i];
 	}
-	if(Sound)
-	{
-		Sound->drop();
-	}
-	engine->drop();
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }

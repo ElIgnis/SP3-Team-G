@@ -5,6 +5,7 @@
 #include "Lever.h"
 #include "Laser.h"
 #include "BBtn.h"
+#include "Teleporter.h"
 #include "Enemy_Patrol.h"
 #include "Enemy_Patrol_Rage.h"
 #include "Enemy_Sentry.h"
@@ -37,7 +38,7 @@ private:
 	string m_sLevelData2;
 	int m_iObjLine;
 	int m_iCurrentStage;
-	bool m_bStageSelection;
+	bool m_bLevelSelection;
 	bool m_bStageCompleted;
 	Vector3 SpawnPos;
 

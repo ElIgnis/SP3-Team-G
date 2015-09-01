@@ -8,6 +8,7 @@
 #define InventoryOffset 0.08125f
 
 #define SpeedPowerupModifier 2.f
+#define DisguiseModifier 0.25f
 
 #define ReboundFactor 2.f
 #define MoveSpeed 50.f
@@ -30,6 +31,10 @@
 #include "DialogueBox.h"
 #include "Player.h"
 
+#include <irrKlang.h>
+#pragma comment(lib, "irrKlang.lib")
+using namespace irrklang;
+
 using std::vector;
 using std::string;
 using std::getline;
@@ -47,6 +52,31 @@ class SceneStealth : public SceneBase
 		STATE_PLAYING,
 		STATE_PAUSED,
 		NUM_GAMESTATES,//number of gamestates
+	};
+	enum SOUND_TYPES
+	{
+		//Menu Related sounds
+		MENU_BGM,
+		MENU_SELECT,
+		MENU_HIGHSCORE,
+		//Environment sounds
+		LEVEL_WIN,
+		LEVEL_LOSE,
+		LEVEL_BUTTON,
+		LEVEL_CHECKPOINT,
+		//Enemy Sounds
+		ENEMY_ALERT,
+		ENEMY_SHOOT,
+		ENEMY_BULLET_WALL,
+		ENEMY_STUNNED,
+		//Player Sounds
+		PLAYER_DMG,
+		PLAYER_PICKUP,
+		PLAYER_HEALTH,
+		PLAYER_DISGUISE,
+		PLAYER_SPEED,
+		PLAYER_DECOY,
+		SOUND_TOTAL,
 	};
 public:
 	SceneStealth();
@@ -129,6 +159,9 @@ public:
 	void RenderDead(void);
 	void RenderLevelTransit(void);
 
+	//Sound
+	int InitAudio();
+	void UpdateAudio();
 protected:
 
 	//Physics
@@ -202,8 +235,12 @@ private:
 	float f_FeedbackTimer;
 	bool b_TriggerFBTimer;
 
-	CItem *test;
-	CItem *testes;
+	CItem *Disguise;
+	CItem *Decoy;
+
+	//Sound
+	ISoundEngine* engine;
+	ISound* sound[SOUND_TOTAL];
 };
 
 #endif

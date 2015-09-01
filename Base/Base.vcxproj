@@ -42,6 +42,7 @@
     <ClCompile Include="Source\SceneKinematics.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\SpriteAnimation.cpp" />
+    <ClCompile Include="Source\Teleporter.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
     <ClCompile Include="Source\Lever.cpp" />
   </ItemGroup>
@@ -80,6 +81,7 @@
     <ClInclude Include="Source\SceneKinematics.h" />
     <ClInclude Include="Source\shader.hpp" />
     <ClInclude Include="Source\SpriteAnimation.h" />
+    <ClInclude Include="Source\Teleporter.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
     <ClInclude Include="Source\Lever.h" />
