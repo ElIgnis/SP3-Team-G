@@ -1,5 +1,7 @@
 #include "Enemy_Patrol.h"
 
+extern ISoundEngine* engine;
+
 #define Patrol_moveSpd 15.f
 #define Chase_moveSpd 20.f
 #define Enraged_moveSpd 55.f

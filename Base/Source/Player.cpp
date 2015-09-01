@@ -1,5 +1,7 @@
 #include "Player.h"
 
+extern ISoundEngine* engine;
+
 CPlayer::CPlayer(void)
 	: m_pLives(3)
 	, m_fDisguiseCDTimer(0.f)
@@ -86,7 +88,14 @@ void CPlayer::UpdateTimers(const double dt)
 		{
 			NoiseObject_List[i]->SetCountdownTime(NoiseObject_List[i]->GetCountdownTime() - (float)dt);
 			if(NoiseObject_List[i]->GetCountdownTime() < 0.f)
+			{
 				NoiseObject_List[i]->SetActive();
+				ISound * sound = engine->play2D("../Base/Audio/Player_decoy.wav", false, true);
+				if(sound)
+				{
+					sound->setIsPaused(false);
+				}
+			}
 		}
 		else
 		{
@@ -185,6 +194,11 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 		{
 			if(m_pLives != 3)
 			{
+				ISound * sound =  engine->play2D("../Base/Audio/Player_health.wav", false, true);
+				if(sound)
+				{
+					sound->setIsPaused(false);
+				}
 				add1Life();
 				m_pInv.delItem(slot);
 			}
@@ -200,12 +214,22 @@ void CPlayer::TriggerItemEffect(CItem::ITEM_TYPE type, int slot)
 		break;
 	case CItem::SPEED:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Player_speed.wav", false, true);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			ActivatePowerup(type, 3.f);
 			m_pInv.delItem(slot);
 		}
 		break;
 	case CItem::INVIS:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Player_disguise.wav", false, true);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			ActivatePowerup(type, 3.f);
 			m_pInv.delItem(slot);
 		}
@@ -227,6 +251,11 @@ void CPlayer::TriggerSkillEffect(CItem::ITEM_TYPE type)
 	{
 	case CItem::DISGUISE:
 		{
+			ISound * sound = engine->play2D("../Base/Audio/Player_disguise.wav", false, true);
+			if(sound)
+			{
+				sound->setIsPaused(false);
+			}
 			m_bChangeDisguise = true;
 		}
 		break;

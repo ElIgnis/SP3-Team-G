@@ -10,6 +10,26 @@ later in the level
 #
 -95,-95,0
 Watch out!
-'enemy name here' can move around freely and will chase 
-after you if they spot you!
+Red enemies can move around 
+freely and will chase after you
+if they spot you!
+#
+-95, -185,0
+The invisibility powerup 
+allows you to sneak past 
+enemies undetected!
+#
+-55, 20,0
+The freeze powerup 
+disables all enemies in the
+map!
+#
+50, 20,0
+Look out for special enemies!
+They move differently and
+at a higher speed!
+#
+193, 30,0
+This must unlock the wall
+earlier in the level!
 #

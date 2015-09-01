@@ -187,6 +187,8 @@ void SceneBase::Init()
 	//Player
 	meshList[GEO_PLAYER] = MeshBuilder::GenerateOBJ("Player", "OBJ//Player.obj");
 	meshList[GEO_PLAYER]->textureID = LoadTGA("Image//PlayerTexture.tga");
+	meshList[GEO_PLAYER_INVIS] = MeshBuilder::GenerateOBJ("Player", "OBJ//Player.obj");
+	meshList[GEO_PLAYER_INVIS]->textureID = LoadTGA("Image//PlayerTexture_invis.tga");
 
 	//Enemy alert
 	meshList[GEO_ALERT] = MeshBuilder::GenerateOBJ("GEO_ALERT", "OBJ//enemy_alert.obj");
@@ -230,7 +232,7 @@ void SceneBase::Init()
 	meshList[GEO_CONE_RED]->textureID = LoadTGA("Image//Cone_Red.tga");
 	
 	//Hiding Spot
-	meshList[GEO_HOLE] = MeshBuilder::GenerateSphere("Hole", Color(0, 0, 0), 10, 10, 1.f);
+	meshList[GEO_HOLE] = MeshBuilder::GenerateOBJ("Hole", "OBJ//Hole.obj");
 	meshList[GEO_HOLE]->textureID = LoadTGA("Image//Hole.tga");
 
 	//CheckPoint for Respawn
@@ -262,8 +264,8 @@ void SceneBase::Init()
 	meshList[GEO_BBTN]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Teleporter
-	meshList[GEO_TELEPORTER] = MeshBuilder::GenerateOBJ("Teleporter", "OBJ//Teleporter.obj");
-	meshList[GEO_TELEPORTER]->textureID = LoadTGA("Image//GameObjects//Teleporter.tga");
+	meshList[GEO_TELEPORTER] = MeshBuilder::GenerateOBJ("Teleporter", "OBJ//BBtn.obj");
+	meshList[GEO_TELEPORTER]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);

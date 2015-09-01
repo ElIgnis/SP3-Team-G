@@ -1,7 +1,10 @@
 #include "SceneStealth.h"
 #include "GL\glew.h"
 #include "Application.h"
+
 #include <sstream>
+
+extern ISoundEngine* engine;
 
 SceneStealth::SceneStealth()
 	: GameState(STATE_MENU)
@@ -102,70 +105,6 @@ void SceneStealth::Init()
 	InitAudio();
 }
 
-//Initialize game audio here
-int SceneStealth::InitAudio()
-{
-	engine = createIrrKlangDevice(ESOD_AUTO_DETECT,ESEO_MULTI_THREADED|ESEO_LOAD_PLUGINS|ESEO_USE_3D_BUFFERS);
-	engine->setSoundVolume(1.0f);
-
-	//Menu sounds here
-	sound[MENU_BGM] = engine->play2D("../Base/Audio/Menu_bgm.mp3", true, true);
-	sound[MENU_BGM]->setVolume(1.0f);
-
-	sound[MENU_SELECT] = engine->play2D("../Base/Audio/Menu_select.mp3", true, true);
-	sound[MENU_SELECT]->setVolume(1.0f);
-
-	sound[MENU_HIGHSCORE] = engine->play2D("../Base/Audio/Menu_highscore.wav", true, true);
-	sound[MENU_HIGHSCORE]->setVolume(1.0f);
-
-	//Level things here
-	sound[LEVEL_WIN] = engine->play2D("../Base/Audio/Level_win.mp3", true, true);
-	sound[LEVEL_WIN]->setVolume(1.0f);
-
-	sound[LEVEL_LOSE] = engine->play2D("../Base/Audio/Level_lose.wav", true, true);
-	sound[LEVEL_LOSE]->setVolume(1.0f);
-
-	sound[LEVEL_BUTTON] = engine->play2D("../Base/Audio/Level_button.wav", true, true);
-	sound[LEVEL_BUTTON]->setVolume(1.0f);
-
-	sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.wav", true, true);
-	sound[LEVEL_CHECKPOINT]->setVolume(1.0f);
-
-	//Enemy sounds here
-	sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.wav", true, true);
-	sound[ENEMY_ALERT]->setVolume(1.0f);
-	
-	sound[ENEMY_SHOOT] = engine->play2D("../Base/Audio/Enemy_shoot.mp3", true, true);
-	sound[ENEMY_SHOOT]->setVolume(1.0f);
-	
-	sound[ENEMY_BULLET_WALL] = engine->play2D("../Base/Audio/Enemy_shoot_hit_wall.wav", true, true);
-	sound[ENEMY_BULLET_WALL]->setVolume(1.0f);
-	
-	sound[ENEMY_STUNNED] = engine->play2D("../Base/Audio/Enemy_stunned.wav", true, true);
-	sound[ENEMY_STUNNED]->setVolume(1.0f);
-
-	//Player Sounds here
-	sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", true, true);
-	sound[PLAYER_DMG]->setVolume(1.0f);
-	
-	sound[PLAYER_PICKUP] = engine->play2D("../Base/Audio/Player_pickup.wav", true, true);
-	sound[PLAYER_PICKUP]->setVolume(1.0f);
-	
-	sound[PLAYER_HEALTH] = engine->play2D("../Base/Audio/Player_health.wav", true, true);
-	sound[PLAYER_HEALTH]->setVolume(1.0f);
-	
-	sound[PLAYER_DISGUISE] = engine->play2D("../Base/Audio/Player_disguise.wav", true, true);
-	sound[PLAYER_DISGUISE]->setVolume(1.0f);
-	
-	sound[PLAYER_SPEED] = engine->play2D("../Base/Audio/Player_speed.wav", true, true);
-	sound[PLAYER_SPEED]->setVolume(1.0f);
-	
-	sound[PLAYER_DECOY] = engine->play2D("../Base/Audio/Player_decoy.wav", true, true);
-	sound[PLAYER_DECOY]->setVolume(1.0f);
-
-	return 0;
-}
-
 void SceneStealth::InitGame(void)
 {
 	//Initialise all game variables here
@@ -221,6 +160,7 @@ void SceneStealth::CompareScore(int CurrentLevel)
 	//Overwrite score if lower
 	if(tempHighScore < HS_List.GetScoreList().at(CurrentLevel -1))
 	{
+		sound[MENU_HIGHSCORE] = engine->play2D("../Base/Audio/Menu_highscore.wav", false, false);
 		b_ShowHSNotice = true;
 		HS_List.SetNewHighScore(tempHighScore, LvlHandler.GetCurrentStage()-1);
 	}
@@ -375,6 +315,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 
 			if(distSquared <= combinedRadius * combinedRadius)
 			{
+				Virus->m_bIsHiding = true;
 				return true;
 			}
 			return false;
@@ -589,28 +530,29 @@ void SceneStealth::Update(double dt)
 	
 }
 
-void SceneStealth::UpdateAudio()
+int SceneStealth::UpdateAudio()
 {
-	sound[MENU_BGM]->setVolume(0.1);
-	if(GameState != STATE_MENU)
+	sound[MENU_BGM]->setVolume(0.5);
+	//sound[MENU_SELECT]->setIsPaused(true);
+	if(GameState == STATE_MENU || b_PauseGame == true || b_OutOfLives == true)
 	{
-		sound[MENU_BGM]->setIsPaused(true);
+		sound[MENU_BGM]->setIsPaused(false);
+		if(GetKeyState(VK_UP) || GetKeyState(VK_DOWN) || GetKeyState(VK_RETURN))
+		{
+			sound[MENU_SELECT] = engine->play2D("../Base/Audio/Menu_select.ogg", false, false);
+		}
 	}
 	else
 	{
-		sound[MENU_BGM]->setIsPaused(false);
-		if(GetKeyState(VK_UP) || GetKeyState(VK_DOWN))
-		{
-			sound[MENU_SELECT]->setIsPaused(false);
-		}
-		else
-			sound[MENU_SELECT]->setIsPaused(true);
+		sound[MENU_BGM]->setIsPaused(true);
 	}
 	//float multMusic = 0.1f;
 	//Vector3 viewMusic = 0.0f;
 	//viewMusic = (camera.target + camera.position);
 	//engine->setListenerPosition(vec3df(multMusic * viewMusic.x, multMusic * viewMusic.y, multMusic * viewMusic.z), vec3df(1, 1, 1));
 	engine->update();
+
+	return 0;
 }
 
 void SceneStealth::UpdatePlayer(const double dt)
@@ -653,6 +595,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(go->active && go->type == GameObject::GO_BOX)
 			{
@@ -671,6 +614,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				for(std::vector<CInteractables  *>::iterator it2 = LvlHandler.GetInteractables_List().begin(); it2 != LvlHandler.GetInteractables_List().end(); ++it2)
 				{
 					CInteractables *go2 = (CInteractables *)*it2;
+
 					//Check Collision between Box and Box Button
 					if(go2->active && go2->type == GameObject::GO_BBTN)
 					{
@@ -688,6 +632,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(go->active)
 			{
@@ -714,10 +659,13 @@ void SceneStealth::UpdatePlayer(const double dt)
 						break;
 					case GameObject::GO_ENDPOINT:
 						LvlHandler.SetStageCompleted(true);
+						sound[LEVEL_WIN] = engine->play2D("../Base/Audio/Level_win.mp3", false, false);
+						break;
 					}
 				}
 			}
 		}
+
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -735,6 +683,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						b_ColCheck = true;
 						break;
 					case GameObject::GO_LASER:
+						sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
 						Virus->SetPlayerState(CPlayer::DEAD);
 						break;
 					}
@@ -742,8 +691,10 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 				if(GetKeyState('e'))
 				{
+					sound[LEVEL_BUTTON] = engine->play2D("../Base/Audio/Level_button.wav", false, false);
+					go->CheckBonusInteraction(Virus->pos);
 					//Warps player
-					if(go->type == GameObject::GO_TELEPORTER)
+					if(go->type == GameObject::GO_TELEPORTER )
 					{
 						Virus->pos = go->GetSecondaryPosition(Virus->pos);
 					}
@@ -792,22 +743,23 @@ void SceneStealth::UpdatePlayer(const double dt)
 						Virus->m_pInv.AddItem((CItem::NOISE));
 						break;
 					}
+					sound[PLAYER_PICKUP] = engine->play2D("../Base/Audio/Player_pickup.wav", false, false);
 					go->active = false;
 				}
 			}
 		}
 
-		Virus->m_bIsHiding = false;
-
 		//Check Player Collision with CheckPoints
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(!go->active)
 			{
 				if(CheckCollision(Virus,go,dt))
 				{
+					sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.wav", false, false);
 					for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetCheckPoint_List().begin(); it2 != LvlHandler.GetCheckPoint_List().end(); ++it2)
 					{
 						GameObject *go2 = (GameObject *)*it2;
@@ -827,6 +779,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		//Out of lives
 		if(Virus->getLives() < 2)
 		{	
+			sound[LEVEL_LOSE] = engine->play2D("../Base/Audio/Level_lose.wav", false, false);
 			b_OutOfLives = true;
 		}
 		else
@@ -854,6 +807,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 			//Set player state to dead on collision with any enemy
 			if(CheckCollision(go, Virus, dt) && Virus->GetPlayerState() == CPlayer::ALIVE)
 			{
+				sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
 				Virus->SetPlayerState(CPlayer::DEAD);
 			}
 			//Stunning enemies
@@ -865,6 +819,11 @@ void SceneStealth::UpdateEnemies(const double dt)
 					//Stunning enemies within range
 					if((go->pos - Virus->pos).LengthSquared() < 1000)
 					{
+						ISound * sound = engine->play2D("../Base/Audio/Enemy_stunned.wav", false, false);
+						if(sound)
+						{
+							sound->setIsPaused(false);
+						}
 						go->SetState(CEnemy::STATE_STUNNED);
 						go->vel.SetZero();
 						//Set Delay
@@ -903,6 +862,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 								{
 									if((Virus->GetPlayerState() == CPlayer::DISGUISE && !Virus->vel.IsZero()) || Virus->GetPlayerState() == CPlayer::ALIVE)
 									{
+										sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.wav", false, false);
 										go->SetState(CEnemy::STATE_ALERT);
 										go->vel.SetZero();
 										go->SetIsDetected(true);
@@ -922,8 +882,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 				}
 				else
 					go->SetIsDetected(false);
-
-				
 
 				//Check enemy collision with structures
 				bool b_ColCheck2 = false;
@@ -951,7 +909,8 @@ void SceneStealth::UpdateEnemies(const double dt)
 			}
 
 			//Updates enemies
-			go->Update(dt);
+			if(!Virus->GetPowerupStatus(CItem::FREEZE))
+				go->Update(dt);
 
 			//Update bullets of sentry enemies
 			if(go->e_type == CEnemy::ENEMY_SENTRY)
@@ -972,6 +931,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 						//Bullet kills player if collided
 						if(CheckCollision(bul, Virus, (float)dt))
 						{
+							sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
 							Virus->SetPlayerState(CPlayer::DEAD);
 							bul->active = false;
 						}
@@ -984,6 +944,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 							{
 								if(CheckCollision(bul, go3, (float)dt))
 								{
+									sound[ENEMY_BULLET_WALL] = engine->play2D("../Base/Audio/Enemy_shoot_hit_wall.wav", false, false);
 									bul->active = false;
 									b_ColCheck1 = true;
 									break;
@@ -991,12 +952,13 @@ void SceneStealth::UpdateEnemies(const double dt)
 							}
 						}
 						if(!b_ColCheck1)
-							bul->pos += bul->vel;//If no collision, update bullet pos
+							bul->pos += bul->vel; //If no collision, update bullet pos
 					}
 				}
 			}
 		}
 	}
+	Virus->m_bIsHiding = false;
 }
 
 void SceneStealth::UpdateDialogue(const double dt)
@@ -1938,7 +1900,9 @@ void SceneStealth::RenderGame(void)
 	modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z);
 	modelStack.Scale(Virus->scale.x, Virus->scale.y, Virus->scale.z);
 	modelStack.Rotate(theta, 0, 0, 1);
-	if(Virus->GetPlayerState() != CPlayer::DISGUISE)
+	if(Virus->GetPowerupStatus(CItem::INVIS))
+		RenderMesh(meshList[GEO_PLAYER_INVIS], bLightEnabled);
+	else if(Virus->GetPlayerState() != CPlayer::DISGUISE)
 		RenderMesh(meshList[GEO_PLAYER], bLightEnabled);
 	else
 		RenderMesh(meshList[GEO_BOX], bLightEnabled);
@@ -2195,14 +2159,14 @@ void SceneStealth::RenderUI(void)
 	}
 
 	glDisable(GL_DEPTH_TEST);
+	//Renders elapsed time(score)
+	RenderScore();
 	//Render dialogues in scene
 	RenderDialogBox();
 	//Renders healthbar and current lives
 	RenderHealthbar();
 	//Renders inventory and items in it
 	RenderInventory();
-	//Renders elapsed time(score)
-	RenderScore();
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -2323,12 +2287,14 @@ void SceneStealth::RenderDialogBox(void)
 			if(db->GetTextDisplay())
 			{
 				for(int i = 0; i < db->Text_List.size(); ++i)
-					RenderTextOnScreen(meshList[GEO_TEXT], db->Text_List[i],Color(1,0,0),3,15, 48 - (2.5 * i));
+					RenderTextOnScreen(meshList[GEO_TEXT], db->Text_List[i],Color(0.8,1,0.8),3,15, 48 - (2.5 * i));
 			}
 			break;
 		}
 	}
 }
+
+
 void SceneStealth::RenderPause(void)
 {
 	for(unsigned i = 0; i < menu_pause.m_menuList.size(); ++i)
@@ -2341,7 +2307,7 @@ void SceneStealth::RenderDead(void)
 {
 	std::stringstream ssNotice;
 	ssNotice << "You have ran out of lives...";
-	RenderTextOnScreen(meshList[GEO_TEXT], ssNotice.str(), Color(0, 1, 0), 3, 5, 44);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssNotice.str(), Color(0, 1, 0), 3, 2, 44);
 
 	for(unsigned i = 0; i < menu_dead.m_menuList.size(); ++i)
 	{
@@ -2501,7 +2467,8 @@ void SceneStealth::Render()
 void SceneStealth::Exit()
 {
 	SceneBase::Exit();
-
+	//Exit the sound things
+	ExitAudio();
 	//Cleanup GameObjects
 	while(m_goList.size() > 0)
 	{
@@ -2518,9 +2485,6 @@ void SceneStealth::Exit()
 
 	//Clean up Level handler pointers
 	LvlHandler.Exit();
-
-	//Drop the engine for sound
-	engine->drop();
 	
 	//Clean up Menu 
 	while(menu_main.m_menuList.size() > 0)
