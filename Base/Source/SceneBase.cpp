@@ -264,8 +264,8 @@ void SceneBase::Init()
 	meshList[GEO_BBTN]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Teleporter
-	meshList[GEO_TELEPORTER] = MeshBuilder::GenerateOBJ("Teleporter", "OBJ//Teleporter.obj");
-	meshList[GEO_TELEPORTER]->textureID = LoadTGA("Image//GameObjects//Teleporter.tga");
+	meshList[GEO_TELEPORTER] = MeshBuilder::GenerateOBJ("Teleporter", "OBJ//BBtn.obj");
+	meshList[GEO_TELEPORTER]->textureID = LoadTGA("Image//GameObjects//Box_Button.tga");
 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
