@@ -46,7 +46,7 @@ void CPlayer::UpdateTimers(const double dt)
 	{
 		if(m_bPowerupStatus[i] == true)
 		{
-			m_fPowerupTime[i] -= dt;
+			m_fPowerupTime[i] -= (float)dt;
 			if(m_fPowerupTime[i] < 0.f)
 				m_bPowerupStatus[i] = false;
 		}
@@ -70,7 +70,7 @@ void CPlayer::UpdateTimers(const double dt)
 	//Update Stun timer
 	if(m_bUsedStun)
 	{
-		m_fStunReuseTimer -= dt;
+		m_fStunReuseTimer -= (float)dt;
 		if(m_fStunReuseTimer <= 0.f)
 			m_bUsedStun = false;
 	}
@@ -78,7 +78,7 @@ void CPlayer::UpdateTimers(const double dt)
 	//Update respawn timer
 	if(CurrentState == DEAD)
 	{
-		m_fRespawnTimer -= dt;
+		m_fRespawnTimer -= (float)dt;
 	}
 
 	//Update usage of noise object
@@ -109,13 +109,13 @@ void CPlayer::UpdateTimers(const double dt)
 
 	if(m_bShowIndicatorHealth)
 	{
-		m_fIndicatorHealthDur -= dt;
+		m_fIndicatorHealthDur -= (float)dt;
 		if(m_fIndicatorHealthDur < 0.f)
 			m_bShowIndicatorHealth = false;
 	}
 	if(m_bShowIndicatorStun)
 	{
-		m_fIndicatorStunDur -= dt;
+		m_fIndicatorStunDur -= (float)dt;
 		if(m_fIndicatorStunDur < 0.f)
 			m_bShowIndicatorStun = false;
 	}
@@ -176,7 +176,7 @@ CPlayer::PlayerState CPlayer::GetPlayerState(void)
 
 bool CPlayer::FinishedDisguise(const double dt)
 {
-	m_fDisguiseCDTimer += dt;
+	m_fDisguiseCDTimer += (float)dt;
 	if(m_fDisguiseCDTimer > DisguiseChangeTimer)
 	{
 		m_fDisguiseCDTimer = 0.f;

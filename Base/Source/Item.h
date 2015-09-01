@@ -22,7 +22,7 @@ public:
 	};
 	ITEM_TYPE itemType;
 
-	CItem(void);
+	CItem();
 	CItem(ITEM_TYPE typeValue = HEALTH);
 	CItem(unsigned int stack, unsigned int index, ITEM_TYPE typeValue = HEALTH);
 	~CItem(void);

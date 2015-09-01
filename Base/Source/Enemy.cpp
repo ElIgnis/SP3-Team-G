@@ -40,7 +40,7 @@ void CEnemy::Update(const double dt)
 				normal = (player_position - pos).Normalized();
 				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
 			}
-			f_alertTime -= 1.f * dt;
+			f_alertTime -= 1.f * (float)dt;
 			if(f_alertTime < 0.f)
 				state = STATE_ATTACK;
 		}

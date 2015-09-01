@@ -218,13 +218,13 @@ void Camera3::Update(double dt)
 		if(Application::IsKeyPressed(VK_UP))
 		{
 			if(DistFromPlayer.y > 25.f)
-				DistFromPlayer.y -= 50.f * dt;
+				DistFromPlayer.y -= 50.f * (float)dt;
 			//rotateAngle.x += 100.f * dt;
 		}
 		if(Application::IsKeyPressed(VK_DOWN))
 		{
 			if(DistFromPlayer.y < 125.f)
-			DistFromPlayer.y += 50.f * dt;
+			DistFromPlayer.y += 50.f * (float)dt;
 			//rotateAngle.x -= 100.f * dt;
 		}
 		if(!Application::IsKeyPressed(VK_UP) && !Application::IsKeyPressed(VK_DOWN))

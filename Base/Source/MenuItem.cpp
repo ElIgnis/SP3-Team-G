@@ -2,12 +2,12 @@
 
 #define MAXSIZE 5.5f
 #define MINSIZE 4.f
-static const Color UNSELECTED_COLOR(0.8, 1.0, 0.2);
-static const Color SELECTED_COLOR(1.0, 0.8, 0.0);
+static const Color UNSELECTED_COLOR(0.8f, 1.0f, 0.2f);
+static const Color SELECTED_COLOR(1.0f, 0.8f, 0.0f);
 
 CMenuItem::CMenuItem()
-	: pos(1,1,1)
-	, colour(0.8, 1.0, 0.2)
+	: pos(1.f,1.f,1.f)
+	, colour(0.8f, 1.0f, 0.2f)
 	, f_size(MINSIZE)
 	, b_IsGrowing(false)
 	, b_IsShrinking(false)
@@ -19,7 +19,7 @@ CMenuItem::CMenuItem()
 }
 
 CMenuItem::CMenuItem(std::string text)
-	: colour(0.8, 1.0, 0.2)
+	: colour(0.8f, 1.0f, 0.2f)
 	, f_size(MINSIZE)
 	, b_IsGrowing(false)
 	, b_IsShrinking(false)
@@ -33,7 +33,7 @@ CMenuItem::CMenuItem(std::string text)
 }
 
 CMenuItem::CMenuItem(std::string text, std::string textFile)
-	: colour(0.8, 1.0, 0.2)
+	: colour(0.8f, 1.0f, 0.2f)
 	, f_size(MINSIZE)
 	, b_IsGrowing(false)
 	, b_IsShrinking(false)
@@ -47,8 +47,8 @@ CMenuItem::CMenuItem(std::string text, std::string textFile)
 }
 
 CMenuItem::CMenuItem(Vector3 pos, std::string text)
-	: colour(0.8, 1.0, 0.2)
-	, f_size(5)
+	: colour(0.8f, 1.0f, 0.2f)
+	, f_size(5.f)
 	, b_IsGrowing(false)
 	, b_IsShrinking(false)
 	, b_IsMax(false)
@@ -100,11 +100,11 @@ void CMenuItem::Update(double dt)
 
 	if(b_IsGrowing)
 	{
-		this->f_size += 5 * dt;
+		this->f_size += 5 * (float)dt;
 	}
 	if(b_IsShrinking)
 	{
-		this->f_size -= 5 * dt;
+		this->f_size -= 5 * (float)dt;
 	}
 }
 
