@@ -17,7 +17,7 @@ SceneStealth::SceneStealth()
 	, b_GameCompleted(false)
 	, f_FeedbackTimer(0.f)
 	, b_TriggerFBTimer(false)
-	, m_fCheckpointRot(0.f)
+	, m_fItemRot(0.f)
 	, m_fCheckpointHeight(5.f)
 	, m_bCheckpointDir(true)
 {
@@ -854,7 +854,10 @@ void SceneStealth::UpdateEnemies(const double dt)
 				{
 					//Stunning enemies within range
 					if((go->pos - Virus->pos).LengthSquared() < 1000)
+					{
 						go->SetState(CEnemy::STATE_STUNNED);
+						Virus->SetIndicatorStunDur(2.f);
+					}
 				}
 			}
 		
@@ -997,9 +1000,9 @@ void SceneStealth::UpdateDialogue(const double dt)
 
 void SceneStealth::UpdateCheckpointDisplacement(const double dt)
 {
-	m_fCheckpointRot += dt * 100;
-	if(m_fCheckpointRot > 360)
-		m_fCheckpointRot = 0.f;
+	m_fItemRot += dt * 100;
+	if(m_fItemRot > 360)
+		m_fItemRot = 0.f;
 	if(m_bCheckpointDir)
 		m_fCheckpointHeight += dt * 10;
 	else
@@ -1751,7 +1754,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		else
 		{
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + m_fCheckpointHeight);
-			modelStack.Rotate(m_fCheckpointRot, 0,0,1);
+			modelStack.Rotate(m_fItemRot, 0,0,1);
 		}
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_CHECKPOINT], bLightEnabled);
@@ -1871,7 +1874,23 @@ void SceneStealth::RenderGame(void)
 				RenderMesh(meshList[GEO_TRACK], bLightEnabled);
 				modelStack.PopMatrix();
 			}
-
+			//Enemy frozen indicator
+			if(Virus->GetPowerupStatus(CItem::FREEZE))
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(m_fItemRot, 0, 0, 1);
+				RenderMesh(meshList[GEO_INDICATOR_ENEMY_FREEZE], bLightEnabled);
+				modelStack.PopMatrix();
+			}
+			else if(go->GetState() == CEnemy::STATE_STUNNED)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(go->pos.x, go->pos.y, go->pos.z + 15);
+				modelStack.Rotate(m_fItemRot, 0, 0, 1);
+				RenderMesh(meshList[GEO_INDICATOR_ENEMY_STUN], bLightEnabled);
+				modelStack.PopMatrix();
+			}
 			//Enemy cone detection
 			glDisable(GL_DEPTH_TEST);
 			modelStack.PushMatrix();
@@ -1913,6 +1932,35 @@ void SceneStealth::RenderGame(void)
 	else
 		RenderMesh(meshList[GEO_BOX], bLightEnabled);
 	modelStack.PopMatrix();
+
+	if(Virus->GetPowerupStatus(CItem::SPEED))
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z + 15.f);
+		modelStack.Rotate(m_fItemRot, 0, 0, 1);
+		RenderMesh(meshList[GEO_INDICATOR_SPEED], bLightEnabled);
+		modelStack.PopMatrix();
+	}
+	if(Virus->GetShowIndicatorStun())
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z + 5.f);
+		modelStack.Rotate(m_fItemRot, 0, 0, 1);
+		modelStack.Translate(0.f, 15.f, 0.f);
+		modelStack.Rotate(m_fItemRot, 0, 0, 1);
+		RenderMesh(meshList[GEO_INDICATOR_PLAYER_STUN], bLightEnabled);
+		modelStack.PopMatrix();
+	}
+	else if(Virus->GetShowIndicatorHealth())
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z + 5.f);
+		modelStack.Rotate(m_fItemRot, 0, 0, 1);
+		modelStack.Translate(0.f, 15.f, 0.f);
+		modelStack.Rotate(m_fItemRot, 0, 0, 1);
+		RenderMesh(meshList[GEO_INDICATOR_PLAYER_HEALTH], bLightEnabled);
+		modelStack.PopMatrix();
+	}
 
 	//Render noise objects
 	for(std::vector<CNoiseObject *>::iterator it = Virus->GetNoiseObject_List().begin(); it != Virus->GetNoiseObject_List().end(); ++it)
