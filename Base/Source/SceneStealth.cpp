@@ -178,7 +178,6 @@ void SceneStealth::InitGame(void)
 	//Initializing the player
 	Virus = new CPlayer;
 	Virus->scale.Set(7,7,7);
-	Virus->SetCurrentCP(Vector3(Virus->pos.x, Virus->pos.y, Virus->pos.z));
 	Virus->mass = 1.f;
 	Virus->setLives(3);
 
@@ -213,6 +212,7 @@ void SceneStealth::LoadLevel(const int LevelSelected)
 
 	//Initializing the player spawn points based on level
 	Virus->pos = Vector3(*(LvlHandler.GetSpawn_List().at(LevelSelected-1)));
+	Virus->SetCurrentCP(Vector3(Virus->pos.x, Virus->pos.y, Virus->pos.z));
 }
 
 void SceneStealth::CompareScore(int CurrentLevel)
@@ -373,6 +373,7 @@ bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 
 			if(distSquared <= combinedRadius * combinedRadius)
 			{
+				Virus->m_bIsHiding = true;
 				return true;
 			}
 			return false;
@@ -642,6 +643,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(go->active && go->type == GameObject::GO_BOX)
 			{
@@ -660,6 +662,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				for(std::vector<CInteractables  *>::iterator it2 = LvlHandler.GetInteractables_List().begin(); it2 != LvlHandler.GetInteractables_List().end(); ++it2)
 				{
 					CInteractables *go2 = (CInteractables *)*it2;
+
 					//Check Collision between Box and Box Button
 					if(go2->active && go2->type == GameObject::GO_BBTN)
 					{
@@ -677,6 +680,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetStructure_List().begin(); it != LvlHandler.GetStructure_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(go->active)
 			{
@@ -707,6 +711,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
+
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
 		{
@@ -716,18 +721,21 @@ void SceneStealth::UpdatePlayer(const double dt)
 				if(CheckCollision(Virus,go,dt))
 				{
 					b_ColCheck = true;
+
 					//Kills player
 					if(go->type == GameObject::GO_LASER)
 						Virus->SetPlayerState(CPlayer::DEAD);
 				}
 				if(GetKeyState('e'))
 				{
-					go->CheckBonusInteraction(Virus->pos);
-
 					//Warps player
 					if(go->type == GameObject::GO_TELEPORTER )
 					{
-						Virus->pos = go->GetSecondaryPosition();
+						Virus->pos = go->GetSecondaryPosition(Virus->pos);
+					}
+					else
+					{
+						go->CheckBonusInteraction(Virus->pos);
 					}
 				}
 			}
@@ -775,12 +783,11 @@ void SceneStealth::UpdatePlayer(const double dt)
 			}
 		}
 
-		Virus->m_bIsHiding = false;
-
 		//Check Player Collision with CheckPoints
 		for(std::vector<GameObject  *>::iterator it = LvlHandler.GetCheckPoint_List().begin(); it != LvlHandler.GetCheckPoint_List().end(); ++it)
 		{
 			GameObject *go = (GameObject *)*it;
+
 			//Only check for active game objects
 			if(!go->active)
 			{
@@ -803,7 +810,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 	if (Virus->GetPlayerState() == CPlayer::DEAD && Virus->GetRespawnTimer() < 0.f)
 	{
 		//Out of lives
-		if(Virus->getLives() < 1)
+		if(Virus->getLives() < 2)
 		{	
 			b_OutOfLives = true;
 		}
@@ -901,8 +908,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 				else
 					go->SetIsDetected(false);
 
-				
-
 				//Check enemy collision with structures
 				bool b_ColCheck2 = false;
 				for(std::vector<GameObject  *>::iterator it3 = LvlHandler.GetStructure_List().begin(); it3 != LvlHandler.GetStructure_List().end(); ++it3)
@@ -970,12 +975,13 @@ void SceneStealth::UpdateEnemies(const double dt)
 							}
 						}
 						if(!b_ColCheck1)
-							bul->pos += bul->vel;//If no collision, update bullet pos
+							bul->pos += bul->vel; //If no collision, update bullet pos
 					}
 				}
 			}
 		}
 	}
+	Virus->m_bIsHiding = false;
 }
 
 void SceneStealth::UpdateDialogue(const double dt)
@@ -1020,6 +1026,7 @@ void SceneStealth::UpdateMenuKeypress(void)
 		}
 		if(GetKeyState(VK_RETURN) && menu_main.GetSelection() == 0)//Play
 		{
+			
 			//Initialise vars if not done
 			if(b_ReInitGameVars)
 			{
@@ -1883,7 +1890,7 @@ void SceneStealth::RenderGame(void)
 			//Enemy cone detection
 			glDisable(GL_DEPTH_TEST);
 			modelStack.PushMatrix();
-			modelStack.Translate(go->pos.x, go->pos.y, 0);
+			modelStack.Translate(go->pos.x, go->pos.y, -5);
 			modelStack.Rotate(go->dir.z - 90.f, 0, 0, 1);
 			modelStack.Scale(go->GetDetectionRange().x , go->GetDetectionRange().y, go->GetDetectionRange().z);
 			if(go->GetState() != CEnemy::STATE_ALERT && go->GetState() != CEnemy::STATE_ATTACK)
@@ -2274,7 +2281,7 @@ void SceneStealth::RenderScore(void)
 	else
 		ssScore << " : " << tempHighScore.GetSeconds();
 
-	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 5, 45);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 2, 48);
 }
 void SceneStealth::RenderDialogBox(void)
 {
@@ -2306,7 +2313,7 @@ void SceneStealth::RenderDead(void)
 {
 	std::stringstream ssNotice;
 	ssNotice << "You have ran out of lives...";
-	RenderTextOnScreen(meshList[GEO_TEXT], ssNotice.str(), Color(0, 1, 0), 3, 5, 44);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssNotice.str(), Color(0, 1, 0), 3, 2, 44);
 
 	for(unsigned i = 0; i < menu_dead.m_menuList.size(); ++i)
 	{

@@ -23,9 +23,18 @@ CTeleporter::~CTeleporter()
 
 void CTeleporter::CheckBonusInteraction(Vector3 playerPos)
 {
+
 }
 
 Vector3 CTeleporter::GetSecondaryPosition(void)
 {
-	return activationPos;
+		return activationPos;
+}
+
+Vector3 CTeleporter::GetSecondaryPosition(Vector3 &playerPos)
+{
+	if((playerPos - pos).Length() < Interaction_range)
+		return activationPos;
+	else
+		return playerPos;
 }

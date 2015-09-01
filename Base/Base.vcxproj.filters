@@ -255,7 +255,7 @@
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\Interactables.h">
-      <Filter>Header Files\Player</Filter>
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
