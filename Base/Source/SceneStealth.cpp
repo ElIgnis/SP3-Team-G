@@ -826,36 +826,27 @@ void SceneStealth::UpdateEnemies(const double dt)
 		CEnemy *go = (CEnemy *)*it;
 		if(go->active)
 		{
+			//For enemy to track player last position for patrol algorithm
+			go->PlayerCurrentPosition(Virus->pos);
+
 			//Set player state to dead on collision with any enemy
 			if(CheckCollision(go, Virus, dt) && Virus->GetPlayerState() == CPlayer::ALIVE)
 			{
 				Virus->SetPlayerState(CPlayer::DEAD);
 			}
-			//Enemy to enemy collision
-			//for(std::vector<CEnemy *>::iterator it2 = it + 1; it2 !=LvlHandler.GetEnemy_List().end(); ++it2)
-			//{
-			//	GameObject *go2 = (GameObject *)*it2;
-			//	if(CheckCollision(go, go2, dt))
-			//	{
-			//		//CollisionResponse(go, go2, dt);
-			//		
-			//		go->vel = ((go->vel + go2->vel).Normalized() * 15.f * dt);
-			//		go2->vel = go->vel;
-			//	}
-			//}
 			//Stunning enemies
 			if(GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
 			{
-				//Set Delay
-				Virus->SetStunReuseTimer(StunCooldown);
-
 				//Enemies must not be in alerted or attacking state
-				if(go->GetState() != CEnemy::STATE_ALERT || go->GetState() != CEnemy::STATE_ATTACK)
+				if(!go->GetSpottedStatus())
 				{
 					//Stunning enemies within range
 					if((go->pos - Virus->pos).LengthSquared() < 1000)
 					{
 						go->SetState(CEnemy::STATE_STUNNED);
+						go->vel.SetZero();
+						//Set Delay
+						Virus->SetStunReuseTimer(StunCooldown);
 					}
 				}
 			}
@@ -874,8 +865,6 @@ void SceneStealth::UpdateEnemies(const double dt)
 						go->SetTrackingPos(nobj->GetPosition());
 					}
 				}
-				//For enemy to track player last position for patrol algorithm
-				go->PlayerCurrentPosition(Virus->pos);
 
 				//Cone detection by distance
 				if((Virus->pos - go->pos).LengthSquared() < 10000 && Virus->GetPlayerState() != CPlayer::DEAD && !Virus->GetPowerupStatus(CItem::INVIS))
@@ -1950,13 +1939,13 @@ void SceneStealth::RenderGame(void)
 		RenderMesh(meshList[GEO_INDICATOR_PLAYER_STUN], bLightEnabled);
 		modelStack.PopMatrix();
 	}
-	else if(Virus->GetShowIndicatorHealth())
+	if(Virus->GetShowIndicatorHealth())
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z + 5.f);
-		modelStack.Rotate(m_fItemRot, 0, 0, 1);
+		modelStack.Rotate(m_fItemRot + 180, 0, 0, 1);
 		modelStack.Translate(0.f, 15.f, 0.f);
-		modelStack.Rotate(m_fItemRot, 0, 0, 1);
+		modelStack.Rotate(m_fItemRot + 180, 0, 0, 1);
 		RenderMesh(meshList[GEO_INDICATOR_PLAYER_HEALTH], bLightEnabled);
 		modelStack.PopMatrix();
 	}
