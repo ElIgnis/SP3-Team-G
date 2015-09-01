@@ -111,7 +111,7 @@ void CEnemy_Patrol::Update(const double dt)
 			m_fStunRecover += (float)dt;
 			if(m_fStunRecover > StunDuration)
 			{
-				trackingPos = pos;
+				trackingPos = player_position;;
 				m_fStunRecover = 0.f;
 				state = STATE_TRACK;
 			}

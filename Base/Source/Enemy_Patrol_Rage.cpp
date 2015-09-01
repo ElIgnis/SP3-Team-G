@@ -123,6 +123,7 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 			{
 				m_fStunRecover = 0.f;
 				state = STATE_TRACK;
+				trackingPos = player_position;
 			}
 		}
 		break;

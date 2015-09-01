@@ -1,7 +1,7 @@
 #include "MenuItem.h"
 
-#define MAXSIZE 4.f
-#define MINSIZE 3.f
+#define MAXSIZE 5.5f
+#define MINSIZE 4.f
 static const Color UNSELECTED_COLOR(0.8, 1.0, 0.2);
 static const Color SELECTED_COLOR(1.0, 0.8, 0.0);
 
