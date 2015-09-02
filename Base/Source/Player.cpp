@@ -114,7 +114,9 @@ void CPlayer::UpdateTimers(const double dt)
 			NoiseObject_List[i]->SetRemainingTime(NoiseObject_List[i]->GetRemainingTime() - (float)dt);
 			if(NoiseObject_List[i]->GetRemainingTime() < 0.f)
 			{
-				NoiseObject_List.erase(NoiseObject_List.begin() + i);
+				delete NoiseObject_List.at(i);
+				NoiseObject_List.at(i) = NULL;
+				NoiseObject_List.pop_back();			
 			}
 		}
 	}
@@ -277,9 +279,9 @@ void CPlayer::TriggerSkillEffect(CItem::ITEM_TYPE type)
 			{
 				//Create new noise object and store inside NoiseObject_List
 				CNoiseObject *nobj = new CNoiseObject(this->pos, Noise_start_timer, Noise_duration);
-				NoiseObject_List.push_back(nobj);
-				m_bUseNoise = false;
-				m_fNoiseReuseTimer = Noise_reuse_timer;
+				this->NoiseObject_List.push_back(nobj);
+				this->m_bUseNoise = false;
+				this->m_fNoiseReuseTimer = Noise_reuse_timer;
 			}
 		}
 		break;

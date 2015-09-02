@@ -32,8 +32,6 @@ SceneStealth::SceneStealth()
 
 SceneStealth::~SceneStealth()
 {
-	delete Disguise;
-	delete Decoy;
 }
 
 void SceneStealth::Init()
@@ -55,7 +53,7 @@ void SceneStealth::Init()
 	m = new CMenuItem("Instructions", "Instructions.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
-	m = new CMenuItem("Controls", "ControlsGuide.txt");
+	m = new CMenuItem("Credits", "Credits.txt");
 	m->ReadDescription();
 	menu_main.m_menuList.push_back(m);
 	m = new CMenuItem("Exit", "Exit.txt");
@@ -2126,17 +2124,20 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 		break;
 	case 1: //Option 2 for Level Select
 		{
-			//TODO: ADD IMAGES OF LEVEL AND SCROLLING IMAGES
 			std::stringstream ssDesc;
 			ssDesc << "Current Level: " << LvlHandler.GetCurrentStage();
 			if(!LvlHandler.GetStageSelection())
 			{
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable", Color(1, 1, 1), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press", Color(1, 1, 1), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Right arrow", Color(1, 1, 0), TextSize, 47, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "to enable", Color(1, 1, 1), TextSize, 61, 45);
 				RenderTextOnScreen(meshList[GEO_TEXT], "level selection", Color(1, 1, 1), TextSize, 40, 41);
 			}
 			else
 			{
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll", Color(1, 1, 1), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press", Color(1, 1, 1), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Up/Down arrow", Color(1, 1, 0), TextSize, 47, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "to scroll", Color(1, 1, 1), TextSize, 63, 45);
 				RenderTextOnScreen(meshList[GEO_TEXT], "through levels", Color(1, 1, 1), TextSize, 40, 41);
 			}
 			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 0, 1), TextSize, 40, 37);
@@ -2520,13 +2521,6 @@ void SceneStealth::Exit()
 
 	//Exit the sound things
 	ExitAudio();
-	////Cleanup GameObjects
-	//while(m_goList.size() > 0)
-	//{
-	//	GameObject *go = m_goList.back();
-	//	delete go;
-	//	m_goList.pop_back();
-	//}
 
 	if(Virus)
 	{

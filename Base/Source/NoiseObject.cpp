@@ -18,6 +18,7 @@ CNoiseObject::CNoiseObject(Vector3 pos, float f_CountdownTime, float f_Remaining
 
 CNoiseObject::~CNoiseObject()
 {
+
 }
 
 Vector3 CNoiseObject::GetPosition(void)

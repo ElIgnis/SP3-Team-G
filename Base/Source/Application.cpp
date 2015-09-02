@@ -453,9 +453,9 @@ void Application::Init()
 
 
 	//Create a window and create its OpenGL context
-	m_width = 800;
-	m_height = 600;
-	m_window = glfwCreateWindow(m_width, m_height, "Physics", NULL, NULL);
+	m_width = 1920;
+	m_height = 1080;
+	m_window = glfwCreateWindow(m_width, m_height, "inf.ViRUS", NULL, NULL);
 	//m_window = glfwCreateWindow(1920, 1080, "Physics", glfwGetPrimaryMonitor(), NULL);
 	
 	//If the window couldn't be created

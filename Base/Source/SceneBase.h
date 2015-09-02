@@ -169,6 +169,8 @@ protected:
 	int count;
 
 	int textWidth[256];
+
+	SpriteAnimation *menuAnim;
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include <sstream>
 
 SceneBase::SceneBase()
+	: menuAnim(NULL)
 {
 }
 
@@ -161,7 +162,7 @@ void SceneBase::Init()
 	//Background
 	meshList[GEO_MENUSPRITE] = MeshBuilder::GenerateSpriteAnimation("TheMatrix",2,5);
 	meshList[GEO_MENUSPRITE]->textureID = LoadTGA("Image//matrixSprite.tga");
-	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSPRITE]);
+	menuAnim = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSPRITE]);
 	if(menuAnim)
 	{
 		menuAnim->m_anim = new Animation();
@@ -339,7 +340,7 @@ void SceneBase::Update(double dt)
 	fps = (float)(1.f / dt);
 	rotateAngle += 40 * (float)dt;
 	//Sprite Animation
-	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);
+	menuAnim = dynamic_cast<SpriteAnimation *>(meshList[GEO_MENUSPRITE]);
 	if(menuAnim)
 	{
 		menuAnim->Update(dt);
@@ -568,12 +569,19 @@ void SceneBase::Render()
 
 void SceneBase::Exit()
 {
+	//Clean up sprite
+	if(menuAnim->m_anim)
+	{
+		delete menuAnim->m_anim;
+	}
+
 	// Cleanup VBO
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
 		if(meshList[i])
 			delete meshList[i];
 	}
+
 	glDeleteProgram(m_programID);
 	glDeleteVertexArrays(1, &m_vertexArrayID);
 }
