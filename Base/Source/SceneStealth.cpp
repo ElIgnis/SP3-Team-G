@@ -1804,6 +1804,30 @@ void SceneStealth::RenderEnvironment(void)
 			modelStack.PopMatrix();
 		}
 	}
+	//Background screen
+	modelStack.PushMatrix();
+	modelStack.Translate(0.f, 200.f, -550.f);
+	modelStack.Scale(1200, 500, 1.f);
+	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(0.f, 200.f, 550.f);
+	modelStack.Rotate(180, 0, 1, 0);
+	modelStack.Scale(1200, 500, 1.f);
+	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(550.f, 200.f, 0.f);
+	modelStack.Rotate(-90, 0, 1, 0);
+	modelStack.Scale(1200, 500, 1.f);
+	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(-550.f, 200.f, 0.f);
+	modelStack.Rotate(90, 0, 1, 0);
+	modelStack.Scale(1200, 500, 1.f);
+	RenderMesh(meshList[GEO_MENUSPRITE], false);
+	modelStack.PopMatrix();
 }
 
 void SceneStealth::RenderGame(void)
