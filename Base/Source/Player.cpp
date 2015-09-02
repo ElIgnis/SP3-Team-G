@@ -1,6 +1,9 @@
 #include "Player.h"
 
 extern ISoundEngine* engine;
+#define Noise_reuse_timer 15.f
+#define Noise_start_timer 3.f
+#define Noise_duration 1.f
 
 CPlayer::CPlayer(void)
 	: m_pLives(3)
@@ -14,6 +17,8 @@ CPlayer::CPlayer(void)
 	, m_bShowIndicatorHealth(false)
 	, m_fIndicatorStunDur(0.f)
 	, m_fIndicatorHealthDur(0.f)
+	, m_fNoiseReuseTimer(0.f)
+	, m_bUseNoise(true)
 {
 	this->type = GameObject::GO_PLAYER;
 	this->active = true;
@@ -73,6 +78,13 @@ void CPlayer::UpdateTimers(const double dt)
 		m_fStunReuseTimer -= (float)dt;
 		if(m_fStunReuseTimer <= 0.f)
 			m_bUsedStun = false;
+	}
+
+	if(!m_bUseNoise)
+	{
+		m_fNoiseReuseTimer -= (float)dt;
+		if(m_fNoiseReuseTimer <= 0.f)
+			m_bUseNoise = true;
 	}
 
 	//Update respawn timer
@@ -261,9 +273,14 @@ void CPlayer::TriggerSkillEffect(CItem::ITEM_TYPE type)
 		break;
 	case CItem::NOISE:
 		{
-			//Create new noise object and store inside NoiseObject_List
-			CNoiseObject *nobj = new CNoiseObject(this->pos, 3.f, 1.f);
-			NoiseObject_List.push_back(nobj);
+			if(m_bUseNoise)
+			{
+				//Create new noise object and store inside NoiseObject_List
+				CNoiseObject *nobj = new CNoiseObject(this->pos, Noise_start_timer, Noise_duration);
+				NoiseObject_List.push_back(nobj);
+				m_bUseNoise = false;
+				m_fNoiseReuseTimer = Noise_reuse_timer;
+			}
 		}
 		break;
 	}
@@ -295,6 +312,11 @@ bool CPlayer::GetShowIndicatorStun(void)
 bool CPlayer::GetShowIndicatorHealth(void)
 {
 	return m_bShowIndicatorHealth;
+}
+
+bool CPlayer::GetShowIndicatorNoise(void)
+{
+	return m_bUseNoise;
 }
 
 void CPlayer::SetIndicatorStunDur(float f)

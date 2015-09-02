@@ -32,6 +32,8 @@ private:
 
 	float m_fStunReuseTimer;
 	bool m_bUsedStun;
+	float m_fNoiseReuseTimer;
+	bool m_bUseNoise;
 
 	float m_fRespawnTimer;
 
@@ -71,6 +73,7 @@ public:
 
 	bool GetShowIndicatorStun(void);
 	bool GetShowIndicatorHealth(void);
+	bool GetShowIndicatorNoise(void);
 	void SetIndicatorStunDur(float);
 	void SetIndicatorHealthDur(float);
 
