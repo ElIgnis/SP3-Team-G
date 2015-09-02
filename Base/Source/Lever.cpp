@@ -1,5 +1,7 @@
 #include "Lever.h"
 
+extern ISoundEngine* engine;
+
 CLever::CLever() 
 {
 }
@@ -21,7 +23,14 @@ CLever::~CLever()
 void CLever::CheckBonusInteraction(Vector3 playerPos)
 {
 	if((playerPos - activationPos).Length() < Interaction_range)
+	{
+		ISound * sound = engine->play2D("../Base/Audio/Level_button.wav", false, false);
+		if(sound)
+		{
+			sound->setIsPaused(false);
+		}
 		this->active = false;
+	}
 }
 
 Vector3 CLever::GetSecondaryPosition(void)

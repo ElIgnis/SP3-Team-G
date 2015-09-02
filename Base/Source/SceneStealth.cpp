@@ -693,7 +693,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 				//Interaction
 				if(GetKeyState('e'))
 				{
-					sound[LEVEL_BUTTON] = engine->play2D("../Base/Audio/Level_button.wav", false, false);
 					go->CheckBonusInteraction(Virus->pos);
 					//Warps player
 					if(go->type == GameObject::GO_TELEPORTER )
@@ -761,7 +760,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				if(CheckCollision(Virus,go,(float)dt))
 				{
-					sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.wav", false, false);
+					sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.mp3", false, false);
 					for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetCheckPoint_List().begin(); it2 != LvlHandler.GetCheckPoint_List().end(); ++it2)
 					{
 						GameObject *go2 = (GameObject *)*it2;
@@ -868,7 +867,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 								{
 									if((Virus->GetPlayerState() == CPlayer::DISGUISE && !Virus->vel.IsZero()) || Virus->GetPlayerState() == CPlayer::ALIVE)
 									{
-										sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.wav", false, false);
+										sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.mp3", false, false);
 										go->SetState(CEnemy::STATE_ALERT);
 										go->vel.SetZero();
 										go->SetIsDetected(true);
