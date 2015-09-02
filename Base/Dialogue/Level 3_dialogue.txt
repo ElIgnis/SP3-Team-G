@@ -1,0 +1,21 @@
+/Format
+/1st Line - World position
+/Subsequent Lines - Text
+/Use # to seperate dialogues
+/Do not use # on the first line
+/Use '/ ' to make comments
+/////////////////////////////////////////////////
+//////////////The button dialoug/////////////////
+72,-229,0
+This button needs a
+a box to activate a door somewhere
+Where's that box?
+#
+/////////////////////////////////////////////////
+//////////////The box dialouge///////////////////
+100,25,0
+Oh look, this box looks like 
+it can connect to something.
+Where could that connection
+point be?
+#
