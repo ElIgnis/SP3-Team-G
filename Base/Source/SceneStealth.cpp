@@ -10,6 +10,8 @@ SceneStealth::SceneStealth()
 	: GameState(STATE_MENU)
 	, b_ExitScene (false)
 	, Virus(NULL)
+	, Disguise(NULL)
+	, Decoy(NULL)
 	, b_ReInitGameVars(true)
 	, timeElapsed(0.f)
 	, b_NameEntered(false)
@@ -423,9 +425,9 @@ void SceneStealth::Update(double dt)
 	UpdateAudio();
 
 	//FPS
-	if(GetKeyState(VK_F1))
+	if(GetKeyState(VK_F2))
 		b_ShowFPS = true;
-	if(!GetKeyState(VK_F1))
+	if(!GetKeyState(VK_F2))
 		b_ShowFPS = false;
 
 	//Let player input name
@@ -525,9 +527,6 @@ void SceneStealth::Update(double dt)
 			break;
 		}
 	}
-	if(Application::IsKeyPressed('J'))
-		std::cout<<Virus->pos<<std::endl;
-	
 }
 
 int SceneStealth::UpdateAudio()
@@ -668,12 +667,14 @@ void SceneStealth::UpdatePlayer(const double dt)
 
 		//Check player collision with interactables
 		for(std::vector<CInteractables  *>::iterator it = LvlHandler.GetInteractables_List().begin(); it != LvlHandler.GetInteractables_List().end(); ++it)
-		{
+		{	
 			CInteractables *go = (CInteractables *)* it;
+
+			//Displays info for interaction if nearby
+			go->CheckDisplayInfo(Virus->pos);
+
 			if(go->active)
 			{
-				go->CheckDisplayInfo(Virus->pos);
-
 				if(CheckCollision(Virus,go,(float)dt))
 				{
 					switch(go->type)
@@ -689,6 +690,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 					}
 				}
 
+				//Interaction
 				if(GetKeyState('e'))
 				{
 					sound[LEVEL_BUTTON] = engine->play2D("../Base/Audio/Level_button.wav", false, false);
@@ -853,9 +855,13 @@ void SceneStealth::UpdateEnemies(const double dt)
 					if(CheckDetectionRange(go, Virus))
 					{
 						Vector3 direction = Virus->pos - go->pos;
-						float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x));
-						if(f_DirToPlayer < go->dir.z + go->GetDetectionAngle() && f_DirToPlayer > go->dir.z - go->GetDetectionAngle())
+						float f_DirToPlayer = Math::RadianToDegree(atan2(direction.y, direction.x)) + 180.f;
+						
+						//30 degree cone check
+						if(f_DirToPlayer < go->GetCCW_Check() && f_DirToPlayer > go->GetCCW_Check() - AngleRange
+							|| f_DirToPlayer > go->GetCW_Check() && f_DirToPlayer < go->GetCW_Check() + AngleRange)
 						{
+
 							if(!Virus->m_bIsHiding || Virus->GetPlayerState() == CPlayer::DISGUISE)
 							{
 								if(!go->GetSpottedStatus())
@@ -876,9 +882,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 						}
 					}
 					else
-					{
 						go->SetIsDetected(false);
-					}
 				}
 				else
 					go->SetIsDetected(false);
@@ -903,7 +907,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					}
 				}
 				if(b_ColCheck2)
-					go->pos += go->vel * 0.4f; 
+					go->pos += go->vel * 0.6f; 
 				else
 					go->pos += go->vel;
 			}
@@ -1772,7 +1776,7 @@ void SceneStealth::RenderGO(GameObject *go)
 	}
 }
 
-void SceneStealth::RenderGame(void)
+void SceneStealth::RenderEnvironment(void)
 {
 	////Render floor
 	for(int i = 0; i < 3; ++i)
@@ -1783,12 +1787,28 @@ void SceneStealth::RenderGame(void)
 			modelStack.Translate(-150.f+ (i * 250), -5.f, -150.f + (j * 250));
 			modelStack.Rotate(-90.f, 1, 0, 0);
 			modelStack.Scale(250.f, 250.f, 1.f);
-			RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
+			switch(LvlHandler.GetCurrentStage())
+			{
+			case 1:
+				RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
+				break;
+			case 2:
+				RenderMesh(meshList[GEO_FLOOR_LEVEL2], false);
+				break;
+			case 3:
+				RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
+				break;
+			case 4:
+				RenderMesh(meshList[GEO_FLOOR_LEVEL4], false);
+				break;
+			}
 			modelStack.PopMatrix();
 		}
 	}
+}
 
-	
+void SceneStealth::RenderGame(void)
+{
 	modelStack.PushMatrix();
 	modelStack.Rotate(-rotateScene, 1, 0, 0);
 
@@ -1810,11 +1830,23 @@ void SceneStealth::RenderGame(void)
 		CEnemy *go = (CEnemy  *)*it;
 		if(go->active)
 		{
-			//theta = Math::RadianToDegree(atan2(go->dir.y, go->dir.x));
+			//Enemy detection cone
+			glDisable(GL_DEPTH_TEST);
+			modelStack.PushMatrix();
+			modelStack.Translate(go->pos.x, go->pos.y, -5);
+			modelStack.Rotate(go->dir.z - 90.f, 0, 0, 1);
+			modelStack.Scale(go->GetDetectionRange().x , go->GetDetectionRange().y, go->GetDetectionRange().z);
+			if(go->GetState() != CEnemy::STATE_ALERT && go->GetState() != CEnemy::STATE_ATTACK)
+				RenderMesh(meshList[GEO_CONE_YELLOW], bLightEnabled);
+			else
+				RenderMesh(meshList[GEO_CONE_RED], bLightEnabled);
+			modelStack.PopMatrix();
+			glEnable(GL_DEPTH_TEST);
+
 			modelStack.PushMatrix();
 			modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			modelStack.Rotate(go->dir.z, 0, 0, 1);
+			modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 			switch(go->e_type)
 			{
 			case CEnemy::ENEMY_SENTRY:
@@ -1863,18 +1895,6 @@ void SceneStealth::RenderGame(void)
 				RenderMesh(meshList[GEO_INDICATOR_ENEMY_STUN], bLightEnabled);
 				modelStack.PopMatrix();
 			}
-			//Enemy cone detection
-			glDisable(GL_DEPTH_TEST);
-			modelStack.PushMatrix();
-			modelStack.Translate(go->pos.x, go->pos.y, -5);
-			modelStack.Rotate(go->dir.z - 90.f, 0, 0, 1);
-			modelStack.Scale(go->GetDetectionRange().x , go->GetDetectionRange().y, go->GetDetectionRange().z);
-			if(go->GetState() != CEnemy::STATE_ALERT && go->GetState() != CEnemy::STATE_ATTACK)
-				RenderMesh(meshList[GEO_CONE_YELLOW], bLightEnabled);
-			else
-				RenderMesh(meshList[GEO_CONE_RED], bLightEnabled);
-			modelStack.PopMatrix();
-			glEnable(GL_DEPTH_TEST);
 		}
 		//Render bullet list
 		for(std::vector<GameObject  *>::iterator it2 = go->GetBullet_List().begin(); it2 != go->GetBullet_List().end(); ++it2)
@@ -1925,11 +1945,21 @@ void SceneStealth::RenderGame(void)
 		RenderMesh(meshList[GEO_INDICATOR_PLAYER_STUN], bLightEnabled);
 		modelStack.PopMatrix();
 	}
-	if(Virus->GetShowIndicatorHealth())
+	if(Virus->GetShowIndicatorNoise())
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z + 5.f);
 		modelStack.Rotate(m_fItemRot + 180, 0, 0, 1);
+		modelStack.Translate(0.f, 15.f, 0.f);
+		modelStack.Rotate(m_fItemRot + 180, 0, 0, 1);
+		RenderMesh(meshList[GEO_INDICATOR_NOISE], bLightEnabled);
+		modelStack.PopMatrix();
+	}
+	if(Virus->GetShowIndicatorHealth())
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(Virus->pos.x, Virus->pos.y, Virus->pos.z + 5.f);
+		modelStack.Rotate(m_fItemRot + 90, 0, 0, 1);
 		modelStack.Translate(0.f, 15.f, 0.f);
 		modelStack.Rotate(m_fItemRot + 180, 0, 0, 1);
 		RenderMesh(meshList[GEO_INDICATOR_PLAYER_HEALTH], bLightEnabled);
@@ -1974,7 +2004,7 @@ void SceneStealth::RenderGame(void)
 		{
 			std::stringstream ssInfo;
 			ssInfo << "Press 'e' to interact";
-			RenderTextOnScreen(meshList[GEO_TEXT], ssInfo.str(), Color(0, 1, 0), 2, 25, 20);//fps
+			RenderTextOnScreen(meshList[GEO_TEXT], ssInfo.str(), Color(1, 1, 1), 3, 25, 20);//fps
 		}
 
 		//Render objects
@@ -2445,6 +2475,7 @@ void SceneStealth::Render()
 		RenderMenu();		//Calling of rendermenu
 		break;
 	case STATE_PLAYING:
+		RenderEnvironment();//Environment of game
 		RenderGame();		//Game playing screen
 		RenderUI();			//Calling of render UI
 		//Render paused screen
@@ -2466,6 +2497,7 @@ void SceneStealth::Render()
 void SceneStealth::Exit()
 {
 	SceneBase::Exit();
+
 	//Exit the sound things
 	ExitAudio();
 	//Cleanup GameObjects
@@ -2480,6 +2512,18 @@ void SceneStealth::Exit()
 	{
 		delete Virus;
 		Virus = NULL;
+	}
+
+	if(Disguise)
+	{
+		delete Disguise;
+		Disguise = NULL;
+	}
+
+	if(Decoy)
+	{
+		delete Decoy;
+		Decoy = NULL;
 	}
 
 	//Clean up Level handler pointers
@@ -2514,6 +2558,7 @@ void SceneStealth::Exit()
 		delete spawn;
 		LvlHandler.GetSpawn_List().pop_back();
 	}
+
 	//Updates new highscore list(if any)
 	HS_List.WriteHighScore();
 }

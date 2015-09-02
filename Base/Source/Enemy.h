@@ -8,6 +8,7 @@
 #include <vector>
 
 #define StunDuration 2.f
+#define AngleRange 60.f
 
 using std::string;
 using std::vector;
@@ -53,6 +54,10 @@ public:
 	virtual void SetIsDetected(bool b_IsDetected);
 	virtual void SetTrackingPos(Vector3 tracking_pos);
 
+	//Player detection
+	virtual float GetCW_Check(void);
+	virtual float GetCCW_Check(void);
+
 	virtual vector<GameObject *> &GetBullet_List(void);
 	
 protected:
@@ -70,6 +75,8 @@ protected:
 	float f_detection_angle;
 	float m_fStunRecover;
 	float m_fCurrentRot;//Scan state rotation
+	float m_fCW_Check;
+	float m_fCCW_Check;
 };
 
 #endif

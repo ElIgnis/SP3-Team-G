@@ -26,6 +26,13 @@ CEnemy::CEnemy(Vector3 pos, ENEMY_STATE state)
 
 CEnemy::~CEnemy()
 {
+	//Clean up bullet list
+	while(m_BulletList.size() > 0)
+	{
+		GameObject *go = m_BulletList.back();
+		delete go;
+		m_BulletList.pop_back();
+	}
 }
 
 void CEnemy::Update(const double dt)
@@ -38,7 +45,7 @@ void CEnemy::Update(const double dt)
 			{
 				trackingPos = player_position;
 				normal = (player_position - pos).Normalized();
-				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x)) + 180.f;
 			}
 			f_alertTime -= 1.f * (float)dt;
 			if(f_alertTime < 0.f)
@@ -48,6 +55,15 @@ void CEnemy::Update(const double dt)
 	default:
 		break;
 	}
+
+	m_fCCW_Check = dir.z + f_detection_angle;
+	m_fCW_Check = dir.z - f_detection_angle;
+
+	//360 Rotation limit
+	if(m_fCCW_Check >= 360.f)
+		m_fCCW_Check -= 360.f;
+	if(m_fCW_Check <= 0.f)
+		m_fCW_Check += 360.f;
 }
 
 void CEnemy::AddPatrolPoint(Vector3)
@@ -80,6 +96,15 @@ Vector3 CEnemy::GetDetectionRange(void)
 float CEnemy::GetDetectionAngle(void)
 {	
 	return f_detection_angle;
+}
+
+float CEnemy::GetCW_Check(void)
+ {
+	 return m_fCW_Check;
+ }
+float CEnemy::GetCCW_Check(void)
+{
+	return m_fCCW_Check;
 }
 
 bool CEnemy::GetDetectedStatus(void)

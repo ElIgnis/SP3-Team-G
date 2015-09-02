@@ -22,6 +22,13 @@ CLevelHandler::CLevelHandler(void)
 
 CLevelHandler::~CLevelHandler(void)
 {
+	//Clean up spawn list
+	while(SpawnPoints_List.size() > 0)
+	{
+		Vector3 *go = SpawnPoints_List.back();
+		delete go;
+		SpawnPoints_List.pop_back();
+	}
 }
 
 void CLevelHandler::LoadMap(string mapLevel)
@@ -434,28 +441,28 @@ void CLevelHandler::Exit(void)
 		Item_List.pop_back();
 	}
 
-	//Clean up enemy list
-	while(Enemy_List.size() > 0)
-	{
-		GameObject *go = Enemy_List.back();
-		delete go;
-		Enemy_List.pop_back();
-	}
-
-	//Clean up interactble list
-	while(Interactables_List.size() > 0)
-	{
-		GameObject *go = Interactables_List.back();
-		delete go;
-		Interactables_List.pop_back();
-	}
-
 	//Clean up checkpoint list
 	while(CheckPoint_List.size() > 0)
 	{
 		GameObject *go = CheckPoint_List.back();
 		delete go;
 		CheckPoint_List.pop_back();
+	}
+
+	//Clean up enemy list
+	while(Enemy_List.size() > 0)
+	{
+		CEnemy *enemy = Enemy_List.back();
+		delete enemy;
+		Enemy_List.pop_back();
+	}
+
+	//Clean up interactble list
+	while(Interactables_List.size() > 0)
+	{
+		CInteractables *go = Interactables_List.back();
+		delete go;
+		Interactables_List.pop_back();
 	}
 
 	//Clean up dialogue list

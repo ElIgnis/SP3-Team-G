@@ -314,6 +314,11 @@ bool CPlayer::GetShowIndicatorHealth(void)
 	return m_bShowIndicatorHealth;
 }
 
+bool CPlayer::GetShowIndicatorNoise(void)
+{
+	return m_bUseNoise;
+}
+
 void CPlayer::SetIndicatorStunDur(float f)
 {
 	this->m_fIndicatorStunDur = f;

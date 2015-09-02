@@ -36,7 +36,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-
 void resize_callback(GLFWwindow* window, int w, int h)
 {
 	m_width = w;
@@ -176,14 +175,14 @@ bool Application::GetKeyboardUpdate()
 		b_VKey = false;
 	}
 
-	//V key
-	if(IsKeyPressed(VK_F1))
+	//F1 key
+	if(IsKeyPressed(VK_F2))
 	{
-		scene->UpdateKeyDown(VK_F1);
+		scene->UpdateKeyDown(VK_F2);
 	}
-	else if(IsKeyReleased(VK_F1))
+	else if(IsKeyReleased(VK_F2))
 	{
-		scene->UpdateKeyUp(VK_F1);
+		scene->UpdateKeyUp(VK_F2);
 	}
 
 	static bool delay1 = false;
@@ -393,7 +392,6 @@ bool Application::GetKeyboardUpdate()
 	return false;
 }
 
-
 Application::Application()
 {
 }
@@ -477,8 +475,6 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	//Scene *scene = new SceneAsteroid();
-	//Scene *scene = new SceneKinematics();
 	scene = new SceneStealth();
 	scene->Init();
 

@@ -270,6 +270,9 @@ void SceneBase::Init()
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL1] = MeshBuilder::GenerateQuad("Floor_Level1", Color(1, 0, 0), 1.f);
 	meshList[GEO_FLOOR_LEVEL1]->textureID = LoadTGA("Image//Level1_Floor.tga");
+
+	meshList[GEO_FLOOR_LEVEL2] = MeshBuilder::GenerateQuad("Floor_Leve2", Color(1, 0, 0), 1.f);
+	meshList[GEO_FLOOR_LEVEL2]->textureID = LoadTGA("Image//Level2_Floor.tga");
 	 
 	//Floor quads
 	meshList[GEO_FLOOR_LEVEL3] = MeshBuilder::GenerateQuad("Floor_Level3", Color(1, 0, 0), 1.f);
@@ -298,6 +301,8 @@ void SceneBase::Init()
 	//Status effect indicators
 	meshList[GEO_INDICATOR_SPEED] = MeshBuilder::GenerateOBJ("Le speed", "OBJ//Status_indicators/Speed_indicator.obj");
 	meshList[GEO_INDICATOR_SPEED]->textureID = LoadTGA("Image//red.tga");
+	meshList[GEO_INDICATOR_NOISE] = MeshBuilder::GenerateOBJ("Le speed", "OBJ//Status_indicators/Noise_indicator.obj");
+	meshList[GEO_INDICATOR_NOISE]->textureID = LoadTGA("Image//GameObjects/Noise.tga");
 	meshList[GEO_INDICATOR_ENEMY_FREEZE] = MeshBuilder::GenerateOBJ("Le freeze", "OBJ//Status_indicators/Frozen_indicator.obj");
 	meshList[GEO_INDICATOR_ENEMY_FREEZE]->textureID = LoadTGA("Image//GameObjects/Powerups/TimeFreeze.tga");
 	meshList[GEO_INDICATOR_ENEMY_STUN] = MeshBuilder::GenerateOBJ("Le freeze", "OBJ//Status_indicators/Enemy_stunned_indicator.obj");

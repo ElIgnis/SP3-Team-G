@@ -73,6 +73,7 @@ public:
 
 	bool GetShowIndicatorStun(void);
 	bool GetShowIndicatorHealth(void);
+	bool GetShowIndicatorNoise(void);
 	void SetIndicatorStunDur(float);
 	void SetIndicatorHealthDur(float);
 

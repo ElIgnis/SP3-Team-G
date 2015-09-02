@@ -34,6 +34,12 @@ CEnemy_Patrol::CEnemy_Patrol(Vector3 pos, Vector3 scale, Vector3 norm, float f_d
 
 CEnemy_Patrol::~CEnemy_Patrol()
 {
+	//Clean up patrol point list
+	while(m_patrolposList.size() > 0)
+	{
+		m_patrolposList.pop_back();
+	}
+	m_patrolposList.clear();
 }
 
 void CEnemy_Patrol::Update(const double dt)
@@ -47,7 +53,7 @@ void CEnemy_Patrol::Update(const double dt)
 			{
 				normal = (m_patrolposList[m_iCurrentPatrolpoint] - pos).Normalized();
 				Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
-				dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
+				dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x)) + 180.f;
 
 				vel =  normal * Patrol_moveSpd * (float)dt;
 				if((m_patrolposList[m_iCurrentPatrolpoint] - pos).Length() < 1)//dist check to next patrolpoint
@@ -84,7 +90,7 @@ void CEnemy_Patrol::Update(const double dt)
 				normal = (player_position - pos).Normalized();
 				//Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
 				//dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
-				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x))  + 180.f;
 				vel = normal * Chase_moveSpd * (float)dt;
 			}
 			else
@@ -95,7 +101,7 @@ void CEnemy_Patrol::Update(const double dt)
 		{
 			m_bTracking = true;
 			normal = (trackingPos - pos).Normalized();
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x))  + 180.f;
 			vel = normal * Chase_moveSpd * (float)dt;
 			if((pos - trackingPos).Length() < 1.f)
 			{

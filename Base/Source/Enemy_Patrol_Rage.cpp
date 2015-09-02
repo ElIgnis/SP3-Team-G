@@ -50,7 +50,7 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 			{
 				normal = (m_patrolposList[m_iCurrentPatrolpoint] - pos).Normalized();
 				Vector3 DirToTarget = m_patrolposList[m_iCurrentPatrolpoint] - pos;
-				dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x));
+				dir.z = Math::RadianToDegree(atan2(DirToTarget.y, DirToTarget.x))  + 180.f;
 
 				vel =  normal * Patrol_moveSpd * (float)dt;
 				if((m_patrolposList[m_iCurrentPatrolpoint] - pos).Length() < 1)//dist check to next patrolpoint
@@ -86,7 +86,7 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 			if(m_bCharge)
 			{
 				normal = (player_position - pos).Normalized();
-				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+				dir.z = Math::RadianToDegree(atan2(normal.y, normal.x))  + 180.f;
 				vel = normal * Enraged_moveSpd * (float)dt;
 				m_bCharge = false;
 			}
@@ -105,7 +105,7 @@ void CEnemy_Patrol_Rage::Update(const double dt)
 		{
 			m_bTracking = true;
 			normal = (trackingPos - pos).Normalized();
-			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x));
+			dir.z = Math::RadianToDegree(atan2(normal.y, normal.x))  + 180.f;
 			vel = normal * Chase_moveSpd * (float)dt;
 			if((pos - trackingPos).Length() < 1.f)
 			{
