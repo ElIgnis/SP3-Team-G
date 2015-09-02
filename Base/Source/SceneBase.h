@@ -69,7 +69,6 @@ public:
 	{
 		GEO_AXES,
 		GEO_TEXT,
-		GEO_STARTMENU,
 		GEO_MENUSPRITE,
 		GEO_BALL,
 		GEO_CUBE,
