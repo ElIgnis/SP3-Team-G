@@ -218,8 +218,8 @@ void SceneBase::Init()
 	meshList[GEO_POWERUP_HEALTH] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Health.obj");
 	meshList[GEO_POWERUP_HEALTH]->textureID = LoadTGA("Image//GameObjects/Powerups/Health.tga");
 
-	meshList[GEO_POWERUP_NOISE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//cube.obj");
-	meshList[GEO_POWERUP_NOISE]->textureID = LoadTGA("Image//GameObjects/Powerups/Noise.tga");
+	meshList[GEO_POWERUP_NOISE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Noise.obj");
+	meshList[GEO_POWERUP_NOISE]->textureID = LoadTGA("Image//GameObjects/Noise.tga");
 
 	meshList[GEO_POWERUP_INVISIBLE] = MeshBuilder::GenerateOBJ("Powerup", "OBJ//Invisibility.obj");
 	meshList[GEO_POWERUP_INVISIBLE]->textureID = LoadTGA("Image//GameObjects/Powerups/Invisibility.tga");

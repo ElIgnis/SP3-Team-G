@@ -1775,19 +1775,18 @@ void SceneStealth::RenderGO(GameObject *go)
 void SceneStealth::RenderGame(void)
 {
 	////Render floor
-	//modelStack.PushMatrix();
-	//modelStack.Translate(0.f, -10.f, 0.f);
-	//modelStack.Rotate(-90.f, 1, 0, 0);
-	//modelStack.Scale(1000.f, 1000.f, 1.f);
-	//RenderMesh(meshList[GEO_FLOOR_LEVEL3], false);
-	//modelStack.PopMatrix();
-
-	modelStack.PushMatrix();
-	modelStack.Translate(0.f, -5.f, 0.f);
-	modelStack.Rotate(-90.f, 1, 0, 0);
-	modelStack.Scale(1000.f, 1000.f, 1.f);
-	RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
-	modelStack.PopMatrix();
+	for(int i = 0; i < 3; ++i)
+	{
+		for(int j = 0; j < 3; ++j)
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(-150.f+ (i * 250), -5.f, -150.f + (j * 250));
+			modelStack.Rotate(-90.f, 1, 0, 0);
+			modelStack.Scale(250.f, 250.f, 1.f);
+			RenderMesh(meshList[GEO_FLOOR_LEVEL1], false);
+			modelStack.PopMatrix();
+		}
+	}
 
 	
 	modelStack.PushMatrix();
@@ -1944,9 +1943,9 @@ void SceneStealth::RenderGame(void)
 		modelStack.PushMatrix();
 		modelStack.Translate(nobj->GetPosition().x, nobj->GetPosition().y, nobj->GetPosition().z);
 		if(nobj->GetActive())
-			RenderMesh(meshList[GEO_TRACK], bLightEnabled);
-		else
 			RenderMesh(meshList[GEO_ALERT], bLightEnabled);
+		else
+			RenderMesh(meshList[GEO_POWERUP_NOISE], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 

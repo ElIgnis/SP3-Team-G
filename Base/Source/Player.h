@@ -32,6 +32,8 @@ private:
 
 	float m_fStunReuseTimer;
 	bool m_bUsedStun;
+	float m_fNoiseReuseTimer;
+	bool m_bUseNoise;
 
 	float m_fRespawnTimer;
 
