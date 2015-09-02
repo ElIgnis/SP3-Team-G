@@ -431,7 +431,6 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
-
 			//Update game if not dead and paused
 			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
@@ -525,10 +524,29 @@ int SceneStealth::UpdateAudio()
 	{
 		sound[MENU_BGM]->setIsPaused(true);
 	}
-	//float multMusic = 0.1f;
-	//Vector3 viewMusic = 0.0f;
-	//viewMusic = (camera.target + camera.position);
-	//engine->setListenerPosition(vec3df(multMusic * viewMusic.x, multMusic * viewMusic.y, multMusic * viewMusic.z), vec3df(1, 1, 1));
+
+	if(GameState != STATE_MENU && b_PauseGame != true && b_OutOfLives != true && b_Godmode != true && LvlHandler.GetCurrentStage() == 1)
+		sound[LEVEL_1]->setIsPaused(false);
+	else
+		sound[LEVEL_1]->setIsPaused(true);
+	if(GameState != STATE_MENU && b_PauseGame != true && b_OutOfLives != true && b_Godmode != true && LvlHandler.GetCurrentStage() == 2)
+		sound[LEVEL_2]->setIsPaused(false);
+	else
+		sound[LEVEL_2]->setIsPaused(true);
+	if(GameState != STATE_MENU && b_PauseGame != true && b_OutOfLives != true && b_Godmode != true && LvlHandler.GetCurrentStage() == 3)
+		sound[LEVEL_3]->setIsPaused(false);
+	else
+		sound[LEVEL_3]->setIsPaused(true);
+	if(GameState != STATE_MENU && b_PauseGame != true && b_OutOfLives != true && b_Godmode != true &&  LvlHandler.GetCurrentStage() == 4)
+		sound[LEVEL_4]->setIsPaused(false);
+	else
+		sound[LEVEL_4]->setIsPaused(true);
+
+	if(b_Godmode == true)
+		sound[PLAYER_GOD]->setIsPaused(false);
+	else
+		sound[PLAYER_GOD]->setIsPaused(true);
+
 	engine->update();
 
 	return 0;

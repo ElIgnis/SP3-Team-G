@@ -27,7 +27,19 @@ int SceneStealth::InitAudio()
 	sound[LEVEL_BUTTON]->setVolume(0.7f);
 
 	sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.mp3", false, true);
-	sound[LEVEL_CHECKPOINT]->setVolume(1.0f);
+	sound[LEVEL_CHECKPOINT]->setVolume(8.0f);
+
+	sound[LEVEL_1] = engine->play2D("../Base/Audio/Level_1.mp3", true, true);
+	sound[LEVEL_1]->setVolume(0.8f);
+
+	sound[LEVEL_2] = engine->play2D("../Base/Audio/Level_2.mp3", true, true);
+	sound[LEVEL_2]->setVolume(0.8f);
+
+	sound[LEVEL_3] = engine->play2D("../Base/Audio/Level_3.mp3", true, true);
+	sound[LEVEL_3]->setVolume(0.8f);
+
+	sound[LEVEL_4] = engine->play2D("../Base/Audio/Level_4.mp3", true, true);
+	sound[LEVEL_4]->setVolume(0.8f);
 
 	//Enemy sounds here
 	sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.mp3", false, true);
@@ -60,6 +72,9 @@ int SceneStealth::InitAudio()
 	
 	sound[PLAYER_DECOY] = engine->play2D("../Base/Audio/Player_decoy.wav", false, true);
 	sound[PLAYER_DECOY]->setVolume(0.07f);
+
+	sound[PLAYER_GOD] = engine->play2D("../Base/Audio/Player_god.ogg", true, true);
+	sound[PLAYER_GOD]->setVolume(1.0f);
 
 	return 0;
 }

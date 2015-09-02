@@ -61,6 +61,10 @@ class SceneStealth : public SceneBase
 		LEVEL_LOSE,
 		LEVEL_BUTTON,
 		LEVEL_CHECKPOINT,
+		LEVEL_1,
+		LEVEL_2,
+		LEVEL_3,
+		LEVEL_4,
 		//Enemy Sounds
 		ENEMY_ALERT,
 		ENEMY_SHOOT,
@@ -73,6 +77,7 @@ class SceneStealth : public SceneBase
 		PLAYER_DISGUISE,
 		PLAYER_SPEED,
 		PLAYER_DECOY,
+		PLAYER_GOD,
 		SOUND_TOTAL,
 	};
 public:
