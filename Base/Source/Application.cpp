@@ -143,6 +143,19 @@ bool Application::GetKeyboardUpdate()
 	{
 		scene->UpdateKeyUp('p');
 	}
+
+	//G key
+	static bool g_VKey = false;
+	scene->UpdateKeyUp('g');
+	if(IsKeyPressed('G') && !g_VKey)
+	{
+		scene->UpdateKeyDown('g');
+		g_VKey = true;
+	}
+	else if(!IsKeyPressed('G') && g_VKey)
+	{
+		g_VKey = false;
+	}
 	//E key
 	if(IsKeyPressed('E'))
 	{

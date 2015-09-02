@@ -234,6 +234,7 @@ private:
 	float f_FeedbackTimer;
 	bool b_TriggerFBTimer;
 	bool b_ShowFPS;
+	bool b_Godmode;
 
 	CItem *Disguise;
 	CItem *Decoy;

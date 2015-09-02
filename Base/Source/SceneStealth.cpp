@@ -26,6 +26,7 @@ SceneStealth::SceneStealth()
 	, m_fCheckpointHeight(5.f)
 	, m_bCheckpointDir(true)
 	, b_ShowFPS(false)
+	, b_Godmode(false)
 {
 }
 
@@ -430,7 +431,7 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
-			
+
 			//Update game if not dead and paused
 			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
@@ -537,11 +538,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 {
 	Virus->UpdateTimers(dt);
 
-	/*cout << "Player's Pos :" << Virus->pos << endl;
-	cout << "Light's Pos X is :" << lights[0].position.x << endl;
-	cout << "Light's Pos Y is :" << lights[0].position.y << endl;
-	cout << "Light's Pos Z is :" << lights[0].position.z << endl;
-*/
 	lights[0].position.Set(Virus->pos.x, Virus->pos.z, -Virus->pos.y);
 
 	//Only update player when player is not dead
@@ -565,7 +561,6 @@ void SceneStealth::UpdatePlayer(const double dt)
 		//Use Decoy
 		if(GetKeyState('b'))
 			Virus->TriggerSkillEffect(Decoy->GetItemType());
-		
 
 		 bool b_boxColCheck = false;
 		 bool b_ColCheck = false;
@@ -624,7 +619,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 						b_ColCheck = true;
 						break;
 					case GameObject::GO_WALL:
-						//b_ColCheck = true;
+						b_ColCheck = true;
 						break;
 					case GameObject::GO_BOX:
 						if(!b_boxColCheck)
@@ -685,6 +680,8 @@ void SceneStealth::UpdatePlayer(const double dt)
 				}
 			}
 		}
+		if(b_Godmode)
+			b_ColCheck = false;
 		if(!b_ColCheck)
 		{
 			if(Virus->GetPowerupStatus(CItem::SPEED))
@@ -787,8 +784,11 @@ void SceneStealth::UpdateEnemies(const double dt)
 			//Set player state to dead on collision with any enemy
 			if(CheckCollision(go, Virus, (float)dt) && Virus->GetPlayerState() == CPlayer::ALIVE)
 			{
-				sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
-				Virus->SetPlayerState(CPlayer::DEAD);
+				if(!b_Godmode)
+				{
+					sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
+					Virus->SetPlayerState(CPlayer::DEAD);
+				}
 			}
 			//Stunning enemies
 			if(GetKeyState(VK_SPACE) && Virus->GetStunReuseTimer() <= 0.f)
@@ -913,9 +913,12 @@ void SceneStealth::UpdateEnemies(const double dt)
 						//Bullet kills player if collided
 						if(CheckCollision(bul, Virus, (float)dt))
 						{
-							sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
-							Virus->SetPlayerState(CPlayer::DEAD);
-							bul->active = false;
+							if(!b_Godmode)
+							{
+								sound[PLAYER_DMG] = engine->play2D("../Base/Audio/Player_damaged.wav", false, false);
+								Virus->SetPlayerState(CPlayer::DEAD);
+								bul->active = false;
+							}
 						}
 
 						//Check bullet - structure collision
@@ -1030,12 +1033,6 @@ void SceneStealth::UpdateMenuKeypress(void)
 void SceneStealth::UpdateGameKeypress(void)
 {
 	m_force = 0.f;
-	//if(GetKeyState(VK_BACK))//change game state
-	//	GameState = STATE_MENU;
-	//if(GetKeyState(VK_RETURN))
-	//{
-	//	//Put special interactions here - LEVERS, TELEPORTERS, HIDE IN BOX
-	//}
 
 	//Forward movement
 	if(GetKeyState('w'))
@@ -1144,6 +1141,11 @@ void SceneStealth::UpdateGameKeypress(void)
 	}
 	if(GetKeyState('p'))
 		b_PauseGame = true;
+
+	if(GetKeyState('g'))
+	{
+		b_Godmode = !b_Godmode;
+	}
 }
 
 void SceneStealth::UpdatePauseKeypress(void)
@@ -1600,6 +1602,7 @@ void SceneStealth::RestartGame(void)
 	b_GameCompleted = false;
 	b_ReInitGameVars = true;
 	b_NameEntered = false;
+	b_Godmode = false;
 	Virus->PlayerReset();
 	camera.Reset();
 	tempHighScore.ResetRecord();

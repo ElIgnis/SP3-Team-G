@@ -159,9 +159,6 @@ void SceneBase::Init()
 	meshList[GEO_QUAD] = MeshBuilder::GenerateQuad("Background quad", Color(0.2f, 0.2f, 0.2f), 1.f);
 
 	//Background
-	meshList[GEO_STARTMENU] = MeshBuilder::GenerateQuad("Background", Color(1, 0, 0), 1.f);
-	meshList[GEO_STARTMENU]->textureID = LoadTGA("Image//StartMenu_Background.tga");
-	
 	meshList[GEO_MENUSPRITE] = MeshBuilder::GenerateSpriteAnimation("TheMatrix",2,5);
 	meshList[GEO_MENUSPRITE]->textureID = LoadTGA("Image//matrixSprite.tga");
 	SpriteAnimation *menuAnim = dynamic_cast<SpriteAnimation*>(meshList[GEO_MENUSPRITE]);
