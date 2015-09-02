@@ -34,7 +34,7 @@ int SceneStealth::InitAudio()
 	sound[ENEMY_ALERT]->setVolume(1.0f);
 	
 	sound[ENEMY_SHOOT] = engine->play2D("../Base/Audio/Enemy_shoot.ogg", false, true);
-	sound[ENEMY_SHOOT]->setVolume(0.5f);
+	sound[ENEMY_SHOOT]->setVolume(1.0f);
 	
 	sound[ENEMY_BULLET_WALL] = engine->play2D("../Base/Audio/Enemy_shoot_hit_wall.wav", false, true);
 	sound[ENEMY_BULLET_WALL]->setVolume(0.08f);
