@@ -1816,12 +1816,12 @@ void SceneStealth::RenderGame(void)
 	{
 		CDialogue_Box *db = (CDialogue_Box *)*it;
 		modelStack.PushMatrix();
-		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -5);
+		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, m_fCheckpointHeight);
+		modelStack.Rotate(m_fItemRot, 0, 0, 1);
 		modelStack.Scale(7, 7, 7);
 		RenderMesh(meshList[GEO_DIALOGUE_TRIGGER], bLightEnabled);
 		modelStack.PopMatrix();
 	}
-	
 
 	//Render enemies here
 	for(std::vector<CEnemy  *>::iterator it = LvlHandler.GetEnemy_List().begin(); it != LvlHandler.GetEnemy_List().end(); ++it)
