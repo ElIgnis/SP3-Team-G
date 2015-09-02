@@ -1,0 +1,47 @@
+/Format
+/1st Line - World position
+/Subsequent Lines - Text
+/Use # to seperate dialogues
+/Do not use # on the first line
+-30,44,0
+Reminder Tutorial : 
+W, A, S, D to move.
+Spacebar stuns enemies
+V to use Disguise 
+B to drop Decoy
+#
+-80, -10, 2
+Avoid this Sentry Enemy. 
+Dodge his bullets as well.
+#
+-95, -180, 2
+Press 'E' to open the Gate
+at the North West.
+Pick up the Health Kit,
+and activate the red CheckPoint
+on the way.
+#
+0, -100, 2
+Did you pick up the Speed 
+Powerup?
+If yes, Good for you!
+If no, retrace and pick it up.
+To the West is a Brown 
+Hiding Hole. 
+Enemies won't detect you if
+you're standing in it.
+#
+195, -170, 2
+-Hint-
+Use your Speed Power Up.
+Press 2.
+#
+200, 40, 2
+This is the last lap!
+There are a few ways to do this.
+Make sure you have 3 lives.
+Use the speed power if
+you haven't used it.
+And Dodge the bullets like a pro!
+Good Luck~!
+#
