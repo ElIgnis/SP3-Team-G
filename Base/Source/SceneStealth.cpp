@@ -45,11 +45,11 @@ void SceneStealth::Init()
 	m_objectCount = 0;
 
 	//Initialise a list of 50 GOs
-	for(unsigned i = 0; i < 50; ++i)
+	/*for(unsigned i = 0; i < 50; ++i)
 	{
 		GameObject *go = new GameObject(GameObject::GO_BALL);
 		m_goList.push_back(go);
-	}
+	}*/
 
 	//Main menu
 	CMenuItem *m;
@@ -181,26 +181,26 @@ void SceneStealth::UpdatePlayerScore(const double dt)
 	}
 }
 
-GameObject* SceneStealth::FetchGO()
-{
-	for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
-	{
-		GameObject *go = (GameObject *)*it;
-		if(!go->active)
-		{
-			go->active = true;
-			return go;
-		}
-	}
-	for(unsigned i = 0; i < 10; ++i)
-	{
-		GameObject *go = new GameObject(GameObject::GO_BALL);
-		m_goList.push_back(go);
-	}
-	GameObject *go = m_goList.back();
-	go->active = true;
-	return go;
-}
+//GameObject* SceneStealth::FetchGO()
+//{
+//	/*for(std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
+//	{
+//		GameObject *go = (GameObject *)*it;
+//		if(!go->active)
+//		{
+//			go->active = true;
+//			return go;
+//		}
+//	}
+//	for(unsigned i = 0; i < 10; ++i)
+//	{
+//		GameObject *go = new GameObject(GameObject::GO_BALL);
+//		m_goList.push_back(go);
+//	}
+//	GameObject *go = m_goList.back();
+//	go->active = true;
+//	return go;*/
+//}
 
 bool SceneStealth::CheckCollision(GameObject *go1, GameObject *go2, float dt)
 {
@@ -907,7 +907,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 					}
 				}
 				if(b_ColCheck2)
-					go->pos += go->vel * 0.6f; 
+					go->pos += go->vel * 0.5f; 
 				else
 					go->pos += go->vel;
 			}
@@ -1779,12 +1779,12 @@ void SceneStealth::RenderGO(GameObject *go)
 void SceneStealth::RenderEnvironment(void)
 {
 	////Render floor
-	for(int i = 0; i < 3; ++i)
+	for(int i = 0; i < 5; ++i)
 	{
-		for(int j = 0; j < 3; ++j)
+		for(int j = 0; j < 5; ++j)
 		{
 			modelStack.PushMatrix();
-			modelStack.Translate(-150.f+ (i * 250), -5.f, -150.f + (j * 250));
+			modelStack.Translate(-450.f+ (i * 250), -5.f, -450.f + (j * 250));
 			modelStack.Rotate(-90.f, 1, 0, 0);
 			modelStack.Scale(250.f, 250.f, 1.f);
 			switch(LvlHandler.GetCurrentStage())
@@ -1818,8 +1818,8 @@ void SceneStealth::RenderGame(void)
 		CDialogue_Box *db = (CDialogue_Box *)*it;
 		modelStack.PushMatrix();
 		modelStack.Translate(db->GetWorldPos().x, db->GetWorldPos().y, -5);
-		modelStack.Scale(7, 7, 1);
-		RenderMesh(meshList[GEO_BALL], bLightEnabled);
+		modelStack.Scale(7, 7, 7);
+		RenderMesh(meshList[GEO_DIALOGUE_TRIGGER], bLightEnabled);
 		modelStack.PopMatrix();
 	}
 	
@@ -2500,13 +2500,13 @@ void SceneStealth::Exit()
 
 	//Exit the sound things
 	ExitAudio();
-	//Cleanup GameObjects
-	while(m_goList.size() > 0)
-	{
-		GameObject *go = m_goList.back();
-		delete go;
-		m_goList.pop_back();
-	}
+	////Cleanup GameObjects
+	//while(m_goList.size() > 0)
+	//{
+	//	GameObject *go = m_goList.back();
+	//	delete go;
+	//	m_goList.pop_back();
+	//}
 
 	if(Virus)
 	{
