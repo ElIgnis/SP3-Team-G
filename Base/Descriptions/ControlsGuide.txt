@@ -8,8 +8,11 @@
    'S' - Moves the character Down
    'D' - Moves the character Right
  Interactions:
-   'Spacebar' - Stun enemies around player
-   '1-9' - Use the highlighted item in the
-	  hotbar.
+   'Spacebar' - Stun enemies around 
+    player
+   '1-9' - Use the highlighted item
+             in the hotbar.
    'V' - Disguise
    'B' - Drop Decoy
+   'P' - Pause Game
+   'F2' - Show FPS

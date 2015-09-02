@@ -79,7 +79,7 @@ void SceneStealth::Init()
 	menu_pause.m_menuList.push_back(m2);
 	m2 = new CMenuItem("Restart", "Play.txt");
 	menu_pause.m_menuList.push_back(m2);
-	m2 = new CMenuItem("Exit", "Play.txt");m->ReadDescription();
+	m2 = new CMenuItem("Exit", "Play.txt");
 	menu_pause.m_menuList.push_back(m2);
 	menu_pause.m_menuList[0]->SetIs_Selected(true);
 	menu_pause.SpaceOptions(35,15, 5); //Space out menu options equally
@@ -1818,9 +1818,9 @@ void SceneStealth::RenderGame(void)
 			modelStack.Rotate(go->dir.z - 90.f, 0, 0, 1);
 			modelStack.Scale(go->GetDetectionRange().x , go->GetDetectionRange().y, go->GetDetectionRange().z);
 			if(go->GetState() != CEnemy::STATE_ALERT && go->GetState() != CEnemy::STATE_ATTACK)
-				RenderMesh(meshList[GEO_CONE_YELLOW], bLightEnabled);
+				RenderMesh(meshList[GEO_CONE_YELLOW], false);
 			else
-				RenderMesh(meshList[GEO_CONE_RED], bLightEnabled);
+				RenderMesh(meshList[GEO_CONE_RED], false);
 			modelStack.PopMatrix();
 			glEnable(GL_DEPTH_TEST);
 
@@ -2025,8 +2025,6 @@ void SceneStealth::RenderGame(void)
 			RenderGO(go);
 	}
 
-	
-
 	modelStack.PopMatrix();
 	
 	//Renders elapsed time(score)
@@ -2098,10 +2096,16 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			std::stringstream ssDesc;
 			ssDesc << "Current Level: " << LvlHandler.GetCurrentStage();
 			if(!LvlHandler.GetStageSelection())
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable level selection", Color(0, 1, 0), TextSize, 40, 45);
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable", Color(0, 1, 0), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "level selection", Color(0, 1, 0), TextSize, 40, 41);
+			}
 			else
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll through levels", Color(0, 1, 0), TextSize, 40, 45);
-			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40, 41);
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll", Color(0, 1, 0), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "through levels", Color(0, 1, 0), TextSize, 40, 41);
+			}
+			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40, 37);
 		}
 		break;
 	case 2: //Option 3 for Highscore
