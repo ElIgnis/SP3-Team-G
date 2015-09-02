@@ -4,7 +4,7 @@ extern ISoundEngine* engine;
 
 #define Scan_turnSpd 1.f
 #define Bullet_Size 2.f
-#define Bullet_Spd 60.f
+#define Bullet_Spd 120.f
 #define Sentry_waitTime 1.f
 #define Sentry_waitTime_track 2.f
 

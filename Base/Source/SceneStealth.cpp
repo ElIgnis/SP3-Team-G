@@ -422,7 +422,6 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
-			cout << Virus->pos.x << " " << Virus->pos.y << endl;
 			//Update game if not dead and paused
 			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
@@ -792,7 +791,7 @@ void SceneStealth::UpdateEnemies(const double dt)
 			go->PlayerCurrentPosition(Virus->pos);
 
 			//Set player state to dead on collision with any enemy
-			if(CheckCollision(go, Virus, (float)dt) && Virus->GetPlayerState() == CPlayer::ALIVE)
+			if(CheckCollision(go, Virus, (float)dt) && (Virus->GetPlayerState() == CPlayer::ALIVE || Virus->GetPlayerState() == CPlayer::DISGUISE))
 			{
 				if(!b_Godmode)
 				{
