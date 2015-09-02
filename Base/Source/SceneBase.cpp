@@ -114,7 +114,7 @@ void SceneBase::Init()
 	lights[1].type = Light::LIGHT_DIRECTIONAL;
 	lights[1].position.Set(0, 0, 10);
 	lights[1].color.Set(1, 1, 1);
-	lights[1].power = 5;
+	lights[1].power = 1;
 	lights[1].kC = 1.f;
 	lights[1].kL = 0.001f;
 	lights[1].kQ = 0.0001f;
@@ -176,6 +176,9 @@ void SceneBase::Init()
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
 	//Game Objects
+	//End point
+	meshList[GEO_ENDPOINT] = MeshBuilder::GenerateOBJ("Endpoint", "OBJ//Computer.obj");
+	meshList[GEO_ENDPOINT]->textureID = LoadTGA("Image//GameObjects/Computer.tga");
 	//Wall
 	meshList[GEO_WALL_GREEN] = MeshBuilder::GenerateOBJ("GEO_WALL_BLUE", "OBJ//cube.obj");
 	meshList[GEO_WALL_GREEN]->textureID = LoadTGA("Image//GameObjects/Walls/wall_green.tga");
