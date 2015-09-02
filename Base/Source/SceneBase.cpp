@@ -114,7 +114,7 @@ void SceneBase::Init()
 	lights[1].type = Light::LIGHT_DIRECTIONAL;
 	lights[1].position.Set(0, 0, 10);
 	lights[1].color.Set(1, 1, 1);
-	lights[1].power = 5;
+	lights[1].power = 1;
 	lights[1].kC = 1.f;
 	lights[1].kL = 0.001f;
 	lights[1].kQ = 0.0001f;

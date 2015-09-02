@@ -1815,9 +1815,9 @@ void SceneStealth::RenderGame(void)
 			modelStack.Rotate(go->dir.z - 90.f, 0, 0, 1);
 			modelStack.Scale(go->GetDetectionRange().x , go->GetDetectionRange().y, go->GetDetectionRange().z);
 			if(go->GetState() != CEnemy::STATE_ALERT && go->GetState() != CEnemy::STATE_ATTACK)
-				RenderMesh(meshList[GEO_CONE_YELLOW], bLightEnabled);
+				RenderMesh(meshList[GEO_CONE_YELLOW], false);
 			else
-				RenderMesh(meshList[GEO_CONE_RED], bLightEnabled);
+				RenderMesh(meshList[GEO_CONE_RED], false);
 			modelStack.PopMatrix();
 			glEnable(GL_DEPTH_TEST);
 
