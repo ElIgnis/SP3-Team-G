@@ -745,7 +745,7 @@ void SceneStealth::UpdatePlayer(const double dt)
 			{
 				if(CheckCollision(Virus,go,(float)dt))
 				{
-					sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.mp3", false, false);
+					sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.ogg", false, false);
 					for(std::vector<GameObject  *>::iterator it2 = LvlHandler.GetCheckPoint_List().begin(); it2 != LvlHandler.GetCheckPoint_List().end(); ++it2)
 					{
 						GameObject *go2 = (GameObject *)*it2;
