@@ -74,7 +74,7 @@ void CEnemy_Sentry::Update(const double dt)
 				go->vel = this->normal * Bullet_Spd * (float)dt;
 				go->scale.Set(Bullet_Size,Bullet_Size,Bullet_Size);
 				m_fShootCD = 1.f;
-				ISound * sound =  engine->play2D("../Base/Audio/Enemy_shoot.mp3", false, false);
+				ISound * sound =  engine->play2D("../Base/Audio/Enemy_shoot.ogg", false, false);
 				if(sound)
 				{
 					sound->setIsPaused(false);

@@ -26,14 +26,14 @@ int SceneStealth::InitAudio()
 	sound[LEVEL_BUTTON] = engine->play2D("../Base/Audio/Level_button.wav", false, true);
 	sound[LEVEL_BUTTON]->setVolume(0.7f);
 
-	sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.wav", false, true);
+	sound[LEVEL_CHECKPOINT] = engine->play2D("../Base/Audio/Level_checkpoint.mp3", false, true);
 	sound[LEVEL_CHECKPOINT]->setVolume(0.5f);
 
 	//Enemy sounds here
-	sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.wav", false, true);
+	sound[ENEMY_ALERT] = engine->play2D("../Base/Audio/Enemy_alert.mp3", false, true);
 	sound[ENEMY_ALERT]->setVolume(1.0f);
 	
-	sound[ENEMY_SHOOT] = engine->play2D("../Base/Audio/Enemy_shoot.mp3", false, true);
+	sound[ENEMY_SHOOT] = engine->play2D("../Base/Audio/Enemy_shoot.ogg", false, true);
 	sound[ENEMY_SHOOT]->setVolume(0.05f);
 	
 	sound[ENEMY_BULLET_WALL] = engine->play2D("../Base/Audio/Enemy_shoot_hit_wall.wav", false, true);
