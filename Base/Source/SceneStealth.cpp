@@ -1770,7 +1770,7 @@ void SceneStealth::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BOX], bLightEnabled);
+		RenderMesh(meshList[GEO_ENDPOINT], bLightEnabled);
 		modelStack.PopMatrix();
 	break;
 	}
@@ -2107,7 +2107,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[0]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), 1.5f, 40.f, 45.f - j * 2.5f);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), TextSize, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2117,10 +2117,10 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			std::stringstream ssDesc;
 			ssDesc << "Current Level: " << LvlHandler.GetCurrentStage();
 			if(!LvlHandler.GetStageSelection())
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable level selection", Color(0, 1, 0), 1.5, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable level selection", Color(0, 1, 0), TextSize, 40, 45);
 			else
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll through levels", Color(0, 1, 0), 1.5, 40, 45);
-			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5, 40, 41);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll through levels", Color(0, 1, 0), TextSize, 40, 45);
+			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40, 41);
 		}
 		break;
 	case 2: //Option 3 for Highscore
@@ -2140,7 +2140,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
 				else
 					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
-				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), 1.5, 40.f, 45.f - i * 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), TextSize, 40.f, 45.f - i * 4);
 			}
 		}
 		break;
@@ -2150,7 +2150,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[3]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5f, 40.f, 45.f - j * 2.5f);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2160,7 +2160,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[4]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), 1.5f, 40.f, 45.f - j * 2.5f);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2170,7 +2170,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[5]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0.f, 1.f, 0.f), 1.5f, 40.f, 45.f - j * 2.5f);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0.f, 1.f, 0.f), TextSize, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;

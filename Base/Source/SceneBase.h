@@ -78,6 +78,7 @@ public:
 		GEO_BALL2,
 		//Game Objects
 		//Walls & Floors
+		GEO_ENDPOINT,
 		GEO_WALL_GREEN,
 		GEO_WALL_BLUE,
 		GEO_BINARYWALL,

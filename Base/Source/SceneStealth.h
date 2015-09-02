@@ -15,6 +15,7 @@
 #define MoveSpeedModifier 0.75f
 
 #define DisplayTimer 2.f
+#define TextSize 2.f
 
 #define NumberOfKeys 255
 
