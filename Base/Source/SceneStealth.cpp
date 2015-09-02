@@ -422,6 +422,7 @@ void SceneStealth::Update(double dt)
 			//Set the camera to target this player
 			camera.SetTargetPlayer(Virus);
 			camera.SetPersp(true);
+			cout << Virus->pos.x << " " << Virus->pos.y << endl;
 			//Update game if not dead and paused
 			if(!b_PauseGame && !b_OutOfLives && !b_ShowHSNotice && !LvlHandler.GetStageCompleted())
 			{
