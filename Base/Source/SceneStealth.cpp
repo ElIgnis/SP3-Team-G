@@ -43,15 +43,6 @@ void SceneStealth::Init()
 	//Physics code here
 	Math::InitRNG();
 
-	m_objectCount = 0;
-
-	//Initialise a list of 50 GOs
-	/*for(unsigned i = 0; i < 50; ++i)
-	{
-		GameObject *go = new GameObject(GameObject::GO_BALL);
-		m_goList.push_back(go);
-	}*/
-
 	//Main menu
 	CMenuItem *m;
 	m = new CMenuItem("Play", "Play.txt");
@@ -2139,15 +2130,15 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			ssDesc << "Current Level: " << LvlHandler.GetCurrentStage();
 			if(!LvlHandler.GetStageSelection())
 			{
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable", Color(0, 1, 0), TextSize, 40, 45);
-				RenderTextOnScreen(meshList[GEO_TEXT], "level selection", Color(0, 1, 0), TextSize, 40, 41);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Right arrow to enable", Color(1, 1, 1), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "level selection", Color(1, 1, 1), TextSize, 40, 41);
 			}
 			else
 			{
-				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll", Color(0, 1, 0), TextSize, 40, 45);
-				RenderTextOnScreen(meshList[GEO_TEXT], "through levels", Color(0, 1, 0), TextSize, 40, 41);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Press Up/Down arrow to scroll", Color(1, 1, 1), TextSize, 40, 45);
+				RenderTextOnScreen(meshList[GEO_TEXT], "through levels", Color(1, 1, 1), TextSize, 40, 41);
 			}
-			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40, 37);
+			RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 0, 1), TextSize, 40, 37);
 		}
 		break;
 	case 2: //Option 3 for Highscore
@@ -2167,7 +2158,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 					HighScore << "0" << HS_List.GetScoreList().at(i).GetSeconds();
 				else
 					HighScore << HS_List.GetScoreList().at(i).GetSeconds();
-				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(0, 1, 0), TextSize, 40.f, 45.f - i * 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], HighScore.str(), Color(1, 1, 1), TextSize, 40.f, 45.f - i * 4);
 			}
 		}
 		break;
@@ -2177,7 +2168,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[3]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40.f, 45.f - j * 2.5f);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), TextSize, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2187,7 +2178,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[4]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0, 1, 0), TextSize, 40.f, 45.f - j * 2.5f);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1, 1, 1), TextSize, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2197,7 +2188,7 @@ void SceneStealth::RenderDesc(CMenu &menuItem)
 			{
 				std::stringstream ssDesc;
 				ssDesc << menu_main.m_menuList[5]->vec_DescTokens[j];
-				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(0.f, 1.f, 0.f), TextSize, 40.f, 45.f - j * 2.5f);
+				RenderTextOnScreen(meshList[GEO_TEXT], ssDesc.str(), Color(1.f, 1.f, 1.f), TextSize, 40.f, 45.f - j * 2.5f);
 			}
 		}
 		break;
@@ -2211,18 +2202,19 @@ void SceneStealth::RenderUI(void)
 	{
 		std::stringstream ssFPS;
 		ssFPS << "FPS:" << fps;
-		RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(0, 1, 0), 3, 1, 1);//fps
+		RenderTextOnScreen(meshList[GEO_TEXT], ssFPS.str(), Color(1, 1, 1), 3, 1, 1);//fps
 	}
 
 	glDisable(GL_DEPTH_TEST);
 	//Renders elapsed time(score)
 	RenderScore();
-	//Render dialogues in scene
-	RenderDialogBox();
+	
 	//Renders healthbar and current lives
 	RenderHealthbar();
 	//Renders inventory and items in it
 	RenderInventory();
+	//Render dialogues in scene
+	RenderDialogBox();
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -2329,7 +2321,7 @@ void SceneStealth::RenderScore(void)
 	else
 		ssScore << " : " << tempHighScore.GetSeconds();
 
-	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(0, 1, 0), 3, 45, 56);
+	RenderTextOnScreen(meshList[GEO_TEXT], ssScore.str(), Color(1, 1, 1), 3, 45, 56);
 }
 void SceneStealth::RenderDialogBox(void)
 {

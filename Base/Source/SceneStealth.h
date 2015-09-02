@@ -92,8 +92,6 @@ public:
 
 	void RenderGO(GameObject *go);
 
-	//GameObject* FetchGO();
-
 	bool CheckCollision(GameObject *go1, GameObject *go2, float dt);
 	bool CheckDetectionRange(CEnemy *go1, GameObject *go2);
 	void CollisionResponse(GameObject *go1, GameObject *go2, float dt);
@@ -167,10 +165,6 @@ public:
 	int UpdateAudio();
 	int ExitAudio();
 protected:
-
-	//Physics
-	//vector<GameObject *> m_goList;
-	int m_objectCount;
 
 	//Auditing
 	float m1, m2;
