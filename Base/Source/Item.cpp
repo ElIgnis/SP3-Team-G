@@ -1,13 +1,5 @@
 #include "Item.h"
 
-
-CItem::CItem(void)
-	: m_uiStack(0)
-	, m_uiIndex(0)
-	, itemType(ITEM_TOTAL)
-{
-}
-
 CItem::~CItem(void)
 {
 }
