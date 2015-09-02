@@ -290,6 +290,8 @@ void SceneBase::Init()
 	meshList[GEO_HOTSEL]->textureID = LoadTGA("Image//hotbar_select.tga");
 	meshList[GEO_DIALOGUE_BOX] = MeshBuilder::GenerateQuad("DialogueBox", Color(1, 1, 1), 1.f);
 	meshList[GEO_DIALOGUE_BOX]->textureID = LoadTGA("Image//dialogue_box.tga");
+	meshList[GEO_DIALOGUE_TRIGGER] = MeshBuilder::GenerateOBJ("Le speed", "OBJ//SpeechBubble.obj");
+	meshList[GEO_DIALOGUE_TRIGGER]->textureID = LoadTGA("Image//SpeechBubble.tga");
 
 	//Health Bar UI
 	meshList[GEO_HEALTHUI] = MeshBuilder::GenerateQuad("HealthUI", Color(1, 1, 1), 1.f);
