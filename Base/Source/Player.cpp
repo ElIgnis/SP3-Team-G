@@ -1,7 +1,7 @@
 #include "Player.h"
 
 extern ISoundEngine* engine;
-#define Noise_reuse_timer 60.f
+#define Noise_reuse_timer 15.f
 #define Noise_start_timer 3.f
 #define Noise_duration 1.f
 
